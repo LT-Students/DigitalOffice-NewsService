@@ -6,4 +6,8 @@
     <RootNamespace>LT.DigitalOffice.NewsService.Data.Provider</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NewsService.Models.Db\NewsService.Models.Db.csproj" />
+  </ItemGroup>
+
 </Project>
