@@ -16,6 +16,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         private DbNews dbNewsRequest;
         private DbNews dbNews;
+        private DbNews dbNewsToAdd;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -43,6 +44,18 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 IsActive = true
             };
 
+            dbNewsToAdd = new DbNews
+            {
+                Id = Guid.NewGuid(),
+                Content = "Content",
+                Subject = "Subject",
+                AuthorName = "AuthorName",
+                AuthorId = Guid.NewGuid(),
+                SenderId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
             provider.News.Add(dbNews);
             provider.Save();
 
@@ -57,7 +70,6 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
-
         }
 
         [TearDown]
@@ -88,6 +100,17 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 .Result;
 
             SerializerAssert.AreEqual(dbNewsRequest, resultNews);
+        }
+        #endregion
+
+        #region CreateNews
+        [Test]
+        public void ShouldReturnMatchingIdAndCreateNews()
+        {
+            var guidOfNews = repository.CreateNews(dbNewsToAdd);
+
+            Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
+            Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
         }
         #endregion
     }

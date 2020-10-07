@@ -118,6 +118,7 @@ namespace NewsService
         private void ConfigureCommands(IServiceCollection services)
         {
             services.AddTransient<IEditNewsCommand, EditNewsCommand>();
+            services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
         }
     }
 }

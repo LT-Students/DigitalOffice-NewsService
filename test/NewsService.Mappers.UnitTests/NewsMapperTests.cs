@@ -72,6 +72,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
         public void ShouldReturnRightModelWhenRequestWithIdIsMapped()
         {
             var dbNews = mapper.Map(newsRequestWithId);
+
             expectedDbNews.Id = dbNews.Id;
             expectedDbNews.CreatedAt = dbNews.CreatedAt;
 

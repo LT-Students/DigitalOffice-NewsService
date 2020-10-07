@@ -29,6 +29,13 @@ namespace LT.DigitalOffice.NewsService.Data
 
             provider.News.Update(news);
             provider.Save();
+
+        public Guid CreateNews(DbNews news)
+        {
+            provider.News.Add(news);
+            provider.Save();
+
+            return news.Id;
         }
     }
 }

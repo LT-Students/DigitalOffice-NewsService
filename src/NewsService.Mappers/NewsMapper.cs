@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.NewsService.Mappers
                 SenderId = request.SenderId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
-            }; ;
+            };
 
             if (request.Id != null)
             {
