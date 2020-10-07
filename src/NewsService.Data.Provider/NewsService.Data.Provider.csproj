@@ -6,4 +6,12 @@
     <RootNamespace>LT.DigitalOffice.NewsService.Data.Provider</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewsService.Models.Db\NewsService.Models.Db.csproj" />
+  </ItemGroup>
+
 </Project>
