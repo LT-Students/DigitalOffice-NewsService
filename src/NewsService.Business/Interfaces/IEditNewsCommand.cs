@@ -7,13 +7,12 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
     /// Represents interface for a command in command pattern.
     /// Provides method for adding new news.
     /// </summary>
-    public interface ICreateNewsCommand
+    public interface IEditNewsCommand
     {
         /// <summary>
-        ///  Adds new news.
+        /// Edits news.
         /// </summary>
-        /// <param name="request">News data.</param>
-        /// <returns>Guid of added news.</returns>
-        Guid Execute(CreateNewsRequest request);
+        /// <param name="request">New news data.</param>
+        void Execute(NewsRequest request);
     }
 }

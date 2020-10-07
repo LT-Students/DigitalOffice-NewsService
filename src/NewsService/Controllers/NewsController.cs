@@ -9,12 +9,12 @@ namespace LT.DigitalOffice.NewsService.Controllers
     [ApiController]
     public class NewsController : ControllerBase
     {
-        [HttpPost("createNews")]
-        public Guid CreateNews(
-            [FromServices] ICreateNewsCommand command,
-            [FromBody] CreateNewsRequest request)
+        [HttpPost("editNews")]
+        public void CreateNews(
+            [FromServices] IEditNewsCommand command,
+            [FromBody] NewsRequest request)
         {
-            return command.Execute(request);
+            command.Execute(request);
         }
     }
 }

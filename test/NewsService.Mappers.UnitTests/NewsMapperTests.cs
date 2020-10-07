@@ -9,8 +9,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
 {
     class NewsMapperTests
     {
-        private IMapper<CreateNewsRequest, DbNews> mapper;
-        private CreateNewsRequest createNewsRequest;
+        private IMapper<NewsRequest, DbNews> mapper;
+        private NewsRequest newsRequestWithId;
+        private NewsRequest newsRequest;
         private DbNews expectedDbNews;
 
         [OneTimeSetUp]
@@ -18,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
         {
             mapper = new NewsMapper();
 
-            createNewsRequest = new CreateNewsRequest
+            newsRequest = new NewsRequest
             {
                 Content = "Content",
                 Subject = "Subject",
@@ -26,19 +27,30 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid()
             };
+
+            newsRequestWithId = new NewsRequest
+            {
+                Id = Guid.NewGuid(),
+                Content = "Content",
+                Subject = "Subject",
+                AuthorName = "AuthorName",
+                AuthorId = newsRequest.AuthorId,
+                SenderId = newsRequest.SenderId,
+            };
+
             expectedDbNews = new DbNews
             {
                 Content = "Content",
                 Subject = "Subject",
                 AuthorName = "AuthorName",
-                AuthorId = createNewsRequest.AuthorId,
-                SenderId = createNewsRequest.SenderId,
+                AuthorId = newsRequest.AuthorId,
+                SenderId = newsRequest.SenderId,
                 IsActive = true
             };
 
         }
 
-        #region CreateNewsRequest to DbNews
+        #region NewsRequest to DbNews
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
@@ -48,7 +60,18 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
         [Test]
         public void ShouldReturnRightModelWhenRequestIsMapped()
         {
-            var dbNews = mapper.Map(createNewsRequest);
+            var dbNews = mapper.Map(newsRequest);
+            expectedDbNews.Id = dbNews.Id;
+            expectedDbNews.CreatedAt = dbNews.CreatedAt;
+
+            Assert.IsInstanceOf<Guid>(dbNews.Id);
+            SerializerAssert.AreEqual(expectedDbNews, dbNews);
+        }
+
+        [Test]
+        public void ShouldReturnRightModelWhenRequestWithIdIsMapped()
+        {
+            var dbNews = mapper.Map(newsRequestWithId);
             expectedDbNews.Id = dbNews.Id;
             expectedDbNews.CreatedAt = dbNews.CreatedAt;
 

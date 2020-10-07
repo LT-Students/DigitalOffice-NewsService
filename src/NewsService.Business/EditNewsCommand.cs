@@ -8,24 +8,24 @@ using System;
 
 namespace LT.DigitalOffice.NewsService.Business
 {
-    public class CreateNewsCommand : ICreateNewsCommand
+    public class EditNewsCommand : IEditNewsCommand
     {
         private readonly INewsRepository repository;
-        private readonly IMapper<CreateNewsRequest, DbNews> mapper;
+        private readonly IMapper<NewsRequest, DbNews> mapper;
 
-        public CreateNewsCommand(
+        public EditNewsCommand(
             [FromServices] INewsRepository repository,
-            [FromServices] IMapper<CreateNewsRequest, DbNews> mapper)
+            [FromServices] IMapper<NewsRequest, DbNews> mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
         }
 
-        public Guid Execute(CreateNewsRequest request)
+        public void Execute(NewsRequest request)
         {
             var news = mapper.Map(request);
 
-            return repository.CreateNews(news);
+            repository.EditNews(news);
         }
     }
 }

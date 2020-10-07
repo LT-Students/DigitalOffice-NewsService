@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
+﻿using LT.DigitalOffice.Kernel.UnitTestLibrary;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
@@ -13,7 +14,8 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         private IDataProvider provider;
         private INewsRepository repository;
 
-        private DbNews dbNewsToAdd;
+        private DbNews dbNewsRequest;
+        private DbNews dbNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -29,7 +31,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [SetUp]
         public void SetUp()
         {
-            dbNewsToAdd = new DbNews
+            dbNews = new DbNews
             {
                 Id = Guid.NewGuid(),
                 Content = "Content",
@@ -40,6 +42,22 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
+
+            provider.News.Add(dbNews);
+            provider.Save();
+
+            dbNewsRequest = new DbNews
+            {
+                Id = dbNews.Id,
+                Content = "Content111",
+                Subject = "Subject111",
+                AuthorName = "AuthorName111",
+                AuthorId = Guid.NewGuid(),
+                SenderId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
         }
 
         [TearDown]
@@ -51,14 +69,25 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             }
         }
 
-        #region CreateNews
+        #region EditNews
         [Test]
-        public void ShouldReturnMatchingIdAndCreateNews()
+        public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
         {
-            var guidOfNews = repository.CreateNews(dbNewsToAdd);
+            Assert.Throws<Exception>(() => repository.EditNews(
+                new DbNews() { Id = Guid.Empty }));
+        }
 
-            Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
-            Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
+        [Test]
+        public void ShouldEditNews()
+        {
+            provider.MakeEntityDetached(dbNews);
+            repository.EditNews(dbNewsRequest);
+
+            var resultNews = provider.News
+                .FirstOrDefaultAsync(x => x.Id == dbNewsRequest.Id)
+                .Result;
+
+            SerializerAssert.AreEqual(dbNewsRequest, resultNews);
         }
         #endregion
     }
