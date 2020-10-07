@@ -16,4 +16,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NewsService.Data.Provider.MsSql.Ef\NewsService.Data.Provider.MsSql.Ef.csproj" />
+    <ProjectReference Include="..\..\src\NewsService.Data.Provider\NewsService.Data.Provider.csproj" />
+    <ProjectReference Include="..\..\src\NewsService.Data\NewsService.Data.csproj" />
+  </ItemGroup>
+
 </Project>
