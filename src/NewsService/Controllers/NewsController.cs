@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
         [HttpPost("createNews")]
         public Guid CreateNews(
             [FromServices] ICreateNewsCommand command,
-            [FromBody] CreateNewsRequest request)
+            [FromBody] NewsRequest request)
         {
             return command.Execute(request);
         }

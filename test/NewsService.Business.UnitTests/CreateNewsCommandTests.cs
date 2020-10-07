@@ -11,17 +11,17 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class CreateNewsCommandTests
     {
-        private Mock<IMapper<CreateNewsRequest, DbNews>> mapperMock;
+        private Mock<IMapper<NewsRequest, DbNews>> mapperMock;
         private Mock<INewsRepository> repositoryMock;
 
         private ICreateNewsCommand command;
-        private CreateNewsRequest request;
+        private NewsRequest request;
         private DbNews createdNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            request = new CreateNewsRequest
+            request = new NewsRequest
             {
                 Content = "Content",
                 Subject = "Subject",
@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            mapperMock = new Mock<IMapper<CreateNewsRequest, DbNews>>();
+            mapperMock = new Mock<IMapper<NewsRequest, DbNews>>();
             repositoryMock = new Mock<INewsRepository>();
 
             command = new CreateNewsCommand(repositoryMock.Object, mapperMock.Object);
@@ -56,7 +56,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         public void ShouldThrowExceptionWhenRepositoryThrowingException()
         {
             mapperMock
-                .Setup(x => x.Map(It.IsAny<CreateNewsRequest>()))
+                .Setup(x => x.Map(It.IsAny<NewsRequest>()))
                 .Returns(createdNews);
 
             repositoryMock
@@ -70,7 +70,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         public void ShouldReturnIdFromRepositoryWhenNewsCreated()
         {
             mapperMock
-                .Setup(x => x.Map(It.IsAny<CreateNewsRequest>()))
+                .Setup(x => x.Map(It.IsAny<NewsRequest>()))
                 .Returns(createdNews);
 
             repositoryMock

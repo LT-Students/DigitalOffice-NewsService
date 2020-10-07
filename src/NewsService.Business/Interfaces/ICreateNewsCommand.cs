@@ -14,6 +14,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
         /// </summary>
         /// <param name="request">News data.</param>
         /// <returns>Guid of added news.</returns>
-        Guid Execute(CreateNewsRequest request);
+        Guid Execute(NewsRequest request);
     }
 }

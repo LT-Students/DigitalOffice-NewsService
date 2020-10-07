@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <param name="news">News to add.</param>
         /// <returns>Guid of added news.</returns>
         Guid CreateNews(DbNews news);
-        
+
         /// <summary>
         /// Update existing news in the database.
         /// </summary>
