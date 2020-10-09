@@ -16,6 +16,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Data.Provider", "src\NewsService.Data.Provider\NewsService.Data.Provider.csproj", "{7B6CA353-1363-422D-B44C-AF8E9202719A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Data.Provider.MsSql.Ef", "src\NewsService.Data.Provider.MsSql.Ef\NewsService.Data.Provider.MsSql.Ef.csproj", "{19E60CAE-2DDB-4E59-857B-AC5DC8AC55C4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7B6CA353-1363-422D-B44C-AF8E9202719A} = {7B6CA353-1363-422D-B44C-AF8E9202719A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Mappers", "src\NewsService.Mappers\NewsService.Mappers.csproj", "{240918B2-188A-4914-9BD1-4319B13F1614}"
 EndProject
@@ -35,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Data.UnitTests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Validation.UnitTests", "test\NewsService.Validation.UnitTests\NewsService.Validation.UnitTests.csproj", "{0E1C52C2-9E1E-4B70-889C-85FC23CD91BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsService", "src\NewsService\NewsService.csproj", "{B35CDF50-7D71-495F-AF3C-E94706CE3B90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService", "src\NewsService\NewsService.csproj", "{B35CDF50-7D71-495F-AF3C-E94706CE3B90}"
 	ProjectSection(ProjectDependencies) = postProject
 		{19E60CAE-2DDB-4E59-857B-AC5DC8AC55C4} = {19E60CAE-2DDB-4E59-857B-AC5DC8AC55C4}
 	EndProjectSection
