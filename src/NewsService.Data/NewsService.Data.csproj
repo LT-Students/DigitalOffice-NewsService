@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NewsService.Data.Provider\NewsService.Data.Provider.csproj" />
     <ProjectReference Include="..\NewsService.Models.Db\NewsService.Models.Db.csproj" />
   </ItemGroup>

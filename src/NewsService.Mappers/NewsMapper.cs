@@ -5,7 +5,7 @@ using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers
 {
-    public class NewsMapper : IMapper<CreateNewsRequest, DbNews>
+    public class NewsMapper : IMapper<CreateNewsRequest, DbNews>, IMapper<DbNews, News>
     {
         public DbNews Map(CreateNewsRequest request)
         {
@@ -24,6 +24,26 @@ namespace LT.DigitalOffice.NewsService.Mappers
                 SenderId = request.SenderId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
+            };
+        }
+
+        public News Map(DbNews dbNews)
+        {
+            if (dbNews == null)
+            {
+                throw new ArgumentNullException(nameof(dbNews));
+            }
+
+            return new News
+            {
+                Id = dbNews.Id,
+                Content = dbNews.Content,
+                Subject = dbNews.Subject,
+                AuthorName = dbNews.AuthorName,
+                AuthorId = dbNews.AuthorId,
+                SenderId = dbNews.SenderId,
+                CreatedAt = dbNews.CreatedAt,
+                IsActive = dbNews.IsActive
             };
         }
     }

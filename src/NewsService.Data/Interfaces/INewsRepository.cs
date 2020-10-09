@@ -15,5 +15,12 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <param name="news">News to add.</param>
         /// <returns>Guid of added news.</returns>
         Guid CreateNews(DbNews news);
+
+        /// <summary>
+        /// Get news from Db by Id.
+        /// </summary>
+        /// <param name="newsId">Id of news.</param>
+        /// <returns>News with specified Id.</returns>
+        DbNews GetNews(Guid newsId);
     }
 }

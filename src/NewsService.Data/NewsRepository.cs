@@ -1,7 +1,10 @@
-﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
+﻿using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
 using System;
+using System.Data.Common;
+using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Data
 {
@@ -20,6 +23,17 @@ namespace LT.DigitalOffice.NewsService.Data
             provider.Save();
 
             return news.Id;
+        }
+
+        public DbNews GetNews(Guid newsId)
+        {
+            var news = provider.News.FirstOrDefault(x => x.Id == newsId);
+            if (news == null)
+            {
+                throw new NotFoundException();
+            }
+
+            return news;
         }
     }
 }

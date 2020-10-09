@@ -113,11 +113,13 @@ namespace NewsService
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<IMapper<CreateNewsRequest, DbNews>, NewsMapper>();
+            services.AddTransient<IMapper<DbNews, News>, NewsMapper>();
         }
 
         private void ConfigureCommands(IServiceCollection services)
         {
             services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
+            services.AddTransient<IGetNewsCommand, GetNewsCommand>();
         }
     }
 }

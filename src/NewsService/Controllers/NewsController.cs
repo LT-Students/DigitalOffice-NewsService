@@ -16,5 +16,13 @@ namespace LT.DigitalOffice.NewsService.Controllers
         {
             return command.Execute(request);
         }
+
+        [HttpGet("getNews")]
+        public News GetNews(
+            [FromServices] IGetNewsCommand command,
+            [FromBody] Guid newsId)
+        {
+            return command.Execute(newsId);
+        }
     }
 }
