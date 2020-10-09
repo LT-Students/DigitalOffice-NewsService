@@ -5,18 +5,17 @@ using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers
 {
-    public class NewsMapper : IMapper<CreateNewsRequest, DbNews>
+    public class NewsMapper : IMapper<NewsRequest, DbNews>
     {
-        public DbNews Map(CreateNewsRequest request)
+        public DbNews Map(NewsRequest request)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return new DbNews
+            var dbNews = new DbNews
             {
-                Id = Guid.NewGuid(),
                 Content = request.Content,
                 Subject = request.Subject,
                 AuthorName = request.AuthorName,
@@ -25,6 +24,17 @@ namespace LT.DigitalOffice.NewsService.Mappers
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
+
+            if (request.Id != null)
+            {
+                dbNews.Id = (Guid)request.Id;
+            }
+            else
+            {
+                dbNews.Id = Guid.NewGuid();
+            }
+
+            return dbNews;
         }
     }
 }

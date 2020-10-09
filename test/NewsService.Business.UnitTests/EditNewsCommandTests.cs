@@ -9,30 +9,31 @@ using System;
 
 namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
-    public class CreateNewsCommandTests
+    public class EditNewsCommandTests
     {
         private Mock<IMapper<NewsRequest, DbNews>> mapperMock;
         private Mock<INewsRepository> repositoryMock;
 
-        private ICreateNewsCommand command;
+        private IEditNewsCommand command;
         private NewsRequest request;
-        private DbNews createdNews;
+        private DbNews dbNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             request = new NewsRequest
             {
-                Content = "Content",
-                Subject = "Subject",
-                AuthorName = "AuthorName",
+                Id = Guid.NewGuid(),
+                Content = "Content111",
+                Subject = "Subject111",
+                AuthorName = "AuthorName111",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid()
             };
 
-            createdNews = new DbNews
+            dbNews = new DbNews
             {
-                Id = Guid.NewGuid(),
+                Id = (Guid)request.Id,
                 Content = "Content",
                 Subject = "Subject",
                 AuthorName = "AuthorName",
@@ -49,36 +50,46 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             mapperMock = new Mock<IMapper<NewsRequest, DbNews>>();
             repositoryMock = new Mock<INewsRepository>();
 
-            command = new CreateNewsCommand(repositoryMock.Object, mapperMock.Object);
+            command = new EditNewsCommand(repositoryMock.Object, mapperMock.Object);
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenRepositoryThrowingException()
+        public void ShouldThrowExceptionWhenMapperThrowException()
         {
             mapperMock
                 .Setup(x => x.Map(It.IsAny<NewsRequest>()))
-                .Returns(createdNews);
+                .Throws(new Exception());
+
+            Assert.Throws<Exception>(() => command.Execute(request));
+            repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenRepositoryThrowException()
+        {
+            mapperMock
+                .Setup(x => x.Map(It.IsAny<NewsRequest>()))
+                .Returns(dbNews);
 
             repositoryMock
-                .Setup(x => x.CreateNews(It.IsAny<DbNews>()))
+                .Setup(x => x.EditNews(It.IsAny<DbNews>()))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => command.Execute(request));
         }
 
         [Test]
-        public void ShouldReturnIdFromRepositoryWhenNewsCreated()
+        public void ShouldEditNews()
         {
             mapperMock
                 .Setup(x => x.Map(It.IsAny<NewsRequest>()))
-                .Returns(createdNews);
+                .Returns(dbNews);
 
             repositoryMock
-                .Setup(x => x.CreateNews(It.IsAny<DbNews>()))
-                .Returns(createdNews.Id);
+                .Setup(x => x.EditNews(It.IsAny<DbNews>()));
 
-            Assert.AreEqual(createdNews.Id, command.Execute(request));
-            repositoryMock.Verify(repository => repository.CreateNews(It.IsAny<DbNews>()), Times.Once);
+            Assert.DoesNotThrow(() => command.Execute(request));
+            repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Once);
         }
     }
 }
