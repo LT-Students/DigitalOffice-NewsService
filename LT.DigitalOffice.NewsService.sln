@@ -35,9 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Data.UnitTests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Validation.UnitTests", "test\NewsService.Validation.UnitTests\NewsService.Validation.UnitTests.csproj", "{0E1C52C2-9E1E-4B70-889C-85FC23CD91BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Models.BrokerRequest", "src\NewsService.Models.BrokerRequest\NewsService.Models.BrokerRequest.csproj", "{75F6EE8C-1C3B-47AC-AB1C-B4AF434F8CE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Models.Broker", "src\NewsService.Models.BrokerRequest\NewsService.Models.Broker.csproj", "{75F6EE8C-1C3B-47AC-AB1C-B4AF434F8CE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsService", "src\NewsService\NewsService.csproj", "{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService", "src\NewsService\NewsService.csproj", "{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
