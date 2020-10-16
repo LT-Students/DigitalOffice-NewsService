@@ -81,7 +81,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Setup(x => x.Map(It.IsAny<DbNews>()))
                 .Returns(response);
 
-            Assert.AreEqual(dbNews.Id, command.Execute(dbNews.Id));
+            Assert.AreEqual(response, command.Execute(dbNews.Id));
             repositoryMock.Verify(repository => repository.GetNews(It.IsAny<Guid>()), Times.Once);
             mapperMock.Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Once);
         }
