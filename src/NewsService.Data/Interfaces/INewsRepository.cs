@@ -22,5 +22,11 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <param name="newsId">Id of news.</param>
         /// <returns>News with specified Id.</returns>
         DbNews GetNews(Guid newsId);
+
+        /// <summary>
+        /// Update existing news in the database.
+        /// </summary>
+        /// <param name="news">News to edit.</param>
+        void EditNews(DbNews news);
     }
 }

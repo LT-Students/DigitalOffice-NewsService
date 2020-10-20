@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
+﻿using LT.DigitalOffice.Kernel.UnitTestLibrary;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
@@ -13,6 +14,8 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         private IDataProvider provider;
         private INewsRepository repository;
 
+        private DbNews dbNewsRequest;
+        private DbNews dbNews;
         private DbNews dbNewsToAdd;
 
         [OneTimeSetUp]
@@ -29,12 +32,39 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [SetUp]
         public void SetUp()
         {
+            dbNews = new DbNews
+            {
+                Id = Guid.NewGuid(),
+                Content = "Content",
+                Subject = "Subject",
+                AuthorName = "AuthorName",
+                AuthorId = Guid.NewGuid(),
+                SenderId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
             dbNewsToAdd = new DbNews
             {
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
                 AuthorName = "AuthorName",
+                AuthorId = Guid.NewGuid(),
+                SenderId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            provider.News.Add(dbNews);
+            provider.Save();
+
+            dbNewsRequest = new DbNews
+            {
+                Id = dbNews.Id,
+                Content = "Content111",
+                Subject = "Subject111",
+                AuthorName = "AuthorName111",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
@@ -50,6 +80,28 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 provider.EnsureDeleted();
             }
         }
+
+        #region EditNews
+        [Test]
+        public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
+        {
+            Assert.Throws<Exception>(() => repository.EditNews(
+                new DbNews() { Id = Guid.Empty }));
+        }
+
+        [Test]
+        public void ShouldEditNews()
+        {
+            provider.MakeEntityDetached(dbNews);
+            repository.EditNews(dbNewsRequest);
+
+            var resultNews = provider.News
+                .FirstOrDefaultAsync(x => x.Id == dbNewsRequest.Id)
+                .Result;
+
+            SerializerAssert.AreEqual(dbNewsRequest, resultNews);
+        }
+        #endregion
 
         #region CreateNews
         [Test]
