@@ -9,42 +9,48 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
 {
     class NewsMapperTests
     {
-        private IMapper<NewsRequest, DbNews> mapper;
+        private IMapper<NewsRequest, DbNews> requestMapper;
         private NewsRequest newsRequestWithId;
         private NewsRequest newsRequest;
-        private DbNews expectedDbNews;
+        private DbNews dbNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            mapper = new NewsMapper();
+            requestMapper = new NewsMapper();
+            var id = Guid.NewGuid();
+            var content = "Content";
+            var subject = "Subject";
+            var authorName = "AuthorName";
+            var authorId = Guid.NewGuid();
+            var senderId = Guid.NewGuid();
 
             newsRequest = new NewsRequest
             {
-                Content = "Content",
-                Subject = "Subject",
-                AuthorName = "AuthorName",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid()
+                Content = content,
+                Subject = subject,
+                AuthorName = authorName,
+                AuthorId = authorId,
+                SenderId = senderId
             };
 
             newsRequestWithId = new NewsRequest
             {
-                Id = Guid.NewGuid(),
-                Content = "Content",
-                Subject = "Subject",
-                AuthorName = "AuthorName",
-                AuthorId = newsRequest.AuthorId,
-                SenderId = newsRequest.SenderId,
+                Id = id,
+                Content = content,
+                Subject = subject,
+                AuthorName = authorName,
+                AuthorId = authorId,
+                SenderId = senderId,
             };
 
-            expectedDbNews = new DbNews
+            dbNews = new DbNews
             {
-                Content = "Content",
-                Subject = "Subject",
-                AuthorName = "AuthorName",
-                AuthorId = newsRequest.AuthorId,
-                SenderId = newsRequest.SenderId,
+                Content = content,
+                Subject = subject,
+                AuthorName = authorName,
+                AuthorId = authorId,
+                SenderId = senderId,
                 IsActive = true
             };
 
@@ -54,31 +60,49 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => mapper.Map(null));
+            Assert.Throws<ArgumentNullException>(() => requestMapper.Map(null));
         }
 
         [Test]
         public void ShouldReturnRightModelWhenRequestIsMapped()
         {
-            var dbNews = mapper.Map(newsRequest);
-            expectedDbNews.Id = dbNews.Id;
-            expectedDbNews.CreatedAt = dbNews.CreatedAt;
+            var dbNews = requestMapper.Map(newsRequest);
+            this.dbNews.Id = dbNews.Id;
+            this.dbNews.CreatedAt = dbNews.CreatedAt;
 
             Assert.IsInstanceOf<Guid>(dbNews.Id);
-            SerializerAssert.AreEqual(expectedDbNews, dbNews);
+            SerializerAssert.AreEqual(this.dbNews, dbNews);
         }
 
         [Test]
         public void ShouldReturnRightModelWhenRequestWithIdIsMapped()
         {
-            var dbNews = mapper.Map(newsRequestWithId);
+            var dbNews = requestMapper.Map(newsRequestWithId);
 
-            expectedDbNews.Id = dbNews.Id;
-            expectedDbNews.CreatedAt = dbNews.CreatedAt;
+            this.dbNews.Id = dbNews.Id;
+            this.dbNews.CreatedAt = dbNews.CreatedAt;
 
             Assert.IsInstanceOf<Guid>(dbNews.Id);
-            SerializerAssert.AreEqual(expectedDbNews, dbNews);
+            SerializerAssert.AreEqual(this.dbNews, dbNews);
         }
+        #endregion
+
+        #region DbNews to News
+        [Test]
+        public void ShouldThrowArgumentNullExceptionWhenDbNewsIsNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => requestMapper.Map(null));
+        }
+
+        [Test]
+        public void ShouldReturnRightModelWhenDbModelIsMapped()
+        {
+            var news = requestMapper.Map(dbNews);
+
+            Assert.IsInstanceOf<Guid>(dbNews.Id);
+            SerializerAssert.AreEqual(this.dbNews, dbNews);
+        }
+
         #endregion
     }
 }
