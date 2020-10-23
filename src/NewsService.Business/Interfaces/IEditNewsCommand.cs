@@ -1,5 +1,4 @@
 ﻿using LT.DigitalOffice.NewsService.Models.Dto;
-using System;
 
 namespace LT.DigitalOffice.NewsService.Business.Interfaces
 {
