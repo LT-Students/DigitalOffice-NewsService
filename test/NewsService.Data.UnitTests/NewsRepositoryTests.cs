@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.Kernel.UnitTestLibrary;
+﻿using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.UnitTestLibrary;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
@@ -81,9 +82,41 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             }
         }
 
-        #region EditNews
+        #region GetNews
         [Test]
         public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
+        {
+            Assert.Throws<NotFoundException>(() => repository.GetNews (Guid.Empty));
+        }
+
+        [Test]
+        public void ShouldGetNews()
+        {
+            var recievedNews = repository.GetNews(dbNews.Id);
+            var sameNews = provider.News
+                .FirstOrDefaultAsync(x => x.Id == dbNews.Id)
+                .Result;
+
+            SerializerAssert.AreEqual(recievedNews, sameNews);
+            SerializerAssert.AreEqual(dbNews, sameNews);
+
+        }
+        #endregion
+
+        #region CreateNews
+        [Test]
+        public void ShouldReturnMatchingIdAndCreateNews()
+        {
+            var guidOfNews = repository.CreateNews(dbNewsToAdd);
+
+            Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
+            Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
+        }
+        #endregion
+
+        #region EditNews
+        [Test]
+        public void ShouldThrowExceptionWhenNewsDoesNotExist()
         {
             Assert.Throws<Exception>(() => repository.EditNews(
                 new DbNews() { Id = Guid.Empty }));
@@ -100,17 +133,6 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 .Result;
 
             SerializerAssert.AreEqual(dbNewsRequest, resultNews);
-        }
-        #endregion
-
-        #region CreateNews
-        [Test]
-        public void ShouldReturnMatchingIdAndCreateNews()
-        {
-            var guidOfNews = repository.CreateNews(dbNewsToAdd);
-
-            Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
-            Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
         }
         #endregion
     }
