@@ -26,6 +26,7 @@ namespace LT.DigitalOffice.NewsService.Business
         public News Execute(Guid newsId)
         {
             var dbNews = repository.GetNews(newsId);
+
             return mapper.Map(dbNews);
         }
     }
