@@ -80,7 +80,10 @@ namespace NewsService
 
             UpdateDatabase(app);
 
+#if RELEASE
             app.UseHttpsRedirection();
+#endif
+
             app.UseRouting();
 
             string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
@@ -102,6 +105,7 @@ namespace NewsService
             using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
+
             using var context = serviceScope.ServiceProvider.GetService<NewsServiceDbContext>();
             context.Database.Migrate();
         }
