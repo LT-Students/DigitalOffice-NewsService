@@ -10,7 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.8" />
+    <PackageReference Include="LT.DigitalOffice.Kernel" Version="1.0.15" />
+    <PackageReference Include="LT.DigitalOffice.UnitTestKernel" Version="1.0.0" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
