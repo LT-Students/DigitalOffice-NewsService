@@ -1,7 +1,7 @@
-﻿using LT.DigitalOffice.Kernel.UnitTestLibrary;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
+﻿using LT.DigitalOffice.NewsService.Mappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto;
+using LT.DigitalOffice.UnitTestKernel;
 using NUnit.Framework;
 using System;
 

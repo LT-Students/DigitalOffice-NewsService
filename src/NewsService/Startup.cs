@@ -31,8 +31,6 @@ namespace NewsService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<RabbitMQOptions>(Configuration);
-
             services.AddHealthChecks();
 
             services.AddControllers();
@@ -52,16 +50,16 @@ namespace NewsService
 
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            var rabbitmqOptions = Configuration.GetSection(RabbitMQOptions.RabbitMQ).Get<RabbitMQOptions>();
+            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<BaseRabbitMqOptions>();
 
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitmqOptions.Host, "/", host =>
+                    cfg.Host(rabbitMqConfig.Host, "/", host =>
                     {
-                        host.Username($"{rabbitmqOptions.Username}_{rabbitmqOptions.Password}");
-                        host.Password(rabbitmqOptions.Password);
+                        host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
+                        host.Password(rabbitMqConfig.Password);
                     });
                 });
             });

@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Models.Db;
+﻿using LT.DigitalOffice.Kernel.Database;
+using LT.DigitalOffice.NewsService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -29,7 +30,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef
             return Entry(obj).State;
         }
 
-        void IDataProvider.Save()
+        void IBaseDataProvider.Save()
         {
             SaveChanges();
         }
