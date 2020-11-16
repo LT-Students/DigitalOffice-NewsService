@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto
+namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {
-    public class NewsRequest
+    public class News
     {
         public Guid? Id { get; set; }
         public string Content { get; set; }
