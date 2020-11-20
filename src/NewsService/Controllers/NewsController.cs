@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.NewsService.Business.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Dto;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
         [HttpPost("editNews")]
         public void CreateNews(
             [FromServices] IEditNewsCommand command,
-            [FromBody] NewsRequest request)
+            [FromBody] News request)
         {
             command.Execute(request);
         }
@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
         [HttpPost("createNews")]
         public Guid CreateNews(
             [FromServices] ICreateNewsCommand command,
-            [FromBody] NewsRequest request)
+            [FromBody] News request)
         {
             return command.Execute(request);
         }

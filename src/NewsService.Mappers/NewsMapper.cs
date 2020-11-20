@@ -1,13 +1,13 @@
 ﻿using LT.DigitalOffice.NewsService.Mappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers
 {
-    public class NewsMapper : IMapper<NewsRequest, DbNews>
+    public class NewsMapper : IMapper<News, DbNews>
     {
-        public DbNews Map(NewsRequest request)
+        public DbNews Map(News request)
         {
             if (request == null)
             {
