@@ -1,17 +1,18 @@
-﻿using LT.DigitalOffice.NewsService.Mappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto;
+﻿using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.UnitTestKernel;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using NUnit.Framework;
 using System;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
 
-namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
+namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
 {
     class NewsMapperTests
     {
-        private IMapper<NewsRequest, DbNews> mapper;
-        private NewsRequest newsRequestWithId;
-        private NewsRequest newsRequest;
+        private INewsMapper mapper;
+        private News newsRequestWithId;
+        private News newsRequest;
         private DbNews expectedDbNews;
 
         [OneTimeSetUp]
@@ -19,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
         {
             mapper = new NewsMapper();
 
-            newsRequest = new NewsRequest
+            newsRequest = new News
             {
                 Content = "Content",
                 Subject = "Subject",
@@ -28,7 +29,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
                 SenderId = Guid.NewGuid()
             };
 
-            newsRequestWithId = new NewsRequest
+            newsRequestWithId = new News
             {
                 Id = Guid.NewGuid(),
                 Content = "Content",

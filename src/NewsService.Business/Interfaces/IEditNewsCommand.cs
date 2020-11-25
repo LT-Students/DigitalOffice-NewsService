@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.NewsService.Models.Dto;
+﻿using LT.DigitalOffice.NewsService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.NewsService.Business.Interfaces
 {
@@ -12,6 +12,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
         /// Edits news.
         /// </summary>
         /// <param name="request">New news data.</param>
-        void Execute(NewsRequest request);
+        void Execute(News request);
     }
 }

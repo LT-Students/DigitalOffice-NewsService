@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using LT.DigitalOffice.NewsService.Models.Dto;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.NewsService.Validation
 {
-    public class NewsValidator : AbstractValidator<NewsRequest>
+    public class NewsValidator : AbstractValidator<News>
     {
         public NewsValidator()
         {

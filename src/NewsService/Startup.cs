@@ -6,10 +6,8 @@ using LT.DigitalOffice.NewsService.Data;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.NewsService.Mappers;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -114,7 +112,7 @@ namespace NewsService
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<IMapper<NewsRequest, DbNews>, NewsMapper>();
+            services.AddTransient<INewsMapper, NewsMapper>();
         }
 
         private void ConfigureCommands(IServiceCollection services)

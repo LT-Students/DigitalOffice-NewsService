@@ -2,9 +2,9 @@
 using FluentValidation.Results;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -14,18 +14,18 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class EditNewsCommandTests
     {
-        private Mock<IMapper<NewsRequest, DbNews>> mapperMock;
+        private Mock<INewsMapper> mapperMock;
         private Mock<INewsRepository> repositoryMock;
-        private Mock<IValidator<NewsRequest>> validatorMock;
+        private Mock<IValidator<News>> validatorMock;
 
         private IEditNewsCommand command;
-        private NewsRequest request;
+        private News request;
         private DbNews dbNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            request = new NewsRequest
+            request = new News
             {
                 Id = Guid.NewGuid(),
                 Content = "Content111",
@@ -51,9 +51,9 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            mapperMock = new Mock<IMapper<NewsRequest, DbNews>>();
+            mapperMock = new Mock<INewsMapper>();
             repositoryMock = new Mock<INewsRepository>();
-            validatorMock = new Mock<IValidator<NewsRequest>>();
+            validatorMock = new Mock<IValidator<News>>();
 
             command = new EditNewsCommand(repositoryMock.Object, mapperMock.Object, validatorMock.Object);
         }
@@ -81,7 +81,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Returns(new ValidationResult());
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<NewsRequest>()))
+                .Setup(x => x.Map(It.IsAny<News>()))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => command.Execute(request));
@@ -96,7 +96,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Returns(new ValidationResult());
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<NewsRequest>()))
+                .Setup(x => x.Map(It.IsAny<News>()))
                 .Returns(dbNews);
 
             repositoryMock
@@ -114,7 +114,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Returns(new ValidationResult());
 
             mapperMock
-                .Setup(x => x.Map(It.IsAny<NewsRequest>()))
+                .Setup(x => x.Map(It.IsAny<News>()))
                 .Returns(dbNews);
 
             repositoryMock
