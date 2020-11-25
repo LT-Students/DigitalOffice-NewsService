@@ -6,10 +6,8 @@ using LT.DigitalOffice.NewsService.Data;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.NewsService.Mappers;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,8 +29,6 @@ namespace NewsService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<RabbitMQOptions>(Configuration);
-
             services.AddHealthChecks();
 
             services.AddControllers();
@@ -52,16 +48,16 @@ namespace NewsService
 
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            var rabbitmqOptions = Configuration.GetSection(RabbitMQOptions.RabbitMQ).Get<RabbitMQOptions>();
+            var rabbitMqConfig = Configuration.GetSection(BaseRabbitMqOptions.RabbitMqSectionName).Get<BaseRabbitMqOptions>();
 
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitmqOptions.Host, "/", host =>
+                    cfg.Host(rabbitMqConfig.Host, "/", host =>
                     {
-                        host.Username($"{rabbitmqOptions.Username}_{rabbitmqOptions.Password}");
-                        host.Password(rabbitmqOptions.Password);
+                        host.Username($"{rabbitMqConfig.Username}_{rabbitMqConfig.Password}");
+                        host.Password(rabbitMqConfig.Password);
                     });
                 });
             });
@@ -116,7 +112,7 @@ namespace NewsService
 
         private void ConfigureMappers(IServiceCollection services)
         {
-            services.AddTransient<IMapper<News, DbNews>, NewsMapper>();
+            services.AddTransient<INewsMapper, NewsMapper>();
         }
 
         private void ConfigureCommands(IServiceCollection services)

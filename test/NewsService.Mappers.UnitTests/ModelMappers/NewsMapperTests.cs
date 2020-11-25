@@ -1,15 +1,16 @@
-﻿using LT.DigitalOffice.Kernel.UnitTestLibrary;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
+﻿using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.UnitTestKernel;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using NUnit.Framework;
 using System;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
 
-namespace LT.DigitalOffice.NewsService.Mappers.UnitTests
+namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
 {
     class NewsMapperTests
     {
-        private IMapper<News, DbNews> mapper;
+        private INewsMapper mapper;
         private News newsRequestWithId;
         private News newsRequest;
         private DbNews expectedDbNews;

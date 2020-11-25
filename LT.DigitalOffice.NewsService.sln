@@ -37,7 +37,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Validation.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService", "src\NewsService\NewsService.csproj", "{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsService.Models.Broker", "src\NewsService.Models.Broker\NewsService.Models.Broker.csproj", "{187ABF2A-F590-4807-ACB0-935B83E88FC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Models.Broker", "src\NewsService.Models.Broker\NewsService.Models.Broker.csproj", "{187ABF2A-F590-4807-ACB0-935B83E88FC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7DFFE362-A67F-414D-83BC-B736555DDAE9}"
+	ProjectSection(SolutionItems) = preProject
+		Common.Configurations.targets = Common.Configurations.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

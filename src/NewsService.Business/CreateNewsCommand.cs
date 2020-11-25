@@ -2,8 +2,7 @@
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,12 +12,12 @@ namespace LT.DigitalOffice.NewsService.Business
     public class CreateNewsCommand : ICreateNewsCommand
     {
         private readonly INewsRepository repository;
-        private readonly IMapper<News, DbNews> mapper;
+        private readonly INewsMapper mapper;
         private readonly IValidator<News> validator;
 
         public CreateNewsCommand(
             [FromServices] INewsRepository repository,
-            [FromServices] IMapper<News, DbNews> mapper,
+            [FromServices] INewsMapper mapper,
             [FromServices] IValidator<News> validator)
         {
             this.repository = repository;

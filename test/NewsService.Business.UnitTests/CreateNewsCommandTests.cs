@@ -2,7 +2,7 @@
 using FluentValidation.Results;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Moq;
@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class CreateNewsCommandTests
     {
-        private Mock<IMapper<News, DbNews>> mapperMock;
+        private Mock<INewsMapper> mapperMock;
         private Mock<INewsRepository> repositoryMock;
         private Mock<IValidator<News>> validatorMock;
 
@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            mapperMock = new Mock<IMapper<News, DbNews>>();
+            mapperMock = new Mock<INewsMapper>();
             repositoryMock = new Mock<INewsRepository>();
             validatorMock = new Mock<IValidator<News>>();
 
