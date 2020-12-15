@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="ResponseMappers\" />
-    <Folder Include="RequestMappers\" />
   </ItemGroup>
 
 </Project>

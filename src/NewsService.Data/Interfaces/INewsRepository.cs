@@ -21,5 +21,18 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// </summary>
         /// <param name="news">News to edit.</param>
         void EditNews(DbNews news);
+
+        /// <summary>
+        /// Return existing New database model.
+        /// </summary>
+        /// <param name="newId">Specific New id.</param>
+        DbNews GetNew(Guid newId);
+
+        /// <summary>
+        /// Add specific news history in database.
+        /// </summary>
+        /// <param name="dbnewsHistory">News .</param>
+        /// <param name="newId">Specific New id.</param>
+        void CreateNewsHistory(DbNewsChangesHistory dbnewsHistory, Guid newId);
     }
 }

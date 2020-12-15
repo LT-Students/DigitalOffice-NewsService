@@ -16,6 +16,18 @@ namespace LT.DigitalOffice.NewsService.Data
             this.provider = provider;
         }
 
+        public DbNews GetNew(Guid newId)
+        {
+            var dbNews = provider.News.FirstOrDefault(x => x.Id == newId);
+
+            if (dbNews == null)
+            {
+                throw new NullReferenceException("New with id does not exist");
+            }
+
+            return dbNews;
+        }
+
         public void EditNews(DbNews news)
         {
             var dbNews = provider.News
@@ -37,6 +49,16 @@ namespace LT.DigitalOffice.NewsService.Data
             provider.Save();
 
             return news.Id;
+        }
+
+        public void CreateNewsHistory(DbNewsChangesHistory dbnewsHistory, Guid newId)
+        {
+            if (provider.News.Any(n => n.Id == newId))
+            {
+                throw new ArgumentException("Logging is not possible because news id does not exist");
+            }
+
+            provider.NewsHistory.Add(dbnewsHistory);
         }
     }
 }

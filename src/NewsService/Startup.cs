@@ -1,3 +1,4 @@
+using FluentValidation;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.NewsService.Business;
@@ -8,9 +9,15 @@ using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.RequestMappers;
+using LT.DigitalOffice.NewsService.Mappers.RequestMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,6 +50,7 @@ namespace NewsService
             ConfigureCommands(services);
             ConfigureRepositories(services);
             ConfigureMappers(services);
+            ConfigureValidators(services);
             ConfigureMassTransit(services);
         }
 
@@ -113,6 +121,15 @@ namespace NewsService
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<INewsMapper, NewsMapper>();
+            services.AddTransient<INewsMapper, NewsMapper>();
+            services.AddTransient<IAddNewsChangesHistoryMapperRequest, AddNewsChangesHistoryMapperRequest>();
+            services.AddTransient<IAddChangeSetDetailsMapperRequest, AddChangeSetDetailsMapperRequest>();
+        }
+
+        private void ConfigureValidators(IServiceCollection services)
+        {
+            services.AddTransient<IValidator<News>, NewsValidator>();
+            services.AddTransient<IValidator<JsonPatchDocument<DbNews>>, EditNewsValidator>();
         }
 
         private void ConfigureCommands(IServiceCollection services)
