@@ -7,5 +7,6 @@ namespace LT.DigitalOffice.NewsService.Data.Provider
     public interface IDataProvider : IBaseDataProvider
     {
         public DbSet<DbNews> News { get; set; }
+        public DbSet<DbNewsChangesHistory> NewsHistory { get; set; }
     }
 }

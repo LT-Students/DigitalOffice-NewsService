@@ -17,8 +17,8 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef
         }
 
         public DbSet<DbNews> News { get; set; }
+        public DbSet<DbNewsChangesHistory> NewsHistory { get; set; }
 
-        // Fluent API is written here.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("LT.DigitalOffice.NewsService.Models.Db"));
