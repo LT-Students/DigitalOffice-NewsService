@@ -79,7 +79,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ChangadAt")
+                    b.Property<DateTime>("ChangedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ChangedBy")

@@ -46,6 +46,7 @@ namespace NewsService
             });
 
             services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
             ConfigureCommands(services);
             ConfigureRepositories(services);

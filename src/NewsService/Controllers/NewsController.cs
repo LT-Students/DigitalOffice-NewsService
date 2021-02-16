@@ -20,13 +20,13 @@ namespace LT.DigitalOffice.NewsService.Controllers
         }
 
         [HttpPatch("editNews")]
-        public void CreateNews(
+        public void EditNews(
             [FromServices] IEditNewsCommand command,
             [FromHeader] Guid userId,
-            [FromQuery] Guid newId,
+            [FromQuery] Guid newsId,
             [FromBody] JsonPatchDocument<DbNews> patch)
         {
-            command.Execute(userId, newId, patch);
+            command.Execute(userId, newsId, patch);
         }
     }
 }

@@ -61,8 +61,8 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     NewsId = table.Column<Guid>(nullable: false),
-                    ChangedBy = table.Column<DateTime>(nullable: false),
-                    ChangadAt = table.Column<DateTime>(nullable: false)
+                    ChangedBy = table.Column<Guid>(nullable: false),
+                    ChangedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
