@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
+using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.RequestMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,12 +14,12 @@ namespace LT.DigitalOffice.NewsService.Business
     {
         private readonly INewsRepository _repository;
         private readonly IAddNewsChangesHistoryMapperRequest _mapper;
-        private readonly IValidator<News> _validator;
+        private readonly IValidator<JsonPatchDocument<DbNews>> _validator;
 
         public EditNewsCommand(
             [FromServices] INewsRepository repository,
             [FromServices] IAddNewsChangesHistoryMapperRequest mapper,
-            [FromServices] IValidator<News> validator)
+            [FromServices] IValidator<JsonPatchDocument<DbNews>> validator)
         {
             _repository = repository;
             _mapper = mapper;
@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.NewsService.Business
         public void Execute(Guid userId, Guid newsId, JsonPatchDocument<DbNews> patch)
         {
 
-            //validator.ValidateAndThrowCustom(request);
+            _validator.ValidateAndThrowCustom(patch);
 
             var dbNews = _repository.GetNew(newsId);
 
@@ -37,6 +37,11 @@ namespace LT.DigitalOffice.NewsService.Business
 
             dbNewsChangesHistory.NewsId = newsId;
             dbNewsChangesHistory.ChangedBy = userId;
+
+            if (dbNews == null)
+            {
+                throw new ArgumentNullException(nameof(dbNews));
+            }
 
             patch.ApplyTo((DbNews)dbNews);
 

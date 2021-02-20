@@ -51,14 +51,19 @@ namespace LT.DigitalOffice.NewsService.Data
             return news.Id;
         }
 
-        public void CreateNewsHistory(DbNewsChangesHistory dbnewsHistory, Guid newId)
+        public void CreateNewsHistory(DbNewsChangesHistory dbNewsHistory, Guid newsId)
         {
-            if (provider.News.FirstOrDefault(n => n.Id == newId) == null)
+            if (newsId == null)
+            {
+                throw new ArgumentNullException(nameof(dbNewsHistory));
+            }
+
+            if (provider.News.FirstOrDefault(n => n.Id == newsId) == null)
             {
                 throw new ArgumentException("Logging is not possible because news id does not exist");
             }
 
-            provider.NewsHistory.Add(dbnewsHistory);
+            provider.NewsHistory.Add(dbNewsHistory);
             provider.Save();
         }
     }
