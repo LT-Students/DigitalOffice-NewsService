@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
     public class NewsController : ControllerBase
     {
         [HttpPost("editNews")]
-        public void CreateNews(
+        public void EditNews(
             [FromServices] IEditNewsCommand command,
             [FromBody] News request)
         {
