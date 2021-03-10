@@ -3,19 +3,12 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NewsService.Mappers\NewsService.Mappers.csproj" />
     <ProjectReference Include="..\..\src\NewsService.Models.Db\NewsService.Models.Db.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ResponseMappers\" />
-    <Folder Include="RequestMappers\" />
   </ItemGroup>
 
 </Project>
