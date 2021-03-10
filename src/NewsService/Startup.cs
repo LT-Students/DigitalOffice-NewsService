@@ -1,3 +1,4 @@
+using FluentValidation;
 using LT.DigitalOffice.Kernel;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.NewsService.Business;
@@ -8,6 +9,8 @@ using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +46,31 @@ namespace NewsService
             ConfigureCommands(services);
             ConfigureRepositories(services);
             ConfigureMappers(services);
+            ConfigureValidators(services);
             ConfigureMassTransit(services);
+        }
+
+        private void ConfigureRepositories(IServiceCollection services)
+        {
+            services.AddTransient<IDataProvider, NewsServiceDbContext>();
+
+            services.AddTransient<INewsRepository, NewsRepository>();
+        }
+
+        private void ConfigureMappers(IServiceCollection services)
+        {
+            services.AddTransient<INewsMapper, NewsMapper>();
+        }
+
+        private void ConfigureCommands(IServiceCollection services)
+        {
+            services.AddTransient<IEditNewsCommand, EditNewsCommand>();
+            services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
+        }
+
+        private void ConfigureValidators(IServiceCollection services)
+        {
+            services.AddTransient<IValidator<News>, NewsValidator>();
         }
 
         private void ConfigureMassTransit(IServiceCollection services)
@@ -101,24 +128,6 @@ namespace NewsService
 
             using var context = serviceScope.ServiceProvider.GetService<NewsServiceDbContext>();
             context.Database.Migrate();
-        }
-
-        private void ConfigureRepositories(IServiceCollection services)
-        {
-            services.AddTransient<IDataProvider, NewsServiceDbContext>();
-
-            services.AddTransient<INewsRepository, NewsRepository>();
-        }
-
-        private void ConfigureMappers(IServiceCollection services)
-        {
-            services.AddTransient<INewsMapper, NewsMapper>();
-        }
-
-        private void ConfigureCommands(IServiceCollection services)
-        {
-            services.AddTransient<IEditNewsCommand, EditNewsCommand>();
-            services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
         }
     }
 }
