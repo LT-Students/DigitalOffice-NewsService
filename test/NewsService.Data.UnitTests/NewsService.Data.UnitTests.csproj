@@ -2,12 +2,6 @@
 
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\NewsService.Data.Provider.MsSql.Ef\NewsService.Data.Provider.MsSql.Ef.csproj" />
     <ProjectReference Include="..\..\src\NewsService.Data.Provider\NewsService.Data.Provider.csproj" />
