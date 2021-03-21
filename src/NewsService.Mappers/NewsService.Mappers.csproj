@@ -7,9 +7,4 @@
     <ProjectReference Include="..\NewsService.Models.Dto\NewsService.Models.Dto.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ResponseMappers\" />
-    <Folder Include="RequestMappers\" />
-  </ItemGroup>
-
 </Project>

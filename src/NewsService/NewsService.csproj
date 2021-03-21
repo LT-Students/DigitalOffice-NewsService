@@ -1,16 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <UserSecretsId>6e8255c9-9776-43f0-9c24-d9b157ab1493</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
-  </PropertyGroup>
-
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NewsService.Business\NewsService.Business.csproj" />
