@@ -11,6 +11,8 @@ using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers;
+using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interface;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
@@ -21,6 +23,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Text.Json.Serialization;
 
 namespace NewsService
 {
@@ -57,6 +60,11 @@ namespace NewsService
             ConfigureMappers(services);
             ConfigureValidators(services);
             ConfigureMassTransit(services);
+
+            services.AddControllers().AddJsonOptions(option =>
+            {
+                option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -69,12 +77,15 @@ namespace NewsService
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<INewsMapper, NewsMapper>();
+            services.AddTransient<INewsResponseMapper, NewsResponseMapper>();
+
         }
 
         private void ConfigureCommands(IServiceCollection services)
         {
             services.AddTransient<IEditNewsCommand, EditNewsCommand>();
             services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
+            services.AddTransient<IGetNewsByIdCommand, GetNewsByIdCommand>();
         }
 
         private void ConfigureValidators(IServiceCollection services)

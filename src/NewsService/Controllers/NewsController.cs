@@ -9,20 +9,28 @@ namespace LT.DigitalOffice.NewsService.Controllers
     [ApiController]
     public class NewsController : ControllerBase
     {
+        [HttpGet("getNewsById")]
+        public News GetNewsById(
+            [FromServices] IGetNewsByIdCommand getNewsByIdCommand, 
+            [FromQuery] Guid newsId)
+        {
+            return getNewsByIdCommand.Execute(newsId);
+        }
+
         [HttpPost("editNews")]
         public void EditNews(
-            [FromServices] IEditNewsCommand command,
+            [FromServices] IEditNewsCommand editNewsCommand,
             [FromBody] News request)
         {
-            command.Execute(request);
+            editNewsCommand.Execute(request);
         }
 
         [HttpPost("createNews")]
         public Guid CreateNews(
-            [FromServices] ICreateNewsCommand command,
+            [FromServices] ICreateNewsCommand createNewsCommand,
             [FromBody] News request)
         {
-            return command.Execute(request);
+            return createNewsCommand.Execute(request);
         }
     }
 }

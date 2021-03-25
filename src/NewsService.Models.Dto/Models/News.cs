@@ -10,5 +10,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Models
         public string AuthorName { get; set; }
         public Guid AuthorId { get; set; }
         public Guid SenderId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; }
     }
 }

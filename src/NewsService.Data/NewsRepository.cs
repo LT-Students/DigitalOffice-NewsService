@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
+﻿using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
 using Microsoft.EntityFrameworkCore;
@@ -9,16 +10,16 @@ namespace LT.DigitalOffice.NewsService.Data
 {
     public class NewsRepository : INewsRepository
     {
-        private readonly IDataProvider provider;
+        private readonly IDataProvider _provider;
 
         public NewsRepository(IDataProvider provider)
         {
-            this.provider = provider;
+            _provider = provider;
         }
 
         public void EditNews(DbNews news)
         {
-            var dbNews = provider.News
+            var dbNews = _provider.News
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == news.Id);
 
@@ -27,16 +28,20 @@ namespace LT.DigitalOffice.NewsService.Data
                 throw new Exception("News was not found.");
             }
 
-            provider.News.Update(news);
-            provider.Save();
+            _provider.News.Update(news);
+            _provider.Save();
         }
 
         public Guid CreateNews(DbNews news)
         {
-            provider.News.Add(news);
-            provider.Save();
+            _provider.News.Add(news);
+            _provider.Save();
 
             return news.Id;
         }
+
+        public DbNews GetNewsInfoById(Guid newsId)
+            => _provider.News.FirstOrDefault(dbNews => dbNews.Id == newsId) ??
+               throw new NotFoundException($"News with this id: '{newsId}' was not found.");
     }
 }
