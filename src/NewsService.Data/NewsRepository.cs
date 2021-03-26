@@ -3,6 +3,7 @@ using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Data
@@ -38,5 +39,15 @@ namespace LT.DigitalOffice.NewsService.Data
 
             return news.Id;
         }
+
+        /*public List<DbNews> FindNews(FindNewsParams findNewsParams)
+        {
+           return provider.News
+                .Where(aId => authorId == null || aId.AuthorId == authorId)
+                .Where(dId => authorId == null || dId.AuthorId == authorId)
+                .Where(aN => authorName == null || aN.AuthorName == authorName)
+                .Where(nN => newsName == null || nN.Subject == newsName)
+                .ToList();
+        }*/
     }
 }

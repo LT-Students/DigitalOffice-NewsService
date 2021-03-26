@@ -75,6 +75,7 @@ namespace NewsService
         {
             services.AddTransient<IEditNewsCommand, EditNewsCommand>();
             services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
+            services.AddTransient<IFindNewsCommand, FindNewsCommand>();
         }
 
         private void ConfigureValidators(IServiceCollection services)

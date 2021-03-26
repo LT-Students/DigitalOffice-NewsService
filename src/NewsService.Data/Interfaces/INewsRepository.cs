@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.NewsService.Models.Db;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Data.Interfaces
 {
@@ -21,5 +22,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// </summary>
         /// <param name="news">News to edit.</param>
         void EditNews(DbNews news);
+
+        //List<DbNews> FindNews(FindNewsParams findNewsParams);
     }
 }

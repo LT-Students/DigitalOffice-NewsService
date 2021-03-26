@@ -20,6 +20,8 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         [Required]
         public DateTime CreatedAt { get; set; }
         [Required]
+        public Guid DepartmentId { get; set; }
+        [Required]
         public bool IsActive { get; set; }
     }
 }
