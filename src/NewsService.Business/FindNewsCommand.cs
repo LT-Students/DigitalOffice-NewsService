@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
         public List<DbNews> Execute(FindNewsParams findNewsParams)
         {
-            //return _repository.FindNews(findNewsParams);
+            return new List<DbNews>(); //_repository.FindNews(findNewsParams);
         }
     }
 }
