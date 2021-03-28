@@ -15,6 +15,5 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.ModelResponse
         public User Author { get; set; }
         public User Sender { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Guid DepartamentId { get; set; }
     }
 }
