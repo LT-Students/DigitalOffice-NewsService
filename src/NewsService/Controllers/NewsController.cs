@@ -3,7 +3,6 @@ using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
-
 namespace LT.DigitalOffice.NewsService.Controllers
 {
     [Route("api/[controller]")]
