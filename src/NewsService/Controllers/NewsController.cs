@@ -33,12 +33,5 @@ namespace LT.DigitalOffice.NewsService.Controllers
         {
             return command.Execute(request);
         }
-
-        [HttpGet("getNews")]
-        public async Task<NewsResponse> GetNews([FromServices] IDataProvider provider, [FromServices] INewsResponseMapper mapper)
-        {
-            var dbnews = provider.News.ToList();
-            return await (mapper.Map(dbnews[0]));
-        }
     }
 }
