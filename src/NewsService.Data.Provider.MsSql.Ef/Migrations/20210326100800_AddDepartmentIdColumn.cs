@@ -13,8 +13,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
             migrationBuilder.AddColumn<Guid>(
                name: "DepartmentId",
                table: "News",
-               nullable: false,
-               defaultValue: Guid.Empty);
+               nullable: true);
         }
         protected override void Down(MigrationBuilder migrationBuilder)
         {
