@@ -105,7 +105,7 @@ namespace NewsService
 
                 x.AddRequestClient<ICheckTokenRequest>(
                   new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.ValidateTokenEndpoint}"));
-                x.AddRequestClient<IGetUserInfoRequest>(
+                x.AddRequestClient<IGetUserDataRequest>(
                   new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserInfoEndpoint}"));
 
                 x.ConfigureKernelMassTransit(rabbitMqConfig);

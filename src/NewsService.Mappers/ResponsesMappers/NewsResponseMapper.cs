@@ -14,9 +14,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 {
     public class NewsResponseMapper : INewsResponseMapper
     {
-        private IRequestClient<IGetUserInfoRequest> _client;
+        private IRequestClient<IGetUserDataRequest> _client;
         public NewsResponseMapper(
-            [FromServices] IRequestClient<IGetUserInfoRequest> client)
+            [FromServices] IRequestClient<IGetUserDataRequest> client)
         {
             _client = client;
         }
@@ -27,13 +27,13 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 throw new BadRequestException();
             }
 
-            var authorRequest = IGetUserInfoRequest.CreateObj(value.AuthorId);
+            var authorRequest = IGetUserDataRequest.CreateObj(value.AuthorId);
 
-            var authorResponse = await _client.GetResponse<IOperationResult<IGetUserInfoResponse>>(authorRequest);
+            var authorResponse = await _client.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest);
 
-            var senderRequest = IGetUserInfoRequest.CreateObj(value.SenderId);
+            var senderRequest = IGetUserDataRequest.CreateObj(value.SenderId);
 
-            var senderResponse = await _client.GetResponse<IOperationResult<IGetUserInfoResponse>>(senderRequest);
+            var senderResponse = await _client.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest);
 
             return new NewsResponse
             {
@@ -43,12 +43,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 Author = new User
                 {
                     Id = authorResponse.Message.Body.Id,
-                    FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}"
+                    FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim()
                 },
                 Sender = new User
                 {
                     Id = senderResponse.Message.Body.Id,
-                    FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}"
+                    FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}".Trim()
                 },
                 CreatedAt = value.CreatedAt
             };

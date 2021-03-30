@@ -2,7 +2,7 @@
 
 namespace LT.DigitalOffice.Broker.Responses
 {
-    public interface IGetUserInfoResponse
+    public interface IGetUserDataResponse
     {
         Guid Id { get; set; }
         string FirstName { get; set; }
