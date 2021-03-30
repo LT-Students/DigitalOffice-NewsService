@@ -1,5 +1,6 @@
 ﻿using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
+using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
@@ -28,9 +29,11 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 
             var authorRequest = IGetUserInfoRequest.CreateObj(value.AuthorId);
 
-            var authorResponse = await _client.GetResponse<IGetUserInfoResponse>(authorRequest);
+            var authorResponse = await _client.GetResponse<IOperationResult<IGetUserInfoResponse>>(authorRequest);
 
-            var senderResponse = _client.GetResponse<IGetUserInfoResponse>(IGetUserInfoRequest.CreateObj(value.SenderId));
+            var senderRequest = IGetUserInfoRequest.CreateObj(value.SenderId);
+
+            var senderResponse = await _client.GetResponse<IOperationResult<IGetUserInfoResponse>>(senderRequest);
 
             return new NewsResponse
             {
@@ -39,13 +42,13 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 Subject = value.Subject,
                 Author = new User
                 {
-                    Id = authorResponse.Message.Id,
-                    FIO = $"{authorResponse.Message.LastName} {authorResponse.Message.FirstName}"// {authorResponse.Message.}"
+                    Id = authorResponse.Message.Body.Id,
+                    FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}"
                 },
                 Sender = new User
                 {
-                    Id = senderResponse.Result.Message.Id,
-                    FIO = $"{senderResponse.Result.Message.LastName} {senderResponse.Result.Message.FirstName}"// {authorResponse.Message.}"
+                    Id = senderResponse.Message.Body.Id,
+                    FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}"
                 },
                 CreatedAt = value.CreatedAt
             };
