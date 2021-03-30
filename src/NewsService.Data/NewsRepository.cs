@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.NewsService.Data
         }
 
         public DbNews GetNewsInfoById(Guid newsId)
-            => _provider.News.FirstOrDefault(dbNews => dbNews.Id == newsId) ??
-               throw new NotFoundException($"News with this id: '{newsId}' was not found.");
+           => _provider.News.FirstOrDefault(dbNews => dbNews.Id == newsId) ??
+              throw new NotFoundException($"News with this id: '{newsId}' was not found.");
     }
 }

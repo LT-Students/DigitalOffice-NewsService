@@ -2,4 +2,9 @@
 
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
+  <ItemGroup>
+    <ProjectReference Include="..\NewsService.Data\NewsService.Data.csproj" />
+    <ProjectReference Include="..\NewsService.Models.Broker\NewsService.Models.Broker.csproj" />
+  </ItemGroup>
+
 </Project>

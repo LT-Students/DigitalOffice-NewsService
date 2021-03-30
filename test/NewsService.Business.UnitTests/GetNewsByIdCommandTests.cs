@@ -3,6 +3,7 @@ using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interface;
 using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Moq;
@@ -18,8 +19,9 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         private Mock<INewsResponseMapper> mapperMock;
 
         private Guid newsId;
-        private News news;
+        private NewsResponse newsresponse;
         private DbNews dbNews;
+        private DbNews badNews;
 
         [SetUp]
         public void SetUp()
@@ -29,37 +31,40 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             getNewsInfoByIdCommand = new GetNewsByIdCommand(repositoryMock.Object, mapperMock.Object);
 
             newsId = Guid.NewGuid();
-            news = new News { Id = newsId };
+            newsresponse = new NewsResponse { Id = newsId };
             dbNews = new DbNews { Id = newsId };
+            badNews = new DbNews();
+
+            repositoryMock.Setup(repository => repository.GetNewsInfoById(newsId)).Returns(dbNews).Verifiable();
+            mapperMock.Setup(mapper => mapper.Map(dbNews)).Returns(newsresponse).Verifiable();
+
+            mapperMock.Setup(mapper => mapper.Map(badNews)).Throws<Exception>().Verifiable();
         }
 
         [Test]
         public void ShouldReturnModelOfNews()
         {
-            repositoryMock.Setup(repository => repository.GetNewsInfoById(newsId)).Returns(dbNews).Verifiable();
-            mapperMock.Setup(mapper => mapper.Map(dbNews)).Returns(news).Verifiable();
-
-            SerializerAssert.AreEqual(news, getNewsInfoByIdCommand.Execute(newsId));
+            SerializerAssert.AreEqual(newsresponse, getNewsInfoByIdCommand.Execute(newsId));
             repositoryMock.Verify();
-            mapperMock.Verify();
+            mapperMock.Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.);
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenMapperThrowsException()
+        public void ShouldThrowExceptionWhenMapperThrowsIt()
         {
             repositoryMock.Setup(repository => repository.GetNewsInfoById(It.IsAny<Guid>())).Returns(dbNews).Verifiable();
-            mapperMock.Setup(mapper => mapper.Map(It.IsAny<DbNews>())).Throws<Exception>().Verifiable();
 
-            Assert.Throws<Exception>(() => getNewsInfoByIdCommand.Execute(It.IsAny<Guid>()));
-            mapperMock.Verify();
+
+            Assert.Throws<BadRequestException>(() => getNewsInfoByIdCommand.Execute(It.IsAny<Guid>()));
+            mapperMock.Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Once);
             repositoryMock.Verify();
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenRepositoryThrowsException()
+        public void ShouldThrowExceptionWhenRepositoryThrowsIt()
         {
             repositoryMock.Setup(repository => repository.GetNewsInfoById(newsId)).Throws<NotFoundException>().Verifiable();
-            mapperMock.Setup(mapper => mapper.Map(dbNews)).Returns(news);
+            mapperMock.Setup(mapper => mapper.Map(dbNews)).Returns(newsresponse);
 
             Assert.Throws<NotFoundException>(() => getNewsInfoByIdCommand.Execute(newsId));
             repositoryMock.Verify();

@@ -24,6 +24,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Text.Json.Serialization;
+using LT.DigitalOffice.NewsService.Configuration;
+using LT.DigitalOffice.NewsService.Models.Broker.Requests;
 
 namespace NewsService
 {
@@ -70,7 +72,6 @@ namespace NewsService
         private void ConfigureRepositories(IServiceCollection services)
         {
             services.AddTransient<IDataProvider, NewsServiceDbContext>();
-
             services.AddTransient<INewsRepository, NewsRepository>();
         }
 
@@ -97,7 +98,7 @@ namespace NewsService
         {
             var rabbitMqConfig = Configuration
                 .GetSection(BaseRabbitMqOptions.RabbitMqSectionName)
-                .Get<BaseRabbitMqOptions>();
+                .Get<RabbitMqConfig>();
 
             services.AddMassTransit(x =>
             {
@@ -112,6 +113,8 @@ namespace NewsService
 
                 x.AddRequestClient<ICheckTokenRequest>(
                   new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.ValidateTokenEndpoint}"));
+                x.AddRequestClient<IGetFIOUserRequest>(
+                 new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserInfoEndpoint}"));
 
                 x.ConfigureKernelMassTransit(rabbitMqConfig);
             });

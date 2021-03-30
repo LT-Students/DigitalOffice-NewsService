@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
             {
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
+                Pseudonym = "AuthorName",
                 AuthorId = newsRequest.AuthorId,
                 SenderId = newsRequest.SenderId,
                 IsActive = true

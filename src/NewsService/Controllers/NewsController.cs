@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.NewsService.Business.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,8 +11,8 @@ namespace LT.DigitalOffice.NewsService.Controllers
     public class NewsController : ControllerBase
     {
         [HttpGet("getNewsById")]
-        public News GetNewsById(
-            [FromServices] IGetNewsByIdCommand getNewsByIdCommand, 
+        public NewsResponse GetNewsInfoById(
+            [FromServices] IGetNewsByIdCommand getNewsByIdCommand,
             [FromQuery] Guid newsId)
         {
             return getNewsByIdCommand.Execute(newsId);
