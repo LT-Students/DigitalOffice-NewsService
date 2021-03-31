@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
             }
             catch (Exception exception)
             {
-                _logger.LogInformation(exception.Message);
+                _logger.LogError(exception, "Exception on get user data request.");
             }
 
             return new NewsResponse
