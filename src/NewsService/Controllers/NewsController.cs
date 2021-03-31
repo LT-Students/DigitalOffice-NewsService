@@ -32,14 +32,16 @@ namespace LT.DigitalOffice.NewsService.Controllers
             [FromServices] IFindNewsCommand command,
             [FromQuery] Guid? authorId,
             [FromQuery] Guid? departmentId,
-            [FromQuery] string authorName,
+            [FromQuery] string authorPseudonym,
             [FromQuery] string newsName)
         {
-            FindNewsParams findNewsParams = new FindNewsParams();
-            findNewsParams.AuthorId = authorId;
-            findNewsParams.DepartmentId = departmentId;
-            findNewsParams.AuthorId = authorId;
-            findNewsParams.NewsName = newsName;
+            FindNewsParams findNewsParams = new FindNewsParams
+            {
+                AuthorId = authorId,
+                DepartmentId = departmentId,
+                AuthorPseudonym = authorPseudonym,
+                NewsName = newsName
+            };
 
             return command.Execute(findNewsParams);
         }
