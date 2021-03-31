@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.Kernel.Exceptions;
+﻿using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interface;
 using LT.DigitalOffice.NewsService.Models.Broker.Requests;
 using LT.DigitalOffice.NewsService.Models.Broker.Responses;
@@ -7,19 +8,22 @@ using LT.DigitalOffice.NewsService.Models.Dto.Model;
 using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 {
     public class NewsResponseMapper : INewsResponseMapper
     {
-        private IRequestClient<IGetFIOUserRequest> _client;
-
+        private IRequestClient<IGetUserDataRequest> _client;
+        private readonly ILogger _logger;
         public NewsResponseMapper(
-            [FromServices] IRequestClient<IGetFIOUserRequest> client)
+            [FromServices] IRequestClient<IGetUserDataRequest> client,
+            ILogger<NewsResponseMapper> logger)
         {
             _client = client;
+            _logger = logger;
         }
-
         public NewsResponse Map(DbNews value)
         {
             if (value == null)
@@ -27,29 +31,34 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 throw new BadRequestException();
             }
 
-            var authorResponse =  _client.GetResponse<IGetFIOUserResponse>(
-                IGetFIOUserRequest.CreateObj(value.AuthorId)).Result;
+            User author = new User { Id = value.Id };
+            User sender = new User { Id = value.Id };
 
-            var senderResponse = _client.GetResponse<IGetFIOUserResponse>(
-                IGetFIOUserRequest.CreateObj(value.SenderId)).Result;
+            try
+            {
+                var authorRequest = IGetUserDataRequest.CreateObj(value.AuthorId);
+                var authorResponse = _client.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
+                author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
+
+                var senderRequest = IGetUserDataRequest.CreateObj(value.SenderId);
+                var senderResponse = _client.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest).Result;
+                sender.FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}".Trim();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Exception on get user data request.");
+            }
 
             return new NewsResponse
             {
                 Id = value.Id,
                 Content = value.Content,
                 Subject = value.Subject,
-                Author = new User
-                {
-                    Id = authorResponse.Message.Id,
-                    FIO = value.Pseudonym
-                },
-                Sender = new User
-                {
-                    Id = senderResponse.Message.Id,
-                    FIO = $"{senderResponse.Message.LastName} {senderResponse.Message.FirstName}"
-                },
+                Author = author,
+                Sender = sender,
                 CreatedAt = value.CreatedAt
             };
         }
+
     }
 }

@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.ModelMappers
             {
                 Content = request.Content,
                 Subject = request.Subject,
-                Pseudonym= request.AuthorName,
+                Pseudonym = request.AuthorName,
                 AuthorId = request.AuthorId,
                 SenderId = request.SenderId,
                 CreatedAt = DateTime.UtcNow,

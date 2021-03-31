@@ -2,7 +2,7 @@
 
 namespace LT.DigitalOffice.NewsService.Models.Broker.Requests
 {
-    public interface IGetFIOUserRequest
+    public interface IGetUserDataRequest
     {
         Guid UserId { get; }
 
