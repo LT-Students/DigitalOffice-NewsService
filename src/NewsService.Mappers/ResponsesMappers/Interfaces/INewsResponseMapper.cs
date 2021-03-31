@@ -9,7 +9,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces
     /// <summary>
     /// Represents mapper. Provides methods for converting an object of News value <see cref="DbNews"/>
     /// </summary>
-    public interface INewsResponseMapper : IMapper<DbNews, Task<NewsResponse>>
+    public interface INewsResponseMapper : IMapper<DbNews, NewsResponse>
     {
     }
 }

@@ -10,7 +10,6 @@ using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 {
@@ -25,26 +24,24 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
             _client = client;
             _logger = logger;
         }
-        public async Task<NewsResponse> Map(DbNews value)
+        public NewsResponse Map(DbNews value)
         {
             if (value == null)
             {
                 throw new BadRequestException();
             }
 
-            User author = new User();
-            User sender = new User();
+            User author = new User { Id = value.Id };
+            User sender = new User { Id = value.Id };
 
             try
             {
                 var authorRequest = IGetUserDataRequest.CreateObj(value.AuthorId);
-                var authorResponse = await _client.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest);
-                author.Id = authorResponse.Message.Body.Id;
+                var authorResponse = _client.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
                 author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
 
                 var senderRequest = IGetUserDataRequest.CreateObj(value.SenderId);
-                var senderResponse = await _client.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest);
-                sender.Id = senderResponse.Message.Body.Id;
+                var senderResponse = _client.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest).Result;
                 sender.FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}".Trim();
             }
             catch (Exception exception)
