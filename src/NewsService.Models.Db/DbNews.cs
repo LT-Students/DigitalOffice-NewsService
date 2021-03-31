@@ -11,7 +11,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         public string Content { get; set; }
         [Required]
         public string Subject { get; set; }
-        [Required]
         public string AuthorName { get; set; }
         [Required]
         public Guid AuthorId { get; set; }
