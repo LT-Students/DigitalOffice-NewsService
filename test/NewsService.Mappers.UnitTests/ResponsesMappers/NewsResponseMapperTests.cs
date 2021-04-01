@@ -152,10 +152,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                     It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), Times.Once);
         }
 
-        [Test]
+        /*[Test]
         public void ShouldExeprionWhen()
-        {
-           /* var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
+       {
+            var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             responseMock
                .Setup(x => x.IsSuccess)
                .Returns(false);
@@ -168,11 +168,11 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                .Setup(x => x.Message)
                .Returns(responseMock.Object);
 
-            _requestClientMock*/
-             /*  .Setup(x => x.GetResponse<IOperationResult<IGetUserDataResponse>>(
+            _requestClientMock
+              .Setup(x => x.GetResponse<IOperationResult<IGetUserDataResponse>>(
                    IGetUserDataRequest.CreateObj(dbNews.SenderId), default, default))
                .Returns(Task.FromResult(_brokerResponseSenderNameMock.Object));
-*//*
+
             _mapper.Map(dbNews);
             _loggerMock.Verify(
                 x => x.Log(
@@ -180,8 +180,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                     It.IsAny<EventId>(),
                     It.Is<It.IsAnyType>((v, t) => true),
                     It.IsAny<Exception>(),
-                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), Times.Once);*/
-        }
+                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), Times.Once);
+        }*/
 
     }
 }
