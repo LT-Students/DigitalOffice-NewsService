@@ -44,12 +44,28 @@ namespace LT.DigitalOffice.NewsService.Data
 
         public List<DbNews> FindNews(FindNewsParams findNewsParams)
         {
-            return provider.News
-                .Where(x => findNewsParams.AuthorId == null || x.AuthorId == findNewsParams.AuthorId)
-                .Where(x => findNewsParams.DepartmentId == null || x.DepartmentId == findNewsParams.DepartmentId)
-                .Where(x => findNewsParams.AuthorPseudonym == null || x.AuthorName == findNewsParams.AuthorPseudonym)
-                .Where(x => findNewsParams.Subject == null || x.Subject == findNewsParams.Subject)
-                .ToList();
+            var dbNewsList = provider.News.AsQueryable();
+            if (findNewsParams.AuthorId != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsParams.AuthorId);
+            }
+
+            if (findNewsParams.DepartmentId != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsParams.DepartmentId);
+            }
+
+            if (findNewsParams.AuthorPseudonym != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.AuthorName == findNewsParams.AuthorPseudonym);
+            }
+
+            if (findNewsParams.Subject != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.Subject == findNewsParams.Subject);
+            }
+
+            return dbNewsList.ToList();
         }
     }
 }

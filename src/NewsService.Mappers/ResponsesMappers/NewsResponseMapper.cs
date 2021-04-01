@@ -31,8 +31,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 throw new BadRequestException();
             }
 
-            User author = new User { Id = value.Id };
-            User sender = new User { Id = value.Id };
+            User author = new User { Id = value.AuthorId };
+            User sender = new User { Id = value.AuthorId };
 
             try
             {
