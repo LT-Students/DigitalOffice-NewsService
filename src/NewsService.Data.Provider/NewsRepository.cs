@@ -1,11 +1,7 @@
-﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Data.Provider;
+﻿using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Data
@@ -42,14 +38,14 @@ namespace LT.DigitalOffice.NewsService.Data
             return news.Id;
         }
 
-        public List<DbNews> FindNews(FindNewsParams findNewsParams)
+        /*public List<DbNews> FindNews(FindNewsParams findNewsParams)
         {
-            return provider.News
-                .Where(x => findNewsParams.AuthorId == null || x.AuthorId == findNewsParams.AuthorId)
-                .Where(x => findNewsParams.DepartmentId == null || x.DepartmentId == findNewsParams.DepartmentId)
-                .Where(x => findNewsParams.AuthorPseudonym == null || x.AuthorName == findNewsParams.AuthorPseudonym)
-                .Where(x => findNewsParams.Subject == null || x.Subject == findNewsParams.Subject)
+           return provider.News
+                .Where(aId => authorId == null || aId.AuthorId == authorId)
+                .Where(dId => authorId == null || dId.AuthorId == authorId)
+                .Where(aN => authorName == null || aN.AuthorName == authorName)
+                .Where(nN => newsName == null || nN.Subject == newsName)
                 .ToList();
-        }
+        }*/
     }
 }
