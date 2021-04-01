@@ -43,7 +43,13 @@ namespace LT.DigitalOffice.NewsService.Data
 
         public List<DbNews> FindNews(FindNewsParams findNewsParams)
         {
+            if (findNewsParams == null)
+            {
+                throw new Exception("search parameters not passed.");
+            }
+
             var dbNewsList = provider.News.AsQueryable();
+
             if (findNewsParams.AuthorId != null)
             {
                 dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsParams.AuthorId);
