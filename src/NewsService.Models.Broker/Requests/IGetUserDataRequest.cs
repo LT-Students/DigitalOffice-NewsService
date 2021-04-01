@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.NewsService.Models.Broker.Requests
+namespace LT.DigitalOffice.Broker.Requests
 {
     public interface IGetUserDataRequest
     {

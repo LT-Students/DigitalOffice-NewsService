@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.NewsService.Models.Broker.Responses
+namespace LT.DigitalOffice.Broker.Responses
 {
     public interface IGetUserDataResponse
     {
