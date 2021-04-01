@@ -11,8 +11,8 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 {
     class NewsRepositoryTests
     {
-        private IDataProvider provider;
-        private INewsRepository repository;
+        private IDataProvider _provider;
+        private INewsRepository _repository;
 
         private DbNews dbNewsRequest;
         private DbNews dbNews;
@@ -24,9 +24,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             var dbOptions = new DbContextOptionsBuilder<NewsServiceDbContext>()
                    .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
                    .Options;
-            provider = new NewsServiceDbContext(dbOptions);
+            _provider = new NewsServiceDbContext(dbOptions);
 
-            repository = new NewsRepository(provider);
+            _repository = new NewsRepository(_provider);
         }
 
         [SetUp]
@@ -56,8 +56,8 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 IsActive = true
             };
 
-            provider.News.Add(dbNews);
-            provider.Save();
+            _provider.News.Add(dbNews);
+            _provider.Save();
 
             dbNewsRequest = new DbNews
             {
@@ -75,9 +75,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [TearDown]
         public void CleanDb()
         {
-            if (provider.IsInMemory())
+            if (_provider.IsInMemory())
             {
-                provider.EnsureDeleted();
+                _provider.EnsureDeleted();
             }
         }
 
@@ -85,17 +85,17 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
         {
-            Assert.Throws<Exception>(() => repository.EditNews(
+            Assert.Throws<Exception>(() => _repository.EditNews(
                 new DbNews() { Id = Guid.Empty }));
         }
 
         [Test]
         public void ShouldEditNews()
         {
-            provider.MakeEntityDetached(dbNews);
-            repository.EditNews(dbNewsRequest);
+            _provider.MakeEntityDetached(dbNews);
+            _repository.EditNews(dbNewsRequest);
 
-            var resultNews = provider.News
+            var resultNews = _provider.News
                 .FirstOrDefaultAsync(x => x.Id == dbNewsRequest.Id)
                 .Result;
 
@@ -107,10 +107,18 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldReturnMatchingIdAndCreateNews()
         {
-            var guidOfNews = repository.CreateNews(dbNewsToAdd);
+            var guidOfNews = _repository.CreateNews(dbNewsToAdd);
 
             Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
-            Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
+            Assert.NotNull(_provider.News.Find(dbNewsToAdd.Id));
+        }
+        #endregion
+
+        #region FindNews
+        [Test]
+        public void ExceptionNullFindNewsParams()
+        {
+            Assert.Throws<Exception>(() => _repository.FindNews(null));
         }
         #endregion
     }
