@@ -31,6 +31,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         private const string lastName = "Ivanov";
         private const string middleName = "Ivanovich";
 
+
+        private Guid badId = Guid.NewGuid();
         private INewsResponseMapper _mapper;
         private NewsResponse response;
         private DbNews dbNews;
@@ -79,9 +81,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
             _responseMock
                 .Setup(x => x.Body.LastName)
                 .Returns(lastName);
-            _responseMock
+          /* _responseMock
                 .Setup(x => x.IsSuccess)
-                .Returns(true);
+                .Returns(true);*/
             _responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             _responseMock
                 .Setup(x => x.Body.MiddleName)
@@ -103,7 +105,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                     IGetUserDataRequest.CreateObj(dbNews.AuthorId), default, default))
                 .Returns(Task.FromResult(_brokerResponseAuthorNameMock.Object));
 
-                 _requestClientMock
+            _requestClientMock
                 .Setup(x => x.GetResponse<IOperationResult<IGetUserDataResponse>>(
                     IGetUserDataRequest.CreateObj(dbNews.SenderId), default, default))
                 .Returns(Task.FromResult(_brokerResponseSenderNameMock.Object));
@@ -152,17 +154,16 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                     It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), Times.Once);
         }
 
-        /*[Test]
-        public void ShouldExeprionWhen()
+        [Test]
+        public void ShouldThrowExceptionWhenBadSenderId()
        {
-            var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
+            /*var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             responseMock
                .Setup(x => x.IsSuccess)
                .Returns(false);
-
             responseMock
                .Setup(x => x.Errors)
-               .Returns(new List<string>() {"Not found senderId"});
+               .Returns(new List<string>() { "Not found senderId" });
 
             _brokerResponseSenderNameMock
                .Setup(x => x.Message)
@@ -171,17 +172,34 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
             _requestClientMock
               .Setup(x => x.GetResponse<IOperationResult<IGetUserDataResponse>>(
                    IGetUserDataRequest.CreateObj(dbNews.SenderId), default, default))
-               .Returns(Task.FromResult(_brokerResponseSenderNameMock.Object));
+              .Returns(Task.FromResult(_brokerResponseSenderNameMock.Object));
+*/
+            const string content = "Something";
+            const string subject = "Something";
 
-            _mapper.Map(dbNews);
-            _loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Warning,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => true),
-                    It.IsAny<Exception>(),
-                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), Times.Once);
-        }*/
+            var request = new DbNews
+            {
+                Content = content,
+                Subject = subject,
+                SenderId = badId
+            };
+
+            NewsResponse result = _mapper.Map(request);
+
+            var expected = new NewsResponse
+            {
+                Id = result.Id,
+                Content = content,
+                Subject = subject,
+                Author = result.Author,
+                Sender = null,
+                CreatedAt = result.CreatedAt
+            };
+            SerializerAssert.AreEqual(expected, result);
+
+
+
+        }
 
     }
 }

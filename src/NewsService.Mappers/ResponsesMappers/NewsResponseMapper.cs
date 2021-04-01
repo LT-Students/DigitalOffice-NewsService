@@ -41,19 +41,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 var authorRequest = IGetUserDataRequest.CreateObj(value.AuthorId);
                 var authorResponse = _client.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
                 author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
-                if (!authorResponse.Message.IsSuccess)
-                {
-                    _logger.LogWarning($"Can not found author. Reason: '{string.Join(',', authorResponse.Message.Errors)}'");
-                }
 
                 var senderRequest = IGetUserDataRequest.CreateObj(value.SenderId);
                 var senderResponse = _client.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest).Result;
-
-                if (!senderResponse.Message.IsSuccess)
-                {
-                    _logger.LogWarning($"Can not found sender. Reason: '{string.Join(',', senderResponse.Message.Errors)}'");
-                }
-
                 sender.FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}".Trim();
             }
             catch (Exception exception)
