@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -65,7 +64,14 @@ namespace LT.DigitalOffice.NewsService.Data
                 dbNewsList = dbNewsList.Where(x => x.Subject == findNewsParams.Subject);
             }
 
-            return dbNewsList.ToList();
+            var dbNewsResponse = dbNewsList.ToList();
+
+            if (dbNewsResponse == null)
+            {
+                throw new Exception("News was not found.");
+            }
+
+            return dbNewsResponse;
         }
     }
 }

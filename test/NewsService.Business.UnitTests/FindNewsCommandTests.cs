@@ -1,5 +1,7 @@
 ﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Moq;
 using NUnit.Framework;
@@ -15,24 +17,28 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
     {
         private Mock<INewsRepository> _goodRepository;
         private Mock<INewsRepository> _repositoryException;
-        private Mock<INewsMapper> _GoodMapper;
-        private Exception _exception;
+        private Mock<INewsResponseMapper> _GoodMapper;
+        private Mock<INewsResponseMapper> _mapperException;
 
         [SetUp]
         public void SetUp()
         {
-            _exception = new Exception();
+            _repositoryException = new Mock<INewsRepository>();
+            _repositoryException
+                .Setup(x => x.FindNews(It.IsAny<FindNewsParams>()))
+                .Throws(new Exception());
+
+            _mapperException = new Mock<INewsResponseMapper>();
+            _mapperException
+                .Setup(x => x.Map(It.IsAny<DbNews>()))
+                .Throws(new Exception());
 
         }
 
         [Test]
-
         public void RepositoryException()
         {
-            _repositoryException = new Mock<INewsRepository>();
-            _repositoryException
-                .Setup(x => x.FindNews(It.IsAny<FindNewsParams>())
-                //.Returns(_exception)
+
 
         }
     }
