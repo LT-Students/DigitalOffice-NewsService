@@ -16,15 +16,14 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
                nullable: true);
 
             migrationBuilder.DropColumn(
-                name: "News",
-                table: "AuthorName");
+                name: "AuthorName",
+                table: "News");
         }
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
                 name: "Pseudonym",
-                table: "News"
-            );
+                table: "News");
 
             migrationBuilder.AddColumn<string>(
                 name: "AuthorName",
