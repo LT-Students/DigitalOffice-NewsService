@@ -12,6 +12,8 @@ using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers;
+using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
@@ -75,6 +77,7 @@ namespace NewsService
         private void ConfigureMappers(IServiceCollection services)
         {
             services.AddTransient<INewsMapper, NewsMapper>();
+            services.AddTransient<INewsResponseMapper, NewsResponseMapper>();
         }
 
         private void ConfigureCommands(IServiceCollection services)
@@ -108,6 +111,8 @@ namespace NewsService
 
                 x.AddRequestClient<ICheckTokenRequest>(
                   new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.ValidateTokenEndpoint}"));
+                x.AddRequestClient<IGetUserDataRequest>(
+                 new Uri($"{rabbitMqConfig.BaseUrl}/{rabbitMqConfig.GetUserDataEndpoint}"));
 
                 x.ConfigureKernelMassTransit(rabbitMqConfig);
             });
