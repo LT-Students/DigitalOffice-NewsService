@@ -32,14 +32,14 @@ namespace LT.DigitalOffice.NewsService.Controllers
             [FromServices] IFindNewsCommand command,
             [FromQuery] Guid? authorId,
             [FromQuery] Guid? departmentId,
-            [FromQuery] string authorPseudonym,
+            [FromQuery] string Pseudonym,
             [FromQuery] string subject)
         {
             FindNewsParams findNewsParams = new FindNewsParams
             {
                 AuthorId = authorId,
                 DepartmentId = departmentId,
-                AuthorPseudonym = authorPseudonym,
+                Pseudonym = Pseudonym,
                 Subject = subject
             };
 

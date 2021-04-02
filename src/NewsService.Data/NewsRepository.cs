@@ -60,9 +60,9 @@ namespace LT.DigitalOffice.NewsService.Data
                 dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsParams.DepartmentId);
             }
 
-            if (findNewsParams.AuthorPseudonym != null)
+            if (findNewsParams.Pseudonym != null)
             {
-                dbNewsList = dbNewsList.Where(x => x.AuthorName == findNewsParams.AuthorPseudonym);
+                dbNewsList = dbNewsList.Where(x => x.Pseudonym == findNewsParams.Pseudonym);
             }
 
             if (findNewsParams.Subject != null)

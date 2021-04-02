@@ -30,7 +30,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 Id = Guid.NewGuid(),
                 Content = "Content111",
                 Subject = "Subject111",
-                AuthorName = "AuthorName111",
+                Pseudonym = "AuthorName111",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid()
             };
@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 Id = (Guid)request.Id,
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
+                Pseudonym = "AuthorName",
                 AuthorId = request.AuthorId,
                 SenderId = request.SenderId,
                 CreatedAt = DateTime.UtcNow,

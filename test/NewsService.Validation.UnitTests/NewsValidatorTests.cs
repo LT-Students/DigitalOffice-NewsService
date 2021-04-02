@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
             {
                 Subject = "Subject",
                 AuthorId = Guid.NewGuid(),
-                AuthorName = "Spartak Ryabtsev",
+                Pseudonym = "Spartak Ryabtsev",
                 Content = "Content",
                 SenderId = Guid.NewGuid()
             };
@@ -49,15 +49,15 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [Test]
         public void ShouldThrowValidationExceptionWhenAuthorNameIsEmpty()
         {
-            validator.ShouldHaveValidationErrorFor(x => x.AuthorName, "");
+            validator.ShouldHaveValidationErrorFor(x => x.Pseudonym, "");
         }
 
         [Test]
         public void ShouldThrowValidationExceptionWhenAuthorNameIsTooLong()
         {
-            var authorName = request.AuthorName.PadLeft(100);
+            var authorName = request.Pseudonym.PadLeft(100);
 
-            validator.ShouldHaveValidationErrorFor(x => x.AuthorName, authorName);
+            validator.ShouldHaveValidationErrorFor(x => x.Pseudonym, authorName);
         }
 
         [Test]

@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
             {
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
+                Pseudonym = "AuthorName",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid()
             };
@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
+                Pseudonym = "AuthorName",
                 AuthorId = newsRequest.AuthorId,
                 SenderId = newsRequest.SenderId,
             };
@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
             {
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
+                Pseudonym = "AuthorName",
                 AuthorId = newsRequest.AuthorId,
                 SenderId = newsRequest.SenderId,
                 IsActive = true
