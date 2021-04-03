@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto.Model
+namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {
     public class User
     {

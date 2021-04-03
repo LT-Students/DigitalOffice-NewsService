@@ -5,7 +5,7 @@ using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Model;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using LT.DigitalOffice.UnitTestKernel;
 using MassTransit;
@@ -130,7 +130,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         }
 
        [Test]
-        public void MapBadSenderIdTest()
+        public void ShouldMapWhenBadSenderIdTest()
         {
             var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             responseMock
@@ -160,7 +160,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         }
 
         [Test]
-        public void MapBadAuthorIdTest()
+        public void ShoulMapWhanBadWAuthorIdTest()
         {
             var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             responseMock
