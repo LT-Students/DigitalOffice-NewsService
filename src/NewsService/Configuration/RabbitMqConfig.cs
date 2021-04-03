@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.Broker;
 
 namespace LT.DigitalOffice.NewsService.Configuration
 {

@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Data.Interfaces;
+﻿using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
@@ -64,7 +65,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Id = dbNews.Id,
                 Content = "Content111",
                 Subject = "Subject111",
-                AuthorName = "AuthorName111",
+                AuthorName = "AuthorName",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
@@ -111,6 +112,34 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
             Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
+        }
+        #endregion
+
+        #region GetNews
+        [Test]
+        public void ShouldThrowExceptionWhenThereNoNewsInDatabaseWithSuchId()
+        {
+            Assert.Throws<NotFoundException>(() => repository.GetNewsInfoById(Guid.NewGuid()));
+        }
+
+        [Test]
+        public void ShouldReturnNewsInfoWhenGettingFileById()
+        {
+            var result = repository.GetNewsInfoById(dbNews.Id);
+
+            var expected = new DbNews
+            {
+                Id = dbNews.Id,
+                Content = dbNews.Content,
+                Subject = dbNews.Subject,
+                AuthorName = dbNews.AuthorName,
+                AuthorId = dbNews.AuthorId,
+                SenderId = dbNews.SenderId,
+                CreatedAt = dbNews.CreatedAt,
+                IsActive = dbNews.IsActive
+            };
+
+            SerializerAssert.AreEqual(expected, result);
         }
         #endregion
     }
