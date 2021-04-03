@@ -48,7 +48,14 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                 }
 
                 author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Exception on get author data request.");
+            }
 
+            try
+            {
                 var senderRequest = IGetUserDataRequest.CreateObj(dbNews.SenderId);
                 var senderResponse = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest).Result;
 
@@ -61,7 +68,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Exception on get user data request.");
+                _logger.LogError(exception, "Exception on get sender data request.");
             }
 
             return new NewsResponse

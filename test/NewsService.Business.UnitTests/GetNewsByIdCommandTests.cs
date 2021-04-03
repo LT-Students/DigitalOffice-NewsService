@@ -35,10 +35,13 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             _dbNews = new DbNews { Id = _newsId };
             _badNews = new DbNews();
 
-            _repositoryMock.Setup(repository => repository.GetNewsInfoById(_newsId)).Returns(_dbNews).Verifiable();
-            _mapperMock.Setup(mapper => mapper.Map(_dbNews)).Returns(_newsresponse).Verifiable();
+            _repositoryMock.Setup(repository => repository.GetNewsInfoById(_newsId))
+                .Returns(_dbNews).Verifiable();
+            _mapperMock.Setup(mapper => mapper.Map(_dbNews))
+                .Returns(_newsresponse).Verifiable();
 
-            _mapperMock.Setup(mapper => mapper.Map(_badNews)).Throws<Exception>().Verifiable();
+            _mapperMock.Setup(mapper => mapper.Map(_badNews))
+                .Throws<Exception>().Verifiable();
         }
 
         [Test]
@@ -52,7 +55,8 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenMapperThrowsIt()
         {
-            _mapperMock.Setup(x => x.Map(It.IsAny<DbNews>())).Throws(new BadRequestException());
+            _mapperMock.Setup(x => x.Map(It.IsAny<DbNews>()))
+                .Throws(new BadRequestException());
 
             Assert.Throws<BadRequestException>(() => _getNewsInfoByIdCommand.Execute(_newsId));
             _mapperMock.Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Once);
@@ -62,7 +66,8 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrowsIt()
         {
-            _repositoryMock.Setup(repository => repository.GetNewsInfoById(_newsId)).Throws<NotFoundException>().Verifiable();
+            _repositoryMock.Setup(repository => repository.GetNewsInfoById(_newsId))
+                .Throws<NotFoundException>().Verifiable();
 
             Assert.Throws<NotFoundException>(() => _getNewsInfoByIdCommand.Execute(_newsId));
             _repositoryMock.Verify();
