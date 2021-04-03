@@ -5,7 +5,7 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
 {
     /// <summary>
     /// Represents interface for a command in command pattern.
-    /// Provides method for getting newsresponse model by id.
+    /// Provides method for getting NewsResponse model by id.
     /// </summary>
     public interface IGetNewsByIdCommand
     {

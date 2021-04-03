@@ -44,7 +44,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 
                 if (!authorResponse.Message.IsSuccess)
                 {
-                    _logger.LogWarning($"Can not found author. Reason: '{string.Join(',', authorResponse.Message.Errors)}'");
+                    _logger.LogWarning($"Can't found author. Reason: '{string.Join(',', authorResponse.Message.Errors)}'");
                 }
 
                 author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 
                 if (!senderResponse.Message.IsSuccess)
                 {
-                    _logger.LogWarning($"Can not found sender. Reason: '{string.Join(',', senderResponse.Message.Errors)}'");
+                    _logger.LogWarning($"Can't found sender. Reason: '{string.Join(',', senderResponse.Message.Errors)}'");
                 }
 
                 sender.FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}".Trim();

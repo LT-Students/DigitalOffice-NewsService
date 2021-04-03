@@ -31,37 +31,37 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         private const string middleName = "Ivanovich";
 
         private INewsResponseMapper _mapper;
-        private NewsResponse response;
-        private DbNews dbNews;
-        private User user;
+        private NewsResponse _response;
+        private DbNews _dbNews;
+        private User _user;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            user = new User
+            _user = new User
             {
                 Id = Guid.NewGuid(),
                 FIO = "Ivanov Ivan Ivanovich"
             };
 
-            response = new NewsResponse
+            _response = new NewsResponse
             {
                 Id = Guid.NewGuid(),
                 Content = "Content111",
                 Subject = "Subject111",
-                Author = user,
-                Sender = user,
+                Author = _user,
+                Sender = _user,
                 CreatedAt = DateTime.UtcNow
             };
 
-            dbNews = new DbNews
+            _dbNews = new DbNews
             {
-                Id = response.Id,
+                Id = _response.Id,
                 Content = "Content",
                 Subject = "Subject",
                 AuthorName = "Pseudonym",
-                AuthorId = user.Id,
-                SenderId = user.Id,
+                AuthorId = _user.Id,
+                SenderId = _user.Id,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -116,17 +116,19 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         [Test]
         public void ShouldReturnNewsResponseModelWhenMappingValidDbNews()
         {
-            var resultNewsModel = _mapper.Map(dbNews);
-            var expectedResult = new NewsResponse();
+            NewsResponse result = _mapper.Map(_dbNews);
 
-            expectedResult.Id = dbNews.Id;
-            expectedResult.Subject = dbNews.Subject;
-            expectedResult.CreatedAt = dbNews.CreatedAt;
-            expectedResult.Content = dbNews.Content;
-            expectedResult.Sender = user;
-            expectedResult.Author = user;
+            var expected = new NewsResponse
+            {
+                Id = result.Id,
+                Content = result.Content,
+                Subject = result.Subject,
+                Author = result.Author,
+                Sender = result.Sender,
+                CreatedAt = result.CreatedAt
+            };
 
-            SerializerAssert.AreEqual(expectedResult, resultNewsModel);
+            SerializerAssert.AreEqual(expected, result);
         }
 
        [Test]
@@ -144,7 +146,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                .Setup(x => x.Message)
                .Returns(responseMock.Object);
 
-            NewsResponse result = _mapper.Map(dbNews);
+            NewsResponse result = _mapper.Map(_dbNews);
 
             var expected = new NewsResponse
             {
@@ -174,7 +176,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                .Setup(x => x.Message)
                .Returns(responseMock.Object);
 
-            NewsResponse result = _mapper.Map(dbNews);
+            NewsResponse result = _mapper.Map(_dbNews);
 
             var expected = new NewsResponse
             {
