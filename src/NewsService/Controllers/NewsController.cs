@@ -12,26 +12,26 @@ namespace LT.DigitalOffice.NewsService.Controllers
     {
         [HttpGet("getNewsById")]
         public NewsResponse GetNewsInfoById(
-            [FromServices] IGetNewsByIdCommand getNewsByIdCommand,
+            [FromServices] IGetNewsByIdCommand command,
             [FromQuery] Guid newsId)
         {
-            return getNewsByIdCommand.Execute(newsId);
+            return command.Execute(newsId);
         }
 
         [HttpPost("editNews")]
         public void EditNews(
-            [FromServices] IEditNewsCommand editNewsCommand,
+            [FromServices] IEditNewsCommand command,
             [FromBody] News request)
         {
-            editNewsCommand.Execute(request);
+            command.Execute(request);
         }
 
         [HttpPost("createNews")]
         public Guid CreateNews(
-            [FromServices] ICreateNewsCommand createNewsCommand,
+            [FromServices] ICreateNewsCommand command,
             [FromBody] News request)
         {
-            return createNewsCommand.Execute(request);
+            return command.Execute(request);
         }
     }
 }
