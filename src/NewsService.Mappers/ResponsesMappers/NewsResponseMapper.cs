@@ -39,8 +39,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 
             try
             {
-                if (author.Id == sender.Id)
-                {
                     var authorRequest = IGetUserDataRequest.CreateObj(dbNews.AuthorId);
                     var authorResponse = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
 
@@ -50,7 +48,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
                     }
 
                     author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
-                }
             }
             catch (Exception exception)
             {

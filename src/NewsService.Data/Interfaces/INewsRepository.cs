@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <summary>
         /// Returns the DbNews with the specified id from database.
         /// </summary>
-        /// <param name="newsId">Specified id of dbNews.</param>
+        /// <param name="newsId">Specified id of DbNews.</param>
         /// <returns>News with specified id.</returns>
         DbNews GetNewsInfoById(Guid newsId);
     }
