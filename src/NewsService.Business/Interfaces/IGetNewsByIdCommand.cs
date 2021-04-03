@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
     public interface IGetNewsByIdCommand
     {
         /// <summary>
-        /// Returns the newsresponse model with the specified id.
+        /// Returns the NewsResponse model with the specified id.
         /// </summary>
         /// <param name="newsId">Specified id of news.</param>
         /// <returns>News model with specified id.</returns>

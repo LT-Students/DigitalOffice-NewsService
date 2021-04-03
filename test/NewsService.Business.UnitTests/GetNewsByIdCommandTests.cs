@@ -35,12 +35,15 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             _dbNews = new DbNews { Id = _newsId };
             _badNews = new DbNews();
 
-            _repositoryMock.Setup(repository => repository.GetNewsInfoById(_newsId))
+            _repositoryMock
+                .Setup(repository => repository.GetNewsInfoById(_newsId))
                 .Returns(_dbNews).Verifiable();
-            _mapperMock.Setup(mapper => mapper.Map(_dbNews))
+            _mapperMock
+                .Setup(mapper => mapper.Map(_dbNews))
                 .Returns(_newsresponse).Verifiable();
 
-            _mapperMock.Setup(mapper => mapper.Map(_badNews))
+            _mapperMock
+                .Setup(mapper => mapper.Map(_badNews))
                 .Throws<Exception>().Verifiable();
         }
 
@@ -49,13 +52,15 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         {
             SerializerAssert.AreEqual(_newsresponse, _getNewsInfoByIdCommand.Execute(_newsId));
             _repositoryMock.Verify();
-            _mapperMock.Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Once);
+            _mapperMock
+                .Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Once);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenMapperThrowsIt()
         {
-            _mapperMock.Setup(x => x.Map(It.IsAny<DbNews>()))
+            _mapperMock
+                .Setup(x => x.Map(It.IsAny<DbNews>()))
                 .Throws(new BadRequestException());
 
             Assert.Throws<BadRequestException>(() => _getNewsInfoByIdCommand.Execute(_newsId));
@@ -66,12 +71,14 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrowsIt()
         {
-            _repositoryMock.Setup(repository => repository.GetNewsInfoById(_newsId))
+            _repositoryMock
+                .Setup(repository => repository.GetNewsInfoById(_newsId))
                 .Throws<NotFoundException>().Verifiable();
 
             Assert.Throws<NotFoundException>(() => _getNewsInfoByIdCommand.Execute(_newsId));
             _repositoryMock.Verify();
-            _mapperMock.Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Never);
+            _mapperMock
+                .Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Never);
         }
     }
 }

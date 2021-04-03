@@ -39,15 +39,18 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers
 
             try
             {
-                var authorRequest = IGetUserDataRequest.CreateObj(dbNews.AuthorId);
-                var authorResponse = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
-
-                if (!authorResponse.Message.IsSuccess)
+                if (author.Id == sender.Id)
                 {
-                    _logger.LogWarning($"Can't found author. Reason: '{string.Join(',', authorResponse.Message.Errors)}'");
-                }
+                    var authorRequest = IGetUserDataRequest.CreateObj(dbNews.AuthorId);
+                    var authorResponse = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
 
-                author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
+                    if (!authorResponse.Message.IsSuccess)
+                    {
+                        _logger.LogWarning($"Can't found author. Reason: '{string.Join(',', authorResponse.Message.Errors)}'");
+                    }
+
+                    author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
+                }
             }
             catch (Exception exception)
             {

@@ -23,7 +23,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         void EditNews(DbNews news);
 
         /// <summary>
-        /// Returns the dbNews with the specified id from database.
+        /// Returns the DbNews with the specified id from database.
         /// </summary>
         /// <param name="newsId">Specified id of dbNews.</param>
         /// <returns>News with specified id.</returns>
