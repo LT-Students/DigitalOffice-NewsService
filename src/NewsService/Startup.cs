@@ -24,6 +24,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Text.Json.Serialization;
 
 namespace NewsService
 {
@@ -60,12 +61,16 @@ namespace NewsService
             ConfigureMappers(services);
             ConfigureValidators(services);
             ConfigureMassTransit(services);
+
+            services.AddControllers().AddJsonOptions(option =>
+            {
+                option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         }
 
         private void ConfigureRepositories(IServiceCollection services)
         {
             services.AddTransient<IDataProvider, NewsServiceDbContext>();
-
             services.AddTransient<INewsRepository, NewsRepository>();
         }
 
@@ -79,6 +84,7 @@ namespace NewsService
         {
             services.AddTransient<IEditNewsCommand, EditNewsCommand>();
             services.AddTransient<ICreateNewsCommand, CreateNewsCommand>();
+            services.AddTransient<IGetNewsByIdCommand, GetNewsByIdCommand>();
             services.AddTransient<IFindNewsCommand, FindNewsCommand>();
         }
 

@@ -11,6 +11,14 @@ namespace LT.DigitalOffice.NewsService.Controllers
     [ApiController]
     public class NewsController : ControllerBase
     {
+        [HttpGet("getNewsById")]
+        public NewsResponse GetNewsInfoById(
+            [FromServices] IGetNewsByIdCommand command,
+            [FromQuery] Guid newsId)
+        {
+            return command.Execute(newsId);
+        }
+
         [HttpPost("editNews")]
         public void EditNews(
             [FromServices] IEditNewsCommand command,
