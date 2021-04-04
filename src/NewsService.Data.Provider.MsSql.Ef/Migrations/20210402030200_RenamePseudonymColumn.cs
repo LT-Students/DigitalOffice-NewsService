@@ -20,27 +20,5 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
                 table: "News",
                 nullable: true);
         }
-        /*protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<string>(
-               name: "Pseudonym",
-               table: "News",
-               nullable: true);
-
-            migrationBuilder.DropColumn(
-                name: "AuthorName",
-                table: "News");
-        }
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "Pseudonym",
-                table: "News");
-
-            migrationBuilder.AddColumn<string>(
-                name: "AuthorName",
-                table: "News",
-                nullable: true);
-        }*/
     }
 }
