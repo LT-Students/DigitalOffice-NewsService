@@ -142,20 +142,20 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenThereNoNewsInDatabaseWithSuchId()
         {
-            Assert.Throws<NotFoundException>(() => repository.GetNewsInfoById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => _repository.GetNewsInfoById(Guid.NewGuid()));
         }
 
         [Test]
         public void ShouldReturnNewsInfoWhenGettingFileById()
         {
-            var result = repository.GetNewsInfoById(dbNews.Id);
+            var result = _repository.GetNewsInfoById(dbNews.Id);
 
             var expected = new DbNews
             {
                 Id = dbNews.Id,
                 Content = dbNews.Content,
                 Subject = dbNews.Subject,
-                AuthorName = dbNews.AuthorName,
+                Pseudonym = dbNews.Pseudonym,
                 AuthorId = dbNews.AuthorId,
                 SenderId = dbNews.SenderId,
                 CreatedAt = dbNews.CreatedAt,

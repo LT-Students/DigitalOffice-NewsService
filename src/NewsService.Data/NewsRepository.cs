@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.NewsService.Data
                 throw new Exception("search parameters not passed.");
             }
 
-            var dbNewsList = provider.News.AsQueryable();
+            var dbNewsList = _provider.News.AsQueryable();
 
             if (findNewsParams.AuthorId != null)
             {
