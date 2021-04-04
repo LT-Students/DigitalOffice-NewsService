@@ -2,10 +2,12 @@
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Data.UnitTests
 {
@@ -17,6 +19,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         private DbNews dbNewsRequest;
         private DbNews dbNews;
         private DbNews dbNewsToAdd;
+
+        private Guid _firstUserId = Guid.NewGuid();
+        private Guid _secondUserId = Guid.NewGuid();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -37,9 +42,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
-                Pseudonym = "AuthorName",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid(),
+                Pseudonym = "Pseudonym",
+                AuthorId = _firstUserId,
+                SenderId = _firstUserId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -49,9 +54,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
-                Pseudonym = "AuthorName",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid(),
+                Pseudonym = "Pseudonym",
+                AuthorId = _firstUserId,
+                SenderId = _secondUserId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -64,7 +69,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Id = dbNews.Id,
                 Content = "Content111",
                 Subject = "Subject111",
-                Pseudonym = "AuthorName111",
+                Pseudonym = "Pseudonym1",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
@@ -119,6 +124,16 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         public void ExceptionNullFindNewsParams()
         {
             Assert.Throws<Exception>(() => _repository.FindNews(null));
+        }
+
+        [Test]
+        public void FinedNews()
+        {
+            _provider.MakeEntityDetached(dbNews);
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { dbNews },
+                _repository.FindNews(new FindNewsParams { AuthorId = _firstUserId, Pseudonym = "Pseudonym" }));
         }
         #endregion
     }

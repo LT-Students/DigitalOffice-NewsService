@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
             return command.Execute(request);
         }
 
-        [HttpGet("findNews")]
+        [HttpGet("findnews")]
         public List<NewsResponse> FindNews(
             [FromServices] IFindNewsCommand command,
             [FromQuery] Guid? authorId,
