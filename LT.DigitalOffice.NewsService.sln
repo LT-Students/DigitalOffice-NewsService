@@ -12,9 +12,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Business", "src\NewsService.Business\NewsService.Business.csproj", "{809396D8-723D-433B-9392-7BAF925C5EB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Data", "src\NewsService.Data\NewsService.Data.csproj", "{6084FDBE-4A64-4284-A72A-DB205C2F62EF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EA07A7B3-2039-401E-9DE0-85BC79894201} = {EA07A7B3-2039-401E-9DE0-85BC79894201}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Data.Provider", "src\NewsService.Data.Provider\NewsService.Data.Provider.csproj", "{7B6CA353-1363-422D-B44C-AF8E9202719A}"
 EndProject
