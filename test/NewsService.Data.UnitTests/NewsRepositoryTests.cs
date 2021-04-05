@@ -124,7 +124,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ExceptionNullFindNewsParams()
         {
-            Assert.Throws<Exception>(() => _repository.FindNews(null));
+            Assert.Throws<ArgumentNullException>(() => _repository.FindNews(null));
         }
 
         [Test]
