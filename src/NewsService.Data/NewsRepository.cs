@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.NewsService.Data
         {
             if (findNewsParams == null)
             {
-                throw new Exception("search parameters not passed.");
+                throw new ArgumentNullException("search parameters not passed.");
             }
 
             var dbNewsList = _provider.News.AsQueryable();
@@ -71,14 +71,7 @@ namespace LT.DigitalOffice.NewsService.Data
                 dbNewsList = dbNewsList.Where(x => x.Subject == findNewsParams.Subject);
             }
 
-            var dbNewsResponse = dbNewsList.ToList();
-
-            if (dbNewsResponse == null)
-            {
-                throw new Exception("News was not found.");
-            }
-
-            return dbNewsResponse;
+            return dbNewsList.ToList();
         }
 
         public DbNews GetNewsInfoById(Guid newsId)

@@ -15,8 +15,8 @@ namespace LT.DigitalOffice.NewsService.Business
         private readonly INewsResponseMapper _mapper;
 
         public FindNewsCommand(
-            [FromServices] INewsRepository repository,
-            [FromServices] INewsResponseMapper mapper)
+            INewsRepository repository,
+            INewsResponseMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
