@@ -59,7 +59,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Id = _response.Id,
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "Pseudonym",
+                Pseudonym = "Pseudonym",
                 AuthorId = _user.Id,
                 SenderId = _user.Id,
                 CreatedAt = DateTime.UtcNow,

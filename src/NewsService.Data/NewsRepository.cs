@@ -2,8 +2,10 @@
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Data
@@ -38,6 +40,38 @@ namespace LT.DigitalOffice.NewsService.Data
             _provider.Save();
 
             return news.Id;
+        }
+
+        public List<DbNews> FindNews(FindNewsParams findNewsParams)
+        {
+            if (findNewsParams == null)
+            {
+                throw new ArgumentNullException("search parameters not passed.");
+            }
+
+            var dbNewsList = _provider.News.AsQueryable();
+
+            if (findNewsParams.AuthorId != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsParams.AuthorId);
+            }
+
+            if (findNewsParams.DepartmentId != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsParams.DepartmentId);
+            }
+
+            if (findNewsParams.Pseudonym != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.Pseudonym == findNewsParams.Pseudonym);
+            }
+
+            if (findNewsParams.Subject != null)
+            {
+                dbNewsList = dbNewsList.Where(x => x.Subject == findNewsParams.Subject);
+            }
+
+            return dbNewsList.ToList();
         }
 
         public DbNews GetNewsInfoById(Guid newsId)

@@ -3,21 +3,26 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.UnitTestKernel;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Data.UnitTests
 {
     class NewsRepositoryTests
     {
-        private IDataProvider provider;
-        private INewsRepository repository;
+        private IDataProvider _provider;
+        private INewsRepository _repository;
 
         private DbNews dbNewsRequest;
         private DbNews dbNews;
         private DbNews dbNewsToAdd;
+
+        private Guid _firstUserId = Guid.NewGuid();
+        private Guid _secondUserId = Guid.NewGuid();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -25,9 +30,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             var dbOptions = new DbContextOptionsBuilder<NewsServiceDbContext>()
                    .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
                    .Options;
-            provider = new NewsServiceDbContext(dbOptions);
+            _provider = new NewsServiceDbContext(dbOptions);
 
-            repository = new NewsRepository(provider);
+            _repository = new NewsRepository(_provider);
         }
 
         [SetUp]
@@ -38,9 +43,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid(),
+                Pseudonym = "Pseudonym",
+                AuthorId = _firstUserId,
+                SenderId = _firstUserId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -50,22 +55,22 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
-                AuthorName = "AuthorName",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid(),
+                Pseudonym = "Pseudonym",
+                AuthorId = _firstUserId,
+                SenderId = _secondUserId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
 
-            provider.News.Add(dbNews);
-            provider.Save();
+            _provider.News.Add(dbNews);
+            _provider.Save();
 
             dbNewsRequest = new DbNews
             {
                 Id = dbNews.Id,
                 Content = "Content111",
                 Subject = "Subject111",
-                AuthorName = "AuthorName",
+                Pseudonym = "Pseudonym1",
                 AuthorId = Guid.NewGuid(),
                 SenderId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
@@ -76,9 +81,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [TearDown]
         public void CleanDb()
         {
-            if (provider.IsInMemory())
+            if (_provider.IsInMemory())
             {
-                provider.EnsureDeleted();
+                _provider.EnsureDeleted();
             }
         }
 
@@ -86,17 +91,17 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
         {
-            Assert.Throws<Exception>(() => repository.EditNews(
+            Assert.Throws<Exception>(() => _repository.EditNews(
                 new DbNews() { Id = Guid.Empty }));
         }
 
         [Test]
         public void ShouldEditNews()
         {
-            provider.MakeEntityDetached(dbNews);
-            repository.EditNews(dbNewsRequest);
+            _provider.MakeEntityDetached(dbNews);
+            _repository.EditNews(dbNewsRequest);
 
-            var resultNews = provider.News
+            var resultNews = _provider.News
                 .FirstOrDefaultAsync(x => x.Id == dbNewsRequest.Id)
                 .Result;
 
@@ -108,10 +113,28 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldReturnMatchingIdAndCreateNews()
         {
-            var guidOfNews = repository.CreateNews(dbNewsToAdd);
+            var guidOfNews = _repository.CreateNews(dbNewsToAdd);
 
             Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
-            Assert.NotNull(provider.News.Find(dbNewsToAdd.Id));
+            Assert.NotNull(_provider.News.Find(dbNewsToAdd.Id));
+        }
+        #endregion
+
+        #region FindNews
+        [Test]
+        public void ExceptionNullFindNewsParams()
+        {
+            Assert.Throws<ArgumentNullException>(() => _repository.FindNews(null));
+        }
+
+        [Test]
+        public void FinedNews()
+        {
+            _provider.MakeEntityDetached(dbNews);
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { dbNews },
+                _repository.FindNews(new FindNewsParams { AuthorId = _firstUserId, Pseudonym = "Pseudonym" }));
         }
         #endregion
 
@@ -119,20 +142,20 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenThereNoNewsInDatabaseWithSuchId()
         {
-            Assert.Throws<NotFoundException>(() => repository.GetNewsInfoById(Guid.NewGuid()));
+            Assert.Throws<NotFoundException>(() => _repository.GetNewsInfoById(Guid.NewGuid()));
         }
 
         [Test]
         public void ShouldReturnNewsInfoWhenGettingFileById()
         {
-            var result = repository.GetNewsInfoById(dbNews.Id);
+            var result = _repository.GetNewsInfoById(dbNews.Id);
 
             var expected = new DbNews
             {
                 Id = dbNews.Id,
                 Content = dbNews.Content,
                 Subject = dbNews.Subject,
-                AuthorName = dbNews.AuthorName,
+                Pseudonym = dbNews.Pseudonym,
                 AuthorId = dbNews.AuthorId,
                 SenderId = dbNews.SenderId,
                 CreatedAt = dbNews.CreatedAt,

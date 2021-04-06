@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Validation
             RuleFor(news => news.AuthorId)
                 .NotEmpty();
 
-            RuleFor(news => news.AuthorName)
+            RuleFor(news => news.Pseudonym)
                 .NotEmpty()
                 .MaximumLength(50)
                 .WithMessage("Author name is too long.");

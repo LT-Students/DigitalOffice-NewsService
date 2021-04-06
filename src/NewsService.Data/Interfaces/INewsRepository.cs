@@ -1,5 +1,7 @@
 ﻿using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Data.Interfaces
 {
@@ -28,5 +30,11 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <param name="newsId">Specified id of DbNews.</param>
         /// <returns>News with specified id.</returns>
         DbNews GetNewsInfoById(Guid newsId);
+
+        /// <summary>
+        /// Find news in the database.
+        /// </summary>
+        /// <param name="findNewsParams">Params for serch.</param>
+        List<DbNews> FindNews(FindNewsParams findNewsParams);
     }
 }
