@@ -1,5 +1,5 @@
 ﻿using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using System;
 using System.Collections.Generic;
 
@@ -35,6 +35,6 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// Find news in the database.
         /// </summary>
         /// <param name="findNewsParams">Params for serch.</param>
-        List<DbNews> FindNews(FindNewsParams findNewsParams);
+        List<DbNews> FindNews(FindNewsFilter findNewsParams);
     }
 }

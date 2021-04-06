@@ -5,7 +5,7 @@ using LT.DigitalOffice.Kernel.Exceptions;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
+using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

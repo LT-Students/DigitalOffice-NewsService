@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
 namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
 {

@@ -3,7 +3,7 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.UnitTestKernel;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -134,7 +134,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { dbNews },
-                _repository.FindNews(new FindNewsParams { AuthorId = _firstUserId, Pseudonym = "Pseudonym" }));
+                _repository.FindNews(new FindNewsFilter { AuthorId = _firstUserId, Pseudonym = "Pseudonym" }));
         }
         #endregion
 

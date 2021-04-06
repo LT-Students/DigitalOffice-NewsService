@@ -2,7 +2,7 @@
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.NewsService.Data
             return news.Id;
         }
 
-        public List<DbNews> FindNews(FindNewsParams findNewsParams)
+        public List<DbNews> FindNews(FindNewsFilter findNewsParams)
         {
             if (findNewsParams == null)
             {
