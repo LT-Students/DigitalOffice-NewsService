@@ -6,6 +6,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
 {
     public interface IFindNewsCommand
     {
-        public List<NewsResponse> Execute(FindNewsFilter findNewsFilter);
+        List<NewsResponse> Execute(FindNewsFilter findNewsFilter);
     }
 }
