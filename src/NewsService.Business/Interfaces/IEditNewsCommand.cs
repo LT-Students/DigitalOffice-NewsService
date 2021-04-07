@@ -1,17 +1,20 @@
-﻿using LT.DigitalOffice.NewsService.Models.Dto.Models;
+﻿using LT.DigitalOffice.NewsService.Models.Dto.Requests;
+using Microsoft.AspNetCore.JsonPatch;
+using System;
 
 namespace LT.DigitalOffice.NewsService.Business.Interfaces
 {
     /// <summary>
     /// Represents interface for a command in command pattern.
-    /// Provides method for adding new news.
+    /// Provides method for edit news.
     /// </summary>
     public interface IEditNewsCommand
     {
         /// <summary>
         /// Edits news.
         /// </summary>
-        /// <param name="request">New news data.</param>
-        void Execute(News request);
+        /// <param name="newsId">Unique identefer of news.</param>
+        /// <param name="request">News value.</param>
+        void Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request);
     }
 }

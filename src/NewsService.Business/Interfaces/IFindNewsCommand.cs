@@ -1,5 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+﻿using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Business.Interfaces

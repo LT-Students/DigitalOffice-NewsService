@@ -2,7 +2,7 @@
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;

@@ -2,9 +2,8 @@
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using Microsoft.AspNetCore.Mvc;
+using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Business

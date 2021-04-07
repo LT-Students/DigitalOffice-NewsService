@@ -2,35 +2,40 @@
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace LT.DigitalOffice.NewsService.Business
 {
     public class EditNewsCommand : IEditNewsCommand
     {
-        private readonly INewsRepository repository;
-        private readonly INewsMapper mapper;
-        private readonly IValidator<News> validator;
+        private readonly INewsRepository _repository;
+        private readonly INewsMapper _mapper;
+        private readonly IValidator<News> _validator;
 
         public EditNewsCommand(
             [FromServices] INewsRepository repository,
             [FromServices] INewsMapper mapper,
             [FromServices] IValidator<News> validator)
         {
-            this.repository = repository;
-            this.mapper = mapper;
-            this.validator = validator;
+            _repository = repository;
+            _mapper = mapper;
+            _validator = validator;
         }
 
-        public void Execute(News request)
+        public void Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request)
         {
-            validator.ValidateAndThrowCustom(request);
 
-            var news = mapper.Map(request);
+            //_validator.ValidateAndThrowCustom(request);
 
-            repository.EditNews(news);
+
+            //var news = _mapper.Map(request);
+
+            _repository.EditNews(news);
         }
     }
 }
