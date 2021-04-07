@@ -17,9 +17,9 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         private Mock<INewsRepository> _repositoryMock;
         private Mock<INewsResponseMapper> _mapperMock;
 
-        private FindNewsFilter _goodFinedNewsParams;
-        private FindNewsFilter _badFinedNewsParams;
-        private FindNewsFilter _finedNewsParamsReturnsNullOfDbNews;
+        private FindNewsFilter _goodFinedNewsFilter;
+        private FindNewsFilter _badFinedNewsDilter;
+        private FindNewsFilter _finedNewsFilterReturnsNullOfDbNews;
 
         private List<DbNews> _goodDbNewsList;
         private List<DbNews> _badDbNewsList;
@@ -30,9 +30,9 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            _goodFinedNewsParams = new FindNewsFilter();
-            _badFinedNewsParams = new FindNewsFilter();
-            _finedNewsParamsReturnsNullOfDbNews = new FindNewsFilter();
+            _goodFinedNewsFilter = new FindNewsFilter();
+            _badFinedNewsDilter = new FindNewsFilter();
+            _finedNewsFilterReturnsNullOfDbNews = new FindNewsFilter();
 
             var dbNews = new DbNews();
             var news = new NewsResponse();
@@ -43,13 +43,13 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 
             _repositoryMock = new Mock<INewsRepository>();
             _repositoryMock
-                .Setup(x => x.FindNews(_goodFinedNewsParams))
+                .Setup(x => x.FindNews(_goodFinedNewsFilter))
                 .Returns(_goodDbNewsList);
             _repositoryMock
-                .Setup(x => x.FindNews(_finedNewsParamsReturnsNullOfDbNews))
+                .Setup(x => x.FindNews(_finedNewsFilterReturnsNullOfDbNews))
                 .Returns(_badDbNewsList);
             _repositoryMock
-                .Setup(x => x.FindNews(_badFinedNewsParams))
+                .Setup(x => x.FindNews(_badFinedNewsDilter))
                 .Throws(new Exception());
             _repositoryMock
                 .Setup(x => x.FindNews(null))
@@ -69,19 +69,19 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [Test]
         public void CommandTest()
         {
-            SerializerAssert.AreEqual(_newsResponse, _command.Execute(_goodFinedNewsParams));
+            SerializerAssert.AreEqual(_newsResponse, _command.Execute(_goodFinedNewsFilter));
         }
 
         [Test]
         public void MapperNullDbNewsTest()
         {
-            Assert.Throws<Exception>(() => _command.Execute(_finedNewsParamsReturnsNullOfDbNews));
+            Assert.Throws<Exception>(() => _command.Execute(_finedNewsFilterReturnsNullOfDbNews));
         }
 
         [Test]
         public void RepositoryBadFindNewsParamsTest()
         {
-            Assert.Throws<Exception>(() => _command.Execute(_badFinedNewsParams));
+            Assert.Throws<Exception>(() => _command.Execute(_badFinedNewsDilter));
         }
 
         [Test]

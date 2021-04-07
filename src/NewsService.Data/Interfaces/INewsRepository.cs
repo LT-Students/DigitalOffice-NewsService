@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <summary>
         /// Find news in the database.
         /// </summary>
-        /// <param name="findNewsParams">Params for serch.</param>
-        List<DbNews> FindNews(FindNewsFilter findNewsParams);
+        /// <param name="findNewsFilter">Filter for serch.</param>
+        List<DbNews> FindNews(FindNewsFilter findNewsFilter);
     }
 }

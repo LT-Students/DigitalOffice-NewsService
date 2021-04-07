@@ -42,33 +42,33 @@ namespace LT.DigitalOffice.NewsService.Data
             return news.Id;
         }
 
-        public List<DbNews> FindNews(FindNewsFilter findNewsParams)
+        public List<DbNews> FindNews(FindNewsFilter findNewsFilter)
         {
-            if (findNewsParams == null)
+            if (findNewsFilter == null)
             {
                 throw new ArgumentNullException("search parameters not passed.");
             }
 
             var dbNewsList = _provider.News.AsQueryable();
 
-            if (findNewsParams.AuthorId != null)
+            if (findNewsFilter.AuthorId != null)
             {
-                dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsParams.AuthorId);
+                dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
             }
 
-            if (findNewsParams.DepartmentId != null)
+            if (findNewsFilter.DepartmentId != null)
             {
-                dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsParams.DepartmentId);
+                dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
             }
 
-            if (findNewsParams.Pseudonym != null)
+            if (findNewsFilter.Pseudonym != null)
             {
-                dbNewsList = dbNewsList.Where(x => x.Pseudonym == findNewsParams.Pseudonym);
+                dbNewsList = dbNewsList.Where(x => x.Pseudonym == findNewsFilter.Pseudonym);
             }
 
-            if (findNewsParams.Subject != null)
+            if (findNewsFilter.Subject != null)
             {
-                dbNewsList = dbNewsList.Where(x => x.Subject == findNewsParams.Subject);
+                dbNewsList = dbNewsList.Where(x => x.Subject == findNewsFilter.Subject);
             }
 
             return dbNewsList.ToList();

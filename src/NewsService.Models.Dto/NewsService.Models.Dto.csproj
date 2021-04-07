@@ -2,10 +2,4 @@
 
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
-  <ItemGroup>
-    <Compile Remove="Requesrs\**" />
-    <EmbeddedResource Remove="Requesrs\**" />
-    <None Remove="Requesrs\**" />
-  </ItemGroup>
-
 </Project>
