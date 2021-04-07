@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
             [FromQuery] Guid newsId,
             [FromBody] JsonPatchDocument<EditNewsRequest> request)
         {
-            command.Execute(request);
+            command.Execute(newsId, request);
         }
 
         [HttpPost("create")]

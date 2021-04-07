@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
             //var news = _mapper.Map(request);
 
-            _repository.EditNews(news);
+            //_repository.EditNews(news);
         }
     }
 }
