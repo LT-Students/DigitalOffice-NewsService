@@ -11,6 +11,7 @@
     <ProjectReference Include="..\NewsService.Mappers\NewsService.Mappers.csproj" />
     <ProjectReference Include="..\NewsService.Models.Db\NewsService.Models.Db.csproj" />
     <ProjectReference Include="..\NewsService.Models.Dto\NewsService.Models.Dto.csproj" />
+    <ProjectReference Include="..\NewsService.Validation\NewsService.Validation.csproj" />
   </ItemGroup>
 
 </Project>

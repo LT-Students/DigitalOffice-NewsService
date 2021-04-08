@@ -4,6 +4,8 @@ using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Validation;
+using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -11,27 +13,27 @@ namespace LT.DigitalOffice.NewsService.Business
 {
     public class CreateNewsCommand : ICreateNewsCommand
     {
-        private readonly INewsRepository repository;
-        private readonly INewsMapper mapper;
-        private readonly IValidator<News> validator;
+        private readonly INewsRepository _repository;
+        private readonly INewsMapper _mapper;
+        private readonly INewsValidator _validator;
 
         public CreateNewsCommand(
             [FromServices] INewsRepository repository,
             [FromServices] INewsMapper mapper,
-            [FromServices] IValidator<News> validator)
+            [FromServices] INewsValidator validator)
         {
-            this.repository = repository;
-            this.mapper = mapper;
-            this.validator = validator;
+            _repository = repository;
+            _mapper = mapper;
+            _validator = validator;
         }
 
         public Guid Execute(News request)
         {
-            validator.ValidateAndThrowCustom(request);
+            _validator.ValidateAndThrowCustom(request);
 
-            var news = mapper.Map(request);
+            var news = _mapper.Map(request);
 
-            return repository.CreateNews(news);
+            return _repository.CreateNews(news);
         }
     }
 }
