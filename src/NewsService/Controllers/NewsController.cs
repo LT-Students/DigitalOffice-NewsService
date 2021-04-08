@@ -1,6 +1,7 @@
 ﻿using LT.DigitalOffice.NewsService.Business.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
+using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -38,20 +39,10 @@ namespace LT.DigitalOffice.NewsService.Controllers
         [HttpGet("findnews")]
         public List<NewsResponse> FindNews(
             [FromServices] IFindNewsCommand command,
-            [FromQuery] Guid? authorId,
-            [FromQuery] Guid? departmentId,
-            [FromQuery] string Pseudonym,
-            [FromQuery] string subject)
+            [FromQuery] FindNewsFilter findNewsFilter)
         {
-            FindNewsParams findNewsParams = new FindNewsParams
-            {
-                AuthorId = authorId,
-                DepartmentId = departmentId,
-                Pseudonym = Pseudonym,
-                Subject = subject
-            };
 
-            return command.Execute(findNewsParams);
+            return command.Execute(findNewsFilter);
         }
     }
 }

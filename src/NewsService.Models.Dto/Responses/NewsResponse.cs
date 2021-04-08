@@ -1,7 +1,7 @@
 ﻿using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto.ModelResponse
+namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
 {
     public class NewsResponse
     {

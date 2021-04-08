@@ -2,9 +2,8 @@
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.ModelResponse;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using Microsoft.AspNetCore.Mvc;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
+using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Business
@@ -22,9 +21,9 @@ namespace LT.DigitalOffice.NewsService.Business
             _mapper = mapper;
         }
 
-        public List<NewsResponse> Execute(FindNewsParams findNewsParams)
+        public List<NewsResponse> Execute(FindNewsFilter findNewsFilter)
         {
-            List<DbNews> dbNewsList = _repository.FindNews(findNewsParams);
+            List<DbNews> dbNewsList = _repository.FindNews(findNewsFilter);
             List<NewsResponse> newsResponseList = new List<NewsResponse>();
 
             foreach(DbNews dbNews in dbNewsList)
