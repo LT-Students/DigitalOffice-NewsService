@@ -4,33 +4,34 @@ using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LT.DigitalOffice.NewsService.Business
 {
     public class EditNewsCommand : IEditNewsCommand
     {
-        private readonly INewsRepository repository;
-        private readonly INewsMapper mapper;
-        private readonly IValidator<News> validator;
+        private readonly INewsRepository _repository;
+        private readonly INewsMapper _mapper;
+        private readonly INewsValidator _validator;
 
         public EditNewsCommand(
             [FromServices] INewsRepository repository,
             [FromServices] INewsMapper mapper,
-            [FromServices] IValidator<News> validator)
+            [FromServices] INewsValidator validator)
         {
-            this.repository = repository;
-            this.mapper = mapper;
-            this.validator = validator;
+            _repository = repository;
+            _mapper = mapper;
+            _validator = validator;
         }
 
         public void Execute(News request)
         {
-            validator.ValidateAndThrowCustom(request);
+            _validator.ValidateAndThrowCustom(request);
 
-            var news = mapper.Map(request);
+            var news = _mapper.Map(request);
 
-            repository.EditNews(news);
+            _repository.EditNews(news);
         }
     }
 }

@@ -3,6 +3,11 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="5.0.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\NewsService.Business\NewsService.Business.csproj" />
     <ProjectReference Include="..\NewsService.Data.Provider.MsSql.Ef\NewsService.Data.Provider.MsSql.Ef.csproj" />
     <ProjectReference Include="..\NewsService.Data.Provider\NewsService.Data.Provider.csproj" />

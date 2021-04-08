@@ -5,6 +5,7 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -14,9 +15,9 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class CreateNewsCommandTests
     {
-        private Mock<INewsMapper> mapperMock;
-        private Mock<INewsRepository> repositoryMock;
-        private Mock<IValidator<News>> validatorMock;
+        private Mock<INewsMapper> _mapperMock;
+        private Mock<INewsRepository> _repositoryMock;
+        private Mock<INewsValidator> _validatorMock;
 
         private ICreateNewsCommand command;
         private News request;
@@ -50,17 +51,17 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            mapperMock = new Mock<INewsMapper>();
-            repositoryMock = new Mock<INewsRepository>();
-            validatorMock = new Mock<IValidator<News>>();
+            _mapperMock = new Mock<INewsMapper>();
+            _repositoryMock = new Mock<INewsRepository>();
+            _validatorMock = new Mock<INewsValidator>();
 
-            command = new CreateNewsCommand(repositoryMock.Object, mapperMock.Object, validatorMock.Object);
+            command = new CreateNewsCommand(_repositoryMock.Object, _mapperMock.Object, _validatorMock.Object);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenValidatorThrowException()
         {
-            validatorMock
+            _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult(
                     new List<ValidationFailure>
@@ -69,36 +70,36 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                     }));
 
             Assert.Throws<ValidationException>(() => command.Execute(request));
-            repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
+            _repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenMapperThrowException()
         {
-            validatorMock
+            _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult());
 
-            mapperMock
+            _mapperMock
                 .Setup(x => x.Map(It.IsAny<News>()))
                 .Throws(new Exception());
 
             Assert.Throws<Exception>(() => command.Execute(request));
-            repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
+            _repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
         }
 
         [Test]
         public void ShouldThrowExceptionWhenRepositoryThrowingException()
         {
-            validatorMock
+            _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult());
 
-            mapperMock
+            _mapperMock
                 .Setup(x => x.Map(It.IsAny<News>()))
                 .Returns(createdNews);
 
-            repositoryMock
+            _repositoryMock
                 .Setup(x => x.CreateNews(It.IsAny<DbNews>()))
                 .Throws(new Exception());
 
@@ -108,20 +109,20 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [Test]
         public void ShouldReturnIdFromRepositoryWhenNewsCreated()
         {
-            validatorMock
+            _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult());
 
-            mapperMock
+            _mapperMock
                 .Setup(x => x.Map(It.IsAny<News>()))
                 .Returns(createdNews);
 
-            repositoryMock
+            _repositoryMock
                 .Setup(x => x.CreateNews(It.IsAny<DbNews>()))
                 .Returns(createdNews.Id);
 
             Assert.AreEqual(createdNews.Id, command.Execute(request));
-            repositoryMock.Verify(repository => repository.CreateNews(It.IsAny<DbNews>()), Times.Once);
+            _repositoryMock.Verify(repository => repository.CreateNews(It.IsAny<DbNews>()), Times.Once);
         }
     }
 }
