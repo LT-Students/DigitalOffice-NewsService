@@ -4,6 +4,7 @@ using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
+using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
@@ -13,14 +14,14 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         {
             if (request == null)
             {
-                throw new BadRequestException("Invalid request value");
+                throw new ArgumentNullException("Invalid request value");
             }
 
             var patchDbNews = new JsonPatchDocument<DbNews>();
 
             foreach (var item in request.Operations)
             {
-                if (item.op == "/replace")
+                if (item.op == "replace")
                 {
                     patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
                 }

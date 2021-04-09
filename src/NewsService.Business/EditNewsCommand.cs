@@ -30,10 +30,8 @@ namespace LT.DigitalOffice.NewsService.Business
 
         public bool Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request)
         {
-
-            //_validator.ValidateAndThrowCustom(request);
+            _validator.ValidateAndThrowCustom(request);
             var dbEditNews = _mapper.Map(request);
-
             return _repository.EditNews(newsId, dbEditNews);
         }
     }

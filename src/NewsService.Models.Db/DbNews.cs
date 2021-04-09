@@ -9,14 +9,14 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         public const string TableName = "News";
 
         public Guid Id { get; set; }
-        public string Content { get; set; } //edit
-        public string Subject { get; set; } //edit
+        public string Content { get; set; }
+        public string Subject { get; set; }
         public string Pseudonym { get; set; }
         public Guid AuthorId { get; set; }
         public Guid SenderId { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid? DepartmentId { get; set; }
-        public bool IsActive { get; set; } //edit
+        public bool IsActive { get; set; }
     }
 
     public class DbNewsConfiguration : IEntityTypeConfiguration<DbNews>
