@@ -81,8 +81,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
         {
-            Assert.Throws<Exception>(() => _repository.EditNews(
-                new DbNews() { Id = Guid.Empty }));
+
         }
 
         [Test]
@@ -114,23 +113,23 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsParams { AuthorId = _firstUserId}));
+                _repository.FindNews(new FindNewsFilter { AuthorId = _firstUserId}));
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsParams { DepartmentId = _dbNews.DepartmentId }));
+                _repository.FindNews(new FindNewsFilter { DepartmentId = _dbNews.DepartmentId }));
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsParams { Pseudonym = _dbNews.Pseudonym }));
+                _repository.FindNews(new FindNewsFilter { Pseudonym = _dbNews.Pseudonym }));
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsParams { Subject = _dbNews.Subject }));
+                _repository.FindNews(new FindNewsFilter { Subject = _dbNews.Subject }));
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsParams
+                _repository.FindNews(new FindNewsFilter
                 {
                     AuthorId = _firstUserId,
                     DepartmentId = _dbNews.DepartmentId,
@@ -140,7 +139,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsParams {}));
+                _repository.FindNews(new FindNewsFilter {}));
         }
         #endregion
 

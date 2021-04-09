@@ -3,7 +3,6 @@ using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
-using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
@@ -24,12 +23,12 @@ namespace LT.DigitalOffice.NewsService.Controllers
         }
 
         [HttpPatch("edit")]
-        public void Edit(
+        public bool Edit(
             [FromServices] IEditNewsCommand command,
             [FromQuery] Guid newsId,
             [FromBody] JsonPatchDocument<EditNewsRequest> request)
         {
-            command.Execute(newsId, request);
+            return command.Execute(newsId, request);
         }
 
         [HttpPost("create")]
@@ -45,14 +44,6 @@ namespace LT.DigitalOffice.NewsService.Controllers
             [FromServices] IFindNewsCommand command,
             [FromQuery] FindNewsFilter findNewsFilter)
         {
-            FindNewsParams findNewsParams = new FindNewsParams
-            {
-                AuthorId = authorId,
-                DepartmentId = departmentId,
-                Pseudonym = Pseudonym,
-                Subject = subject
-            };
-
             return command.Execute(findNewsFilter);
         }
     }

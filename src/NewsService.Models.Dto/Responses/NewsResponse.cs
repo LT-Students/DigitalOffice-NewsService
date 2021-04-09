@@ -11,5 +11,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
         public User Author { get; set; }
         public User Sender { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Department Department { get; set; }
+        public bool IsActive { get; set; }
     }
 }

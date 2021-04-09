@@ -18,8 +18,33 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
     {
         private IRequestClient<IGetUserDataRequest> _requestClient;
         private readonly ILogger _logger;
+
+        private string GetUserFIO (Guid userId)
+        {
+            string fio = null;
+
+            try
+            {
+                var request = IGetUserDataRequest.CreateObj(userId);
+                var response = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
+
+                if (!response.Message.IsSuccess)
+                {
+                    _logger.LogWarning($"Can't found user FIO. Reason: '{string.Join(',', response.Message.Errors)}'");
+                }
+
+                fio = $"{response.Message.Body.LastName} {response.Message.Body.FirstName} {response.Message.Body.MiddleName}".Trim();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Exception on get user FIO data request.");
+            }
+
+            return fio;
+        }
+
         public NewsResponseMapper(
-            [FromServices] IRequestClient<IGetUserDataRequest> client,
+            IRequestClient<IGetUserDataRequest> client,
             ILogger<NewsResponseMapper> logger)
         {
             _requestClient = client;
@@ -32,54 +57,16 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                 throw new BadRequestException();
             }
 
-            User author = new();
-            User sender = new();
-
-            author.Id = dbNews.AuthorId;
-            sender.Id = dbNews.SenderId;
-
-            try
-            {
-                    var authorRequest = IGetUserDataRequest.CreateObj(dbNews.AuthorId);
-                    var authorResponse = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(authorRequest).Result;
-
-                    if (!authorResponse.Message.IsSuccess)
-                    {
-                        _logger.LogWarning($"Can't found author. Reason: '{string.Join(',', authorResponse.Message.Errors)}'");
-                    }
-
-                    author.FIO = $"{authorResponse.Message.Body.LastName} {authorResponse.Message.Body.FirstName} {authorResponse.Message.Body.MiddleName}".Trim();
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Exception on get author data request.");
-            }
-
-            try
-            {
-                var senderRequest = IGetUserDataRequest.CreateObj(dbNews.SenderId);
-                var senderResponse = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(senderRequest).Result;
-
-                if (!senderResponse.Message.IsSuccess)
-                {
-                    _logger.LogWarning($"Can't found sender. Reason: '{string.Join(',', senderResponse.Message.Errors)}'");
-                }
-
-                sender.FIO = $"{senderResponse.Message.Body.LastName} {senderResponse.Message.Body.FirstName} {senderResponse.Message.Body.MiddleName}".Trim();
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Exception on get sender data request.");
-            }
-
             return new NewsResponse
             {
                 Id = dbNews.Id,
                 Content = dbNews.Content,
                 Subject = dbNews.Subject,
-                Author = author,
-                Sender = sender,
-                CreatedAt = dbNews.CreatedAt
+                Author = new User { Id = dbNews.AuthorId, FIO = GetUserFIO(dbNews.AuthorId) },
+                Sender = new User { Id = dbNews.AuthorId, FIO = GetUserFIO(dbNews.AuthorId) },
+                CreatedAt = dbNews.CreatedAt,
+                Department = new Department { Id = dbNews.DepartmentId, Name = "" },
+                IsActive = dbNews.IsActive
             };
         }
     }

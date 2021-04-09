@@ -29,16 +29,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
                 SenderId = Guid.NewGuid()
             };
 
-            _newsRequestWithId = new News
-            {
-                Id = Guid.NewGuid(),
-                Content = "Content",
-                Subject = "Subject",
-                Pseudonym = "AuthorName",
-                AuthorId = _newsRequest.AuthorId,
-                SenderId = _newsRequest.SenderId,
-            };
-
             _expectedDbNews = new DbNews
             {
                 Content = "Content",
@@ -62,18 +52,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
         public void ShouldReturnRightModelWhenRequestIsMapped()
         {
             var dbNews = _mapper.Map(_newsRequest);
-            _expectedDbNews.Id = dbNews.Id;
-            _expectedDbNews.CreatedAt = dbNews.CreatedAt;
-
-            Assert.IsInstanceOf<Guid>(dbNews.Id);
-            SerializerAssert.AreEqual(_expectedDbNews, dbNews);
-        }
-
-        [Test]
-        public void ShouldReturnRightModelWhenRequestWithIdIsMapped()
-        {
-            var dbNews = _mapper.Map(_newsRequestWithId);
-
             _expectedDbNews.Id = dbNews.Id;
             _expectedDbNews.CreatedAt = dbNews.CreatedAt;
 
