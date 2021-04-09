@@ -15,12 +15,12 @@ namespace LT.DigitalOffice.NewsService.Business
     {
         private readonly INewsRepository _repository;
         private readonly INewsMapper _mapper;
-        private readonly IValidator<News> _validator;
+        private readonly INewsValidator _validator;
 
         public EditNewsCommand(
             [FromServices] INewsRepository repository,
             [FromServices] INewsMapper mapper,
-            [FromServices] IValidator<News> validator)
+            [FromServices] INewsValidator validator)
         {
             _repository = repository;
             _mapper = mapper;

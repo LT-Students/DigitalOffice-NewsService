@@ -1,11 +1,13 @@
-﻿using LT.DigitalOffice.NewsService.Models.Dto.Models;
+﻿using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Business.Interfaces
 {
+    [AutoInject]
     public interface IFindNewsCommand
     {
-        public List<NewsResponse> Execute(FindNewsParams findNewsParams);
+        List<NewsResponse> Execute(FindNewsFilter findNewsFilter);
     }
 }

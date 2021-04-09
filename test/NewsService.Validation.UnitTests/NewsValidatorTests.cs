@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using NUnit.Framework;
 using System;
 
@@ -8,7 +9,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
 {
     public class NewsValidatorTests
     {
-        private IValidator<News> validator;
+        private INewsValidator validator;
         private News request;
 
         [SetUp]

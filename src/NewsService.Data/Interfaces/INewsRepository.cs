@@ -1,5 +1,6 @@
-﻿using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+﻿using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
     /// Represents interface of repository in repository pattern.
     /// Provides methods for working with the database of NewsService.
     /// </summary>
+    [AutoInject]
     public interface INewsRepository
     {
         /// <summary>
@@ -34,7 +36,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// <summary>
         /// Find news in the database.
         /// </summary>
-        /// <param name="findNewsParams">Params for serch.</param>
-        List<DbNews> FindNews(FindNewsParams findNewsParams);
+        /// <param name="findNewsFilter">Filter for serch.</param>
+        List<DbNews> FindNews(FindNewsFilter findNewsFilter);
     }
 }

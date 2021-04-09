@@ -2,6 +2,7 @@
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
@@ -31,8 +32,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                 throw new BadRequestException();
             }
 
-            User author = new User();
-            User sender = new User();
+            User author = new();
+            User sender = new();
 
             author.Id = dbNews.AuthorId;
             sender.Id = dbNews.SenderId;
