@@ -6,6 +6,8 @@ using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -20,9 +22,15 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         private DbNews _dbNews;
         private DbNews _dbNewsToAdd;
+        private JsonPatchDocument<DbNews> _editDbNews;
+        private JsonPatchDocument<DbNews> _editDbNewsSubject;
+        private JsonPatchDocument<DbNews> _editDbNewsContent;
+        private JsonPatchDocument<DbNews> _editDbNewsIsActive;
 
         private Guid _firstUserId = Guid.NewGuid();
         private Guid _secondUserId = Guid.NewGuid();
+        private string _firstValue;
+        private string _secondValue;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -50,6 +58,20 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 DepartmentId = Guid.NewGuid(),
                 IsActive = true
             };
+
+            _editDbNews = new JsonPatchDocument<DbNews>();
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", "/Subject", "", _firstValue));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", "/Content", "", _firstValue));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", "/IsActive", "", "false"));
+
+            _editDbNewsSubject = new JsonPatchDocument<DbNews>();
+            _editDbNewsSubject.Operations.Add(new Operation<DbNews>("replace", "/Subject", "", _secondValue));
+
+            _editDbNewsContent = new JsonPatchDocument<DbNews>();
+            _editDbNewsContent.Operations.Add(new Operation<DbNews>("replace", "/Content", "", _secondValue));
+
+            _editDbNewsIsActive = new JsonPatchDocument<DbNews>();
+            _editDbNewsIsActive.Operations.Add(new Operation<DbNews>("replace", "/IsActive", "", "true"));
 
             _dbNewsToAdd = new DbNews
             {
@@ -79,14 +101,30 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         #region EditNews
         [Test]
-        public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
+        public void Success()
         {
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNews));
+            var check = _provider.News.Find(_dbNews.Id);
+            Assert.AreEqual(_firstValue, check.Subject);
+            Assert.AreEqual(_firstValue, check.Content);
+            Assert.AreEqual(false, check.IsActive);
 
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsSubject));
+            Assert.AreEqual(_secondValue, _provider.News.Find(_dbNews.Id).Subject);
+
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsContent));
+            Assert.AreEqual(_secondValue, _provider.News.Find(_dbNews.Id).Content);
+
+
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsIsActive));
+            Assert.AreEqual(true, _provider.News.Find(_dbNews.Id).IsActive);
         }
 
         [Test]
-        public void ShouldEditNews()
+        public void ExceptionIfNewsNotFound()
         {
+            Assert.Throws<NotFoundException>(() => _repository.EditNews(Guid.NewGuid(), _editDbNews));
+
         }
         #endregion
 

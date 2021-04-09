@@ -36,6 +36,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         private NewsResponse _response;
         private DbNews _dbNews;
         private User _user;
+        private Department _department;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -46,6 +47,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 FIO = "Ivanov Ivan Ivanovich"
             };
 
+            _department = new Department
+            {
+                Id = Guid.NewGuid(),
+                Name = "Name"
+            };
+
             _response = new NewsResponse
             {
                 Id = Guid.NewGuid(),
@@ -53,7 +60,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Subject = "Subject111",
                 Author = _user,
                 Sender = _user,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Department = _department,
+                IsActive = true
             };
 
             _dbNews = new DbNews
@@ -65,6 +74,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 AuthorId = _user.Id,
                 SenderId = _user.Id,
                 CreatedAt = DateTime.UtcNow,
+                DepartmentId = _department.Id,
                 IsActive = true
             };
         }
@@ -127,7 +137,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Subject = result.Subject,
                 Author = result.Author,
                 Sender = result.Sender,
-                CreatedAt = result.CreatedAt
+                CreatedAt = result.CreatedAt,
+                Department = result.Department,
+                IsActive = result.IsActive
             };
 
             SerializerAssert.AreEqual(expected, result);
@@ -157,7 +169,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Subject = result.Subject,
                 Author = result.Author,
                 Sender = result.Sender,
-                CreatedAt = result.CreatedAt
+                CreatedAt = result.CreatedAt,
+                Department = result.Department,
+                IsActive = result.IsActive,
             };
 
             SerializerAssert.AreEqual(expected, result);
@@ -187,7 +201,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Subject = result.Subject,
                 Author = result.Author,
                 Sender = result.Sender,
-                CreatedAt = result.CreatedAt
+                CreatedAt = result.CreatedAt,
+                Department = result.Department,
+                IsActive = result.IsActive,
             };
 
             SerializerAssert.AreEqual(expected, result);

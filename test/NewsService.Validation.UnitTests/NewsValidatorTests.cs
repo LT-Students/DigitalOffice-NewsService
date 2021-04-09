@@ -48,12 +48,6 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         }
 
         [Test]
-        public void ShouldThrowValidationExceptionWhenAuthorNameIsEmpty()
-        {
-            validator.ShouldHaveValidationErrorFor(x => x.Pseudonym, "");
-        }
-
-        [Test]
         public void ShouldThrowValidationExceptionWhenAuthorNameIsTooLong()
         {
             var authorName = request.Pseudonym.PadLeft(100);
