@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
     {
         private Mock<INewsRepository> _repositoryMock;
         private Mock<IPatchNewsMapper> _mapperMock;
-        private Mock<IPatchNewsValidator> _validatorMock;
+        private Mock<IEditNewsValidator> _validatorMock;
 
         private JsonPatchDocument<EditNewsRequest> _goodEditNewsRequest;
         private JsonPatchDocument<EditNewsRequest> _badEditNewsRequest;
@@ -57,7 +57,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Setup(x => x.Map(_badEditNewsRequest))
                 .Throws(new ArgumentNullException());
 
-            _validatorMock = new Mock<IPatchNewsValidator>();
+            _validatorMock = new Mock<IEditNewsValidator>();
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult());
@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         }
 
         [Test]
-        public void Success()
+        public void SuccessCommand()
         {
             SerializerAssert.AreEqual(true, _command.Execute(_goodNewsId, _goodEditNewsRequest));
         }

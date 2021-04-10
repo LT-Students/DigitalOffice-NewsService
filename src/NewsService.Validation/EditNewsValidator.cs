@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Validation
 {
-    public class PatchNewsValidator : AbstractValidator<JsonPatchDocument<EditNewsRequest>>, IPatchNewsValidator
+    public class EditNewsValidator : AbstractValidator<JsonPatchDocument<EditNewsRequest>>, IEditNewsValidator
     {
         private static List<string> Paths
             => new List<string> { Content, Subject, IsActive };
@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.NewsService.Validation
                         path,
                         StringComparison.OrdinalIgnoreCase));
 
-        public PatchNewsValidator()
+        public EditNewsValidator()
         {
             RuleFor(x => x.Operations)
                 .Must(x => x.Any())

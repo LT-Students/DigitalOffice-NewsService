@@ -14,11 +14,11 @@ namespace LT.DigitalOffice.NewsService.Business
 
         private readonly INewsRepository _repository;
         private readonly IPatchNewsMapper _mapper;
-        private readonly IPatchNewsValidator _validator;
+        private readonly IEditNewsValidator _validator;
         public EditNewsCommand(
             INewsRepository repository,
             IPatchNewsMapper mapper,
-            IPatchNewsValidator validator)
+            IEditNewsValidator validator)
         {
             _repository = repository;
             _mapper = mapper;
@@ -28,8 +28,8 @@ namespace LT.DigitalOffice.NewsService.Business
         public bool Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request)
         {
             _validator.ValidateAndThrowCustom(request);
-            var dbEditNews = _mapper.Map(request);
-            return _repository.EditNews(newsId, dbEditNews);
+            var dbRequest = _mapper.Map(request);
+            return _repository.EditNews(newsId, dbRequest);
         }
     }
 }
