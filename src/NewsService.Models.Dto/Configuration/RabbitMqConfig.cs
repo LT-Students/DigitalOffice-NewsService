@@ -6,5 +6,6 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
     public class RabbitMqConfig : BaseRabbitMqConfig
     {
         public string GetUserDataEndpoint { get; set; }
+        public string GetDepartmentEndpoint { get; set; }
     }
 }
