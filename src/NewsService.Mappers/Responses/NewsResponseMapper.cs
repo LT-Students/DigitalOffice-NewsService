@@ -2,7 +2,6 @@
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
-using LT.DigitalOffice.Models.Broker.Responses;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
@@ -15,7 +14,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
     public class NewsResponseMapper : INewsResponseMapper
     {
-        private IRequestClient<IGetUserDataRequest> _requestClient;
+        private IRequestClient<IGetUserDataRequest> _userRequestClient;
+        private IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
         private readonly ILogger _logger;
 
         private string GetUserFIO (Guid userId)
@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
             try
             {
                 var request = IGetUserDataRequest.CreateObj(userId);
-                var response = _requestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
+                var response = _userRequestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
 
                 if (!response.Message.IsSuccess)
                 {
@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
             try
             {
                 var request = IGetDepartmentRequest.CreateObj(departmentId);
-                var response = _requestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
+                var response = _departmentRequestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
 
                 if (!response.Message.IsSuccess)
                 {
@@ -67,10 +67,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         }
 
         public NewsResponseMapper(
-            IRequestClient<IGetUserDataRequest> client,
+            IRequestClient<IGetUserDataRequest> userClient,
+            IRequestClient<IGetDepartmentRequest> departmentClient,
             ILogger<NewsResponseMapper> logger)
         {
-            _requestClient = client;
+            _userRequestClient = userClient;
+            _departmentRequestClient = departmentClient;
             _logger = logger;
         }
         public NewsResponse Map(DbNews dbNews)
@@ -81,7 +83,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
             }
 
             Department department = null;
-            if(dbNews.DepartmentId != null)
+            if(dbNews.DepartmentId != null && dbNews.DepartmentId != Guid.Empty)
             {
                 department = new Department { Id = (Guid)dbNews.DepartmentId, Name = GetDepartmentName((Guid)dbNews.DepartmentId) };
             }

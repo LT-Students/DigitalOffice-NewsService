@@ -1,33 +1,16 @@
-using FluentValidation;
 using HealthChecks.UI.Client;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel;
-using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.Token;
-using LT.DigitalOffice.NewsService.Business;
-using LT.DigitalOffice.NewsService.Business.Interfaces;
-using LT.DigitalOffice.NewsService.Data;
-using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.NewsService.Mappers.Models;
-using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.Responses;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -121,7 +104,7 @@ namespace NewsService
                     .AllowAnyHeader()
                     .AllowAnyMethod());
 
-            //app.UseMiddleware<TokenMiddleware>();
+            app.UseMiddleware<TokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

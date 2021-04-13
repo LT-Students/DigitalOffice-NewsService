@@ -48,7 +48,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
                     "replace",
                     $"/{nameof(EditNewsRequest.IsActive)}",
                     "",
-                    "false"),
+                    false),
             }, new CamelCasePropertyNamesContractResolver());
         }
 

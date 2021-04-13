@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
@@ -21,6 +22,8 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         private Mock<IPatchNewsMapper> _mapperMock;
         private Mock<IEditNewsValidator> _validatorMock;
 
+        private Mock<IValidationContext> _goodValidatorMock;
+        private Mock<IValidationContext> _badValidatorMock;
         private JsonPatchDocument<EditNewsRequest> _goodEditNewsRequest;
         private JsonPatchDocument<EditNewsRequest> _badEditNewsRequest;
         private JsonPatchDocument<DbNews> _dbNews;
@@ -36,7 +39,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             _goodEditNewsRequest = new JsonPatchDocument<EditNewsRequest>();
             _badEditNewsRequest = null;
             _dbNews = new JsonPatchDocument<DbNews>();
-        }
+    }
 
         [SetUp]
         public void SetUp()
@@ -66,24 +69,33 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         }
 
         [Test]
-        public void SuccessCommand()
+        public void SuccessCommandTest()
         {
             SerializerAssert.AreEqual(true, _command.Execute(_goodNewsId, _goodEditNewsRequest));
         }
 
         [Test]
-        public void BadValidator()
+        public void BadValidatorTest()
         {
+            _validatorMock
+                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+                .Returns(new ValidationResult(
+                    new List<ValidationFailure>
+                        {
+                            new ValidationFailure("error", "something", null)
+                        }));
+
+            Assert.Throws<ValidationException>(() => _command.Execute(_goodNewsId, _goodEditNewsRequest));
         }
 
         [Test]
-        public void MapperException()
+        public void MapperExceptionTest()
         {
             Assert.Throws<ArgumentNullException>(() => _command.Execute(It.IsAny<Guid>(), _badEditNewsRequest));
         }
 
         [Test]
-        public void RepositoryException()
+        public void RepositoryExceptionTest()
         {
             Assert.Throws<NotFoundException> (() => _command.Execute(_badNewsId, _goodEditNewsRequest));
         }

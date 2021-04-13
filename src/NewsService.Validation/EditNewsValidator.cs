@@ -66,8 +66,9 @@ namespace LT.DigitalOffice.NewsService.Validation
                         RuleFor(x => x.Operations)
                             .UniqueOperationWithAllowedOp(IsActive, "replace");
 
-                        RuleFor(x => (string)GetOperationByPath(x, Content).value)
-                            .NotEmpty();
+                        RuleFor(x => GetOperationByPath(x, IsActive).value)
+                            .NotNull()
+                            .Must(x => x is bool);
                     });
                 });
         }
