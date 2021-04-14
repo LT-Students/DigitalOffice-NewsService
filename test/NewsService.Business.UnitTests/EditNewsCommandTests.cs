@@ -22,8 +22,6 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         private Mock<IPatchNewsMapper> _mapperMock;
         private Mock<IEditNewsValidator> _validatorMock;
 
-        private Mock<IValidationContext> _goodValidatorMock;
-        private Mock<IValidationContext> _badValidatorMock;
         private JsonPatchDocument<EditNewsRequest> _goodEditNewsRequest;
         private JsonPatchDocument<EditNewsRequest> _badEditNewsRequest;
         private JsonPatchDocument<DbNews> _dbNews;

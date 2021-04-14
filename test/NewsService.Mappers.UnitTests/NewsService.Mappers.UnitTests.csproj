@@ -3,10 +3,6 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\NewsService.Business\NewsService.Business.csproj" />
     <ProjectReference Include="..\..\src\NewsService.Data\NewsService.Data.csproj" />
     <ProjectReference Include="..\..\src\NewsService.Mappers\NewsService.Mappers.csproj" />
