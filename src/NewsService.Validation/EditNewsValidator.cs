@@ -46,8 +46,7 @@ namespace LT.DigitalOffice.NewsService.Validation
                             .UniqueOperationWithAllowedOp(Content, "replace");
 
                         RuleFor(x => (string)GetOperationByPath(x, Content).value)
-                            .NotEmpty()
-                            .MinimumLength(1).WithMessage("Content is too short.");
+                            .NotEmpty();
                     });
 
                     When(x => GetOperationByPath(x, Subject) != null, () =>
