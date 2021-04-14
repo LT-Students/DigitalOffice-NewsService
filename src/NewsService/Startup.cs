@@ -1,47 +1,68 @@
-using FluentValidation;
 using HealthChecks.UI.Client;
-using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Kernel;
-using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Kernel.Middlewares.Token;
-using LT.DigitalOffice.NewsService.Business;
-using LT.DigitalOffice.NewsService.Business.Interfaces;
-using LT.DigitalOffice.NewsService.Data;
-using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.NewsService.Mappers.ModelMappers;
-using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace NewsService
+namespace LT.DigitalOffice.NewsService
 {
-    public class Startup
+    public class Startup : BaseApiInfo
     {
+        public const string CorsPolicyName = "LtDoCorsPolicy";
+
         private readonly RabbitMqConfig _rabbitMqConfig;
         private readonly BaseServiceInfoConfig _serviceInfoConfig;
-        private readonly ILogger<Startup> _logger;
 
         public IConfiguration Configuration { get; }
+
+        #region private methods
+
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(_rabbitMqConfig.Host, "/", host =>
+                    {
+                        host.Username($"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}");
+                        host.Password(_serviceInfoConfig.Id);
+                    });
+                });
+
+                x.AddRequestClients(_rabbitMqConfig);
+            });
+
+            services.AddMassTransitHostedService();
+        }
+
+        private void UpdateDatabase(IApplicationBuilder app)
+        {
+            using var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+
+            using var context = serviceScope.ServiceProvider.GetService<NewsServiceDbContext>();
+
+            context.Database.Migrate();
+        }
+
+        #endregion
+
+        #region public methods
 
         public Startup(IConfiguration configuration)
         {
@@ -55,20 +76,27 @@ namespace NewsService
                 .GetSection(BaseServiceInfoConfig.SectionName)
                 .Get<BaseServiceInfoConfig>();
 
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                    .AddFilter("LT.DigitalOffice.NewsService.Startup", LogLevel.Trace)
-                    .AddConsole();
-            });
-
-            _logger = loggerFactory.CreateLogger<Startup>();
+            Version = "1.2.2";
+            Description = "NewsService, is intended to work with the news - create them, update info and etc.";
+            StartTime = DateTime.UtcNow;
+            ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
         }
-
-        #region public methods
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    CorsPolicyName,
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins("http://*.ltdo.xyz", "http://ltdo.xyz", "http://ltdo.xyz:9802")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
+
             services.Configure<TokenConfiguration>(Configuration.GetSection("CheckTokenMiddleware"));
             services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
             services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
@@ -91,7 +119,7 @@ namespace NewsService
                 options.UseSqlServer(connStr);
             });
 
-            services.AddBusinessObjects(_logger);
+            services.AddBusinessObjects();
 
             ConfigureMassTransit(services);
 
@@ -103,29 +131,23 @@ namespace NewsService
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseExceptionsHandler(loggerFactory);
-
             UpdateDatabase(app);
 
-#if RELEASE
-            app.UseHttpsRedirection();
-#endif
+            app.UseForwardedHeaders();
+
+            app.UseExceptionsHandler(loggerFactory);
+
+            app.UseApiInformation();
 
             app.UseRouting();
 
-            string corsUrl = Configuration.GetSection("Settings")["CorsUrl"];
-
-            app.UseCors(builder =>
-                builder
-                    .WithOrigins(corsUrl)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod());
+            app.UseCors(CorsPolicyName);
 
             app.UseMiddleware<TokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireCors(CorsPolicyName);
 
                 endpoints.MapHealthChecks($"/{_serviceInfoConfig.Id}/hc", new HealthCheckOptions
                 {
@@ -139,39 +161,6 @@ namespace NewsService
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
             });
-        }
-
-        #endregion
-
-        #region private methods
-
-        private void ConfigureMassTransit(IServiceCollection services)
-        {
-            services.AddMassTransit(x =>
-            {
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host(_rabbitMqConfig.Host, "/", host =>
-                    {
-                        host.Username($"{_serviceInfoConfig.Name}_{_serviceInfoConfig.Id}");
-                        host.Password(_serviceInfoConfig.Id);
-                    });
-                });
-
-                x.AddRequestClients(_rabbitMqConfig, _logger);
-            });
-
-            services.AddMassTransitHostedService();
-        }
-
-        private void UpdateDatabase(IApplicationBuilder app)
-        {
-            using var serviceScope = app.ApplicationServices
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope();
-
-            using var context = serviceScope.ServiceProvider.GetService<NewsServiceDbContext>();
-            context.Database.Migrate();
         }
 
         #endregion
