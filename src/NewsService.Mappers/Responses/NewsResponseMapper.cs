@@ -18,9 +18,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         private IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
         private readonly ILogger _logger;
 
-        private string GetUserFIO (Guid userId)
+        private string GetUserFullName (Guid userId)
         {
-            string fio = null;
+            string fullName = null;
 
             try
             {
@@ -32,14 +32,14 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                     _logger.LogWarning($"Can't found user FIO. Reason: '{string.Join(',', response.Message.Errors)}'");
                 }
 
-                fio = $"{response.Message.Body.LastName} {response.Message.Body.FirstName} {response.Message.Body.MiddleName}".Trim();
+                fullName = $"{response.Message.Body.LastName} {response.Message.Body.FirstName} {response.Message.Body.MiddleName}".Trim();
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Exception on get user FIO data request.");
             }
 
-            return fio;
+            return fullName;
         }
 
         private string GetDepartmentName(Guid departmentId)
@@ -79,7 +79,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         {
             if (dbNews == null)
             {
-                throw new BadRequestException();
+                throw new ArgumentNullException(nameof(dbNews));
             }
 
             Department department = null;
@@ -93,8 +93,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                 Id = dbNews.Id,
                 Content = dbNews.Content,
                 Subject = dbNews.Subject,
-                Author = new User { Id = dbNews.AuthorId, FIO = GetUserFIO(dbNews.AuthorId) },
-                Sender = new User { Id = dbNews.AuthorId, FIO = GetUserFIO(dbNews.AuthorId) },
+                Author = new User { Id = dbNews.AuthorId, FullName = GetUserFullName(dbNews.AuthorId) },
+                Sender = new User { Id = dbNews.AuthorId, FullName = GetUserFullName(dbNews.AuthorId) },
                 CreatedAt = dbNews.CreatedAt,
                 Department = department,
                 IsActive = dbNews.IsActive

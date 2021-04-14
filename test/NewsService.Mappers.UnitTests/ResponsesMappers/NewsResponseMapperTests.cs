@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         [SetUp]
         public void SetUp()
         {
-            _user = new User { Id = Guid.NewGuid(), FIO = "Ivanov Ivan Ivanovich" };
+            _user = new User { Id = Guid.NewGuid(), FullName = "Ivanov Ivan Ivanovich" };
 
             _department = new Department { Id = Guid.NewGuid(), Name = departmentName };
 
@@ -131,7 +131,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         [Test]
         public void ShouldThrowBadRequestExceptionWhenDbNewsIsNull()
         {
-            Assert.Throws<BadRequestException>(() => _mapper.Map(null));
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
        [Test]
         public void ShouldMapWhenBadSenderIdTest()
         {
-            _user.FIO = null;
+            _user.FullName = null;
 
             var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             responseMock
