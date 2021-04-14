@@ -111,13 +111,13 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
         }
 
-        /*[Test]
+        [Test]
         public void ExceptionEmptyIsActive()
         {
             GetOperationByPath(EditNewsValidator.IsActive).value = null;
 
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
-        }*/
+        }
         #endregion
     }
 }
