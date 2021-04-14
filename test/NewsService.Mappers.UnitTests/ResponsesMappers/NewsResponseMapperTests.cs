@@ -1,7 +1,6 @@
 ﻿using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Mappers.Responses;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
