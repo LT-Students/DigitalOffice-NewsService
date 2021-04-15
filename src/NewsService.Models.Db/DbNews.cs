@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 
             builder
                 .Property(p => p.CreatedAt)
-                .HasDefaultValue(new DateTime(2021, 1, 1));
+                .IsRequired();
 
             builder
                 .Property(p => p.Content)

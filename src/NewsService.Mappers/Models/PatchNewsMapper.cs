@@ -27,7 +27,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 }
                 else
                 {
-                    throw new BadRequestException("Invalid operation");
+                    throw new ArgumentException("Invalid operation");
                 }
             }
 
