@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.NewsService
                 .GetSection(BaseServiceInfoConfig.SectionName)
                 .Get<BaseServiceInfoConfig>();
 
-            Version = "1.2.2";
+            Version = "1.2.3";
             Description = "NewsService, is intended to work with the news - create them, update info and etc.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
@@ -92,6 +92,7 @@ namespace LT.DigitalOffice.NewsService
                     {
                         builder
                             .WithOrigins(
+                                "https://*.ltdo.xyz",
                                 "http://*.ltdo.xyz",
                                 "http://ltdo.xyz",
                                 "http://ltdo.xyz:9808",
