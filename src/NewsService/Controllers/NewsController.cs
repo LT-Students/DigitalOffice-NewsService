@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class NewsController : ControllerBase
     {
