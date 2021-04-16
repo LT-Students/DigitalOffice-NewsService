@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.Kernel.Exceptions;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
+﻿using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
@@ -29,8 +28,8 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         private Guid _firstUserId = Guid.NewGuid();
         private Guid _secondUserId = Guid.NewGuid();
-        private string _firstValue;
-        private string _secondValue;
+        private string _firstValue = "firstValue";
+        private string _secondValue = "secondValue";
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -60,18 +59,18 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             };
 
             _editDbNews = new JsonPatchDocument<DbNews>();
-            _editDbNews.Operations.Add(new Operation<DbNews>("replace", "/Subject", "", _firstValue));
-            _editDbNews.Operations.Add(new Operation<DbNews>("replace", "/Content", "", _firstValue));
-            _editDbNews.Operations.Add(new Operation<DbNews>("replace", "/IsActive", "", "false"));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Subject)}", "", _firstValue));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Content)}", "", _firstValue));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.IsActive)}", "", "false"));
 
             _editDbNewsSubject = new JsonPatchDocument<DbNews>();
-            _editDbNewsSubject.Operations.Add(new Operation<DbNews>("replace", "/Subject", "", _secondValue));
+            _editDbNewsSubject.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Subject)}", "", _secondValue));
 
             _editDbNewsContent = new JsonPatchDocument<DbNews>();
-            _editDbNewsContent.Operations.Add(new Operation<DbNews>("replace", "/Content", "", _secondValue));
+            _editDbNewsContent.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Content)}", "", _secondValue));
 
             _editDbNewsIsActive = new JsonPatchDocument<DbNews>();
-            _editDbNewsIsActive.Operations.Add(new Operation<DbNews>("replace", "/IsActive", "", "true"));
+            _editDbNewsIsActive.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.IsActive)}", "", "true"));
 
             _dbNewsToAdd = new DbNews
             {
@@ -101,7 +100,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         #region EditNews
         [Test]
-        public void Success()
+        public void SuccessfullyEditNewsWithAnyСombinationRequestProperties()
         {
             SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNews));
             var check = _provider.News.Find(_dbNews.Id);

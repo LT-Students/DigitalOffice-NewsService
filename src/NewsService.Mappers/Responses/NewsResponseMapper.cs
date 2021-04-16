@@ -31,8 +31,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                 {
                     _logger.LogWarning($"Can't found user FIO. Reason: '{string.Join(',', response.Message.Errors)}'");
                 }
-
-                fullName = $"{response.Message.Body.LastName} {response.Message.Body.FirstName} {response.Message.Body.MiddleName}".Trim();
+                else
+                {
+                    fullName = $"{response.Message.Body.LastName} {response.Message.Body.FirstName} {response.Message.Body.MiddleName}".Trim();
+                }
             }
             catch (Exception exception)
             {
@@ -55,8 +57,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                 {
                     _logger.LogWarning($"Can't found department name. Reason: '{string.Join(',', response.Message.Errors)}'");
                 }
-
-                name = response.Message.Body.Name;
+                else
+                {
+                    name = response.Message.Body.Name;
+                }
             }
             catch (Exception exception)
             {

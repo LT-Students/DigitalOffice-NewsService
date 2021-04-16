@@ -41,6 +41,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         [SetUp]
         public void SetUp()
         {
+            #region Data models mocks
             _user = new User { Id = Guid.NewGuid(), FullName = "Ivanov Ivan Ivanovich" };
 
             _department = new Department { Id = Guid.NewGuid(), Name = departmentName };
@@ -70,6 +71,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 IsActive = _dbNews.IsActive
             };
 
+            #endregion
+
+            #region Broker user mocks
             _userResponseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
 
             _userResponseMock
@@ -97,6 +101,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                     It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(_userBrokerResponseMock.Object));
 
+            #endregion
+
+            #region Broker department mocks
+
             _departmentResponseMock = new Mock<IOperationResult<IGetDepartmentResponse>>();
 
             _departmentResponseMock
@@ -119,6 +127,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                     It.IsAny<object>(), default, default))
                 .Returns(Task.FromResult(_departmentBrokerResponseMock.Object));
 
+            #endregion
+
             _loggerMock = new Mock<ILogger<NewsResponseMapper>>();
 
             _mapper = new NewsResponseMapper(
@@ -130,7 +140,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         [Test]
         public void ShouldThrowBadRequestExceptionWhenDbNewsIsNull()
         {
-            Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
+            DbNews dbNews = null;
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(dbNews));
         }
 
         [Test]
@@ -160,7 +171,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
         }
 
         [Test]
-        public void ShoulMapWhanBadDepartmentIdTest()
+        public void ShouldMapWhenBadDepartmentIdTest()
         {
             _department.Name = null;
 
