@@ -1,9 +1,7 @@
 ﻿using LT.DigitalOffice.Broker.Requests;
 using LT.DigitalOffice.Broker.Responses;
 using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Kernel.Exceptions;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers;
+using LT.DigitalOffice.NewsService.Mappers.Responses;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
@@ -21,120 +19,142 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
 {
     internal class NewsResponseMapperTests
     {
-        private Mock<IRequestClient<IGetUserDataRequest>> _requestClientMock;
         private Mock<ILogger<NewsResponseMapper>> _loggerMock;
-        private Mock<Response<IOperationResult<IGetUserDataResponse>>> _brokerResponseAuthorNameMock;
-        private Mock<Response<IOperationResult<IGetUserDataResponse>>> _brokerResponseSenderNameMock;
-        private Mock<IOperationResult<IGetUserDataResponse>> _responseMock;
+        private Mock<IRequestClient<IGetUserDataRequest>> _userRequestClientMock;
+        private Mock<IRequestClient<IGetDepartmentRequest>> _departmentRequestClientMock;
+        private Mock<Response<IOperationResult<IGetUserDataResponse>>> _userBrokerResponseMock;
+        private Mock<Response<IOperationResult<IGetDepartmentResponse>>> _departmentBrokerResponseMock;
+        private Mock<IOperationResult<IGetUserDataResponse>> _userResponseMock;
+        private Mock<IOperationResult<IGetDepartmentResponse>> _departmentResponseMock;
 
         private const string firstName = "Ivan";
         private const string lastName = "Ivanov";
         private const string middleName = "Ivanovich";
+        private const string departmentName = "Name";
 
         private INewsResponseMapper _mapper;
-        private NewsResponse _response;
+        private NewsResponse _newsResponse;
         private DbNews _dbNews;
         private User _user;
+        private Department _department;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _user = new User
-            {
-                Id = Guid.NewGuid(),
-                FIO = "Ivanov Ivan Ivanovich"
-            };
+            #region Data models mocks
+            _user = new User { Id = Guid.NewGuid(), FullName = "Ivanov Ivan Ivanovich" };
 
-            _response = new NewsResponse
-            {
-                Id = Guid.NewGuid(),
-                Content = "Content111",
-                Subject = "Subject111",
-                Author = _user,
-                Sender = _user,
-                CreatedAt = DateTime.UtcNow
-            };
+            _department = new Department { Id = Guid.NewGuid(), Name = departmentName };
 
             _dbNews = new DbNews
             {
-                Id = _response.Id,
+                Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
                 Pseudonym = "Pseudonym",
                 AuthorId = _user.Id,
                 SenderId = _user.Id,
                 CreatedAt = DateTime.UtcNow,
+                DepartmentId = _department.Id,
                 IsActive = true
             };
-        }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
+            _newsResponse = new NewsResponse
+            {
+                Id = _dbNews.Id,
+                Content = _dbNews.Content,
+                Subject = _dbNews.Subject,
+                Author = _user,
+                Sender = _user,
+                CreatedAt = _dbNews.CreatedAt,
+                Department = _department,
+                IsActive = _dbNews.IsActive
+            };
 
-            _responseMock
+            #endregion
+
+            #region Broker user mocks
+            _userResponseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
+
+            _userResponseMock
                 .Setup(x => x.Body.FirstName)
                 .Returns(firstName);
-            _responseMock
+            _userResponseMock
                 .Setup(x => x.Body.LastName)
                 .Returns(lastName);
-            _responseMock
+            _userResponseMock
                 .Setup(x => x.IsSuccess)
                 .Returns(true);
-            _responseMock
+            _userResponseMock
                 .Setup(x => x.Body.MiddleName)
                 .Returns(middleName);
 
-            _brokerResponseAuthorNameMock = new Mock<Response<IOperationResult<IGetUserDataResponse>>>();
-            _brokerResponseAuthorNameMock
+            _userBrokerResponseMock = new Mock<Response<IOperationResult<IGetUserDataResponse>>>();
+            _userBrokerResponseMock
                 .Setup(x => x.Message)
-                .Returns(_responseMock.Object);
+                .Returns(_userResponseMock.Object);
 
-            _brokerResponseSenderNameMock = new Mock<Response<IOperationResult<IGetUserDataResponse>>>();
-            _brokerResponseSenderNameMock
-                .Setup(x => x.Message)
-                .Returns(_responseMock.Object);
+            _userRequestClientMock = new Mock<IRequestClient<IGetUserDataRequest>>();
 
-            _requestClientMock = new Mock<IRequestClient<IGetUserDataRequest>>();
-
-            _requestClientMock
-                .SetupSequence(x => x.GetResponse<IOperationResult<IGetUserDataResponse>>(
+            _userRequestClientMock
+                .Setup(x => x.GetResponse<IOperationResult<IGetUserDataResponse>>(
                     It.IsAny<object>(), default, default))
-                .Returns(Task.FromResult(_brokerResponseSenderNameMock.Object))
-                .Returns(Task.FromResult(_brokerResponseAuthorNameMock.Object));
+                .Returns(Task.FromResult(_userBrokerResponseMock.Object));
+
+            #endregion
+
+            #region Broker department mocks
+
+            _departmentResponseMock = new Mock<IOperationResult<IGetDepartmentResponse>>();
+
+            _departmentResponseMock
+                .Setup(x => x.Body.Name)
+                .Returns(departmentName);
+
+            _departmentBrokerResponseMock = new Mock<Response<IOperationResult<IGetDepartmentResponse>>>();
+            _departmentBrokerResponseMock
+                .Setup(x => x.Message)
+                .Returns(_departmentResponseMock.Object);
+
+            _departmentResponseMock
+                .Setup(x => x.IsSuccess)
+                .Returns(true);
+
+            _departmentRequestClientMock = new Mock<IRequestClient<IGetDepartmentRequest>>();
+
+            _departmentRequestClientMock
+                .Setup(x => x.GetResponse<IOperationResult<IGetDepartmentResponse>>(
+                    It.IsAny<object>(), default, default))
+                .Returns(Task.FromResult(_departmentBrokerResponseMock.Object));
+
+            #endregion
 
             _loggerMock = new Mock<ILogger<NewsResponseMapper>>();
-            _mapper = new NewsResponseMapper(_requestClientMock.Object, _loggerMock.Object);
+
+            _mapper = new NewsResponseMapper(
+                _userRequestClientMock.Object,
+                _departmentRequestClientMock.Object,
+                _loggerMock.Object);
         }
 
         [Test]
         public void ShouldThrowBadRequestExceptionWhenDbNewsIsNull()
         {
-            Assert.Throws<BadRequestException>(() => _mapper.Map(null));
+            DbNews dbNews = null;
+            Assert.Throws<ArgumentNullException>(() => _mapper.Map(dbNews));
         }
 
         [Test]
         public void ShouldReturnNewsResponseModelWhenMappingValidDbNews()
         {
-            NewsResponse result = _mapper.Map(_dbNews);
-
-            var expected = new NewsResponse
-            {
-                Id = result.Id,
-                Content = result.Content,
-                Subject = result.Subject,
-                Author = result.Author,
-                Sender = result.Sender,
-                CreatedAt = result.CreatedAt
-            };
-
-            SerializerAssert.AreEqual(expected, result);
+            SerializerAssert.AreEqual(_newsResponse, _mapper.Map(_dbNews));
         }
 
        [Test]
         public void ShouldMapWhenBadSenderIdTest()
         {
+            _user.FullName = null;
+
             var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
             responseMock
                .Setup(x => x.IsSuccess)
@@ -143,53 +163,40 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                .Setup(x => x.Errors)
                .Returns(new List<string>() { "Not found senderId" });
 
-            _brokerResponseSenderNameMock
+            _userBrokerResponseMock
                .Setup(x => x.Message)
                .Returns(responseMock.Object);
 
-            NewsResponse result = _mapper.Map(_dbNews);
-
-            var expected = new NewsResponse
-            {
-                Id = result.Id,
-                Content = result.Content,
-                Subject = result.Subject,
-                Author = result.Author,
-                Sender = result.Sender,
-                CreatedAt = result.CreatedAt
-            };
-
-            SerializerAssert.AreEqual(expected, result);
+            SerializerAssert.AreEqual(_newsResponse, _mapper.Map(_dbNews));
         }
 
         [Test]
-        public void ShoulMapWhanBadWAuthorIdTest()
+        public void ShouldMapWhenBadDepartmentIdTest()
         {
-            var responseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
+            _department.Name = null;
+
+            var responseMock = new Mock<IOperationResult<IGetDepartmentResponse>>();
             responseMock
                .Setup(x => x.IsSuccess)
                .Returns(false);
             responseMock
                .Setup(x => x.Errors)
-               .Returns(new List<string>() { "Not found authorId" });
+               .Returns(new List<string>() { "Not found DepartmentId" });
 
-            _brokerResponseAuthorNameMock
+            _departmentBrokerResponseMock
                .Setup(x => x.Message)
                .Returns(responseMock.Object);
 
-            NewsResponse result = _mapper.Map(_dbNews);
+            SerializerAssert.AreEqual(_newsResponse, _mapper.Map(_dbNews));
+        }
 
-            var expected = new NewsResponse
-            {
-                Id = result.Id,
-                Content = result.Content,
-                Subject = result.Subject,
-                Author = result.Author,
-                Sender = result.Sender,
-                CreatedAt = result.CreatedAt
-            };
+        [Test]
+        public void MapWithoutDepartmentIdTest()
+        {
+            _dbNews.DepartmentId = null;
+            _newsResponse.Department = null;
 
-            SerializerAssert.AreEqual(expected, result);
+            SerializerAssert.AreEqual(_newsResponse, _mapper.Map(_dbNews));
         }
     }
 }

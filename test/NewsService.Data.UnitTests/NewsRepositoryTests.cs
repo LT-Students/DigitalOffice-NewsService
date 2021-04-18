@@ -1,11 +1,12 @@
-﻿using LT.DigitalOffice.Kernel.Exceptions;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
+﻿using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -18,12 +19,17 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         private IDataProvider _provider;
         private INewsRepository _repository;
 
-        private DbNews dbNewsRequest;
-        private DbNews dbNews;
-        private DbNews dbNewsToAdd;
+        private DbNews _dbNews;
+        private DbNews _dbNewsToAdd;
+        private JsonPatchDocument<DbNews> _editDbNews;
+        private JsonPatchDocument<DbNews> _editDbNewsSubject;
+        private JsonPatchDocument<DbNews> _editDbNewsContent;
+        private JsonPatchDocument<DbNews> _editDbNewsIsActive;
 
         private Guid _firstUserId = Guid.NewGuid();
         private Guid _secondUserId = Guid.NewGuid();
+        private string _firstValue = "firstValue";
+        private string _secondValue = "secondValue";
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -39,7 +45,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [SetUp]
         public void SetUp()
         {
-            dbNews = new DbNews
+            _dbNews = new DbNews
             {
                 Id = Guid.NewGuid(),
                 Content = "Content",
@@ -48,10 +54,25 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 AuthorId = _firstUserId,
                 SenderId = _firstUserId,
                 CreatedAt = DateTime.UtcNow,
+                DepartmentId = Guid.NewGuid(),
                 IsActive = true
             };
 
-            dbNewsToAdd = new DbNews
+            _editDbNews = new JsonPatchDocument<DbNews>();
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Subject)}", "", _firstValue));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Content)}", "", _firstValue));
+            _editDbNews.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.IsActive)}", "", "false"));
+
+            _editDbNewsSubject = new JsonPatchDocument<DbNews>();
+            _editDbNewsSubject.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Subject)}", "", _secondValue));
+
+            _editDbNewsContent = new JsonPatchDocument<DbNews>();
+            _editDbNewsContent.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.Content)}", "", _secondValue));
+
+            _editDbNewsIsActive = new JsonPatchDocument<DbNews>();
+            _editDbNewsIsActive.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.IsActive)}", "", "true"));
+
+            _dbNewsToAdd = new DbNews
             {
                 Id = Guid.NewGuid(),
                 Content = "Content",
@@ -60,23 +81,12 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 AuthorId = _firstUserId,
                 SenderId = _secondUserId,
                 CreatedAt = DateTime.UtcNow,
+                DepartmentId = Guid.NewGuid(),
                 IsActive = true
             };
 
-            _provider.News.Add(dbNews);
+            _provider.News.Add(_dbNews);
             _provider.Save();
-
-            dbNewsRequest = new DbNews
-            {
-                Id = dbNews.Id,
-                Content = "Content111",
-                Subject = "Subject111",
-                Pseudonym = "Pseudonym1",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
-            };
         }
 
         [TearDown]
@@ -90,23 +100,30 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         #region EditNews
         [Test]
-        public void ShouldThrowExceptionWhenNewsForEditDoesNotExist()
+        public void SuccessfullyEditNewsWithAnyСombinationRequestProperties()
         {
-            Assert.Throws<Exception>(() => _repository.EditNews(
-                new DbNews() { Id = Guid.Empty }));
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNews));
+            var check = _provider.News.Find(_dbNews.Id);
+            Assert.AreEqual(_firstValue, check.Subject);
+            Assert.AreEqual(_firstValue, check.Content);
+            Assert.AreEqual(false, check.IsActive);
+
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsSubject));
+            Assert.AreEqual(_secondValue, _provider.News.Find(_dbNews.Id).Subject);
+
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsContent));
+            Assert.AreEqual(_secondValue, _provider.News.Find(_dbNews.Id).Content);
+
+
+            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsIsActive));
+            Assert.AreEqual(true, _provider.News.Find(_dbNews.Id).IsActive);
         }
 
         [Test]
-        public void ShouldEditNews()
+        public void ExceptionIfNewsNotFound()
         {
-            _provider.MakeEntityDetached(dbNews);
-            _repository.EditNews(dbNewsRequest);
+            Assert.Throws<NotFoundException>(() => _repository.EditNews(Guid.NewGuid(), _editDbNews));
 
-            var resultNews = _provider.News
-                .FirstOrDefaultAsync(x => x.Id == dbNewsRequest.Id)
-                .Result;
-
-            SerializerAssert.AreEqual(dbNewsRequest, resultNews);
         }
         #endregion
 
@@ -114,10 +131,8 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldReturnMatchingIdAndCreateNews()
         {
-            var guidOfNews = _repository.CreateNews(dbNewsToAdd);
-
-            Assert.AreEqual(dbNewsToAdd.Id, guidOfNews);
-            Assert.NotNull(_provider.News.Find(dbNewsToAdd.Id));
+            SerializerAssert.AreEqual(_dbNewsToAdd.Id, _repository.CreateNews(_dbNewsToAdd));
+            Assert.NotNull(_provider.News.Find(_dbNewsToAdd.Id));
         }
         #endregion
 
@@ -131,11 +146,37 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void FinedNews()
         {
-            _provider.MakeEntityDetached(dbNews);
+            _provider.MakeEntityDetached(_dbNews);
 
             SerializerAssert.AreEqual(
-                new List<DbNews> { dbNews },
-                _repository.FindNews(new FindNewsFilter { AuthorId = _firstUserId, Pseudonym = "Pseudonym" }));
+                new List<DbNews> { _dbNews },
+                _repository.FindNews(new FindNewsFilter { AuthorId = _firstUserId}));
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { _dbNews },
+                _repository.FindNews(new FindNewsFilter { DepartmentId = _dbNews.DepartmentId }));
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { _dbNews },
+                _repository.FindNews(new FindNewsFilter { Pseudonym = _dbNews.Pseudonym }));
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { _dbNews },
+                _repository.FindNews(new FindNewsFilter { Subject = _dbNews.Subject }));
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { _dbNews },
+                _repository.FindNews(new FindNewsFilter
+                {
+                    AuthorId = _firstUserId,
+                    DepartmentId = _dbNews.DepartmentId,
+                    Pseudonym = _dbNews.Pseudonym,
+                    Subject = _dbNews.Subject
+                }));
+
+            SerializerAssert.AreEqual(
+                new List<DbNews> { _dbNews },
+                _repository.FindNews(new FindNewsFilter {}));
         }
         #endregion
 
@@ -149,18 +190,19 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [Test]
         public void ShouldReturnNewsInfoWhenGettingFileById()
         {
-            var result = _repository.GetNewsInfoById(dbNews.Id);
+            var result = _repository.GetNewsInfoById(_dbNews.Id);
 
             var expected = new DbNews
             {
-                Id = dbNews.Id,
-                Content = dbNews.Content,
-                Subject = dbNews.Subject,
-                Pseudonym = dbNews.Pseudonym,
-                AuthorId = dbNews.AuthorId,
-                SenderId = dbNews.SenderId,
-                CreatedAt = dbNews.CreatedAt,
-                IsActive = dbNews.IsActive
+                Id = _dbNews.Id,
+                Content = _dbNews.Content,
+                Subject = _dbNews.Subject,
+                Pseudonym = _dbNews.Pseudonym,
+                AuthorId = _dbNews.AuthorId,
+                SenderId = _dbNews.SenderId,
+                CreatedAt = _dbNews.CreatedAt,
+                DepartmentId = _dbNews.DepartmentId,
+                IsActive = _dbNews.IsActive
             };
 
             SerializerAssert.AreEqual(expected, result);

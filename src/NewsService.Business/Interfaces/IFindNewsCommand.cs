@@ -8,6 +8,10 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
     [AutoInject]
     public interface IFindNewsCommand
     {
+        /// <summary>
+        /// Fined news.
+        /// </summary>
+        /// <param name="findNewsFilter">Model witch filtres.</param>
         List<NewsResponse> Execute(FindNewsFilter findNewsFilter);
     }
 }

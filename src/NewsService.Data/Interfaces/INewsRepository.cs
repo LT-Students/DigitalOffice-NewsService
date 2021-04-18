@@ -1,6 +1,8 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 
@@ -24,7 +26,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// Update existing news in the database.
         /// </summary>
         /// <param name="news">News to edit.</param>
-        void EditNews(DbNews news);
+        bool EditNews(Guid newsId, JsonPatchDocument<DbNews> news);
 
         /// <summary>
         /// Returns the DbNews with the specified id from database.

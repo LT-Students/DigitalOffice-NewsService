@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
+using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.JsonPatch;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -15,114 +18,85 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class EditNewsCommandTests
     {
-        private Mock<INewsMapper> _mapperMock;
         private Mock<INewsRepository> _repositoryMock;
-        private Mock<INewsValidator> _validatorMock;
+        private Mock<IPatchNewsMapper> _mapperMock;
+        private Mock<IEditNewsValidator> _validatorMock;
+
+        private JsonPatchDocument<EditNewsRequest> _goodEditNewsRequest;
+        private JsonPatchDocument<EditNewsRequest> _badEditNewsRequest;
+        private JsonPatchDocument<DbNews> _dbNews;
+
+        private Guid _goodNewsId = Guid.NewGuid();
+        private Guid _badNewsId = Guid.NewGuid();
 
         private IEditNewsCommand _command;
-        private News _request;
-        private DbNews _dbNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _request = new News
-            {
-                Id = Guid.NewGuid(),
-                Content = "Content111",
-                Subject = "Subject111",
-                Pseudonym = "AuthorName111",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid()
-            };
-
-            _dbNews = new DbNews
-            {
-                Id = (Guid)_request.Id,
-                Content = "Content",
-                Subject = "Subject",
-                Pseudonym = "AuthorName",
-                AuthorId = _request.AuthorId,
-                SenderId = _request.SenderId,
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
-            };
-        }
+            _goodEditNewsRequest = new JsonPatchDocument<EditNewsRequest>();
+            _badEditNewsRequest = null;
+            _dbNews = new JsonPatchDocument<DbNews>();
+    }
 
         [SetUp]
         public void SetUp()
         {
-            _mapperMock = new Mock<INewsMapper>();
             _repositoryMock = new Mock<INewsRepository>();
-            _validatorMock = new Mock<INewsValidator>();
+            _repositoryMock
+                .Setup(x => x.EditNews(_goodNewsId, It.IsAny<JsonPatchDocument<DbNews>>()))
+                .Returns(true);
+            _repositoryMock
+                .Setup(x => x.EditNews(_badNewsId, It.IsAny<JsonPatchDocument<DbNews>>()))
+                .Throws(new NotFoundException());
+
+            _mapperMock = new Mock<IPatchNewsMapper>();
+            _mapperMock
+                .Setup(x => x.Map(_goodEditNewsRequest))
+                .Returns(_dbNews);
+            _mapperMock
+                .Setup(x => x.Map(_badEditNewsRequest))
+                .Throws(new ArgumentNullException());
+
+            _validatorMock = new Mock<IEditNewsValidator>();
+            _validatorMock
+                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
+                .Returns(new ValidationResult());
 
             _command = new EditNewsCommand(_repositoryMock.Object, _mapperMock.Object, _validatorMock.Object);
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenValidatorThrowException()
+        public void SuccessCommandTest()
+        {
+            SerializerAssert.AreEqual(true, _command.Execute(_goodNewsId, _goodEditNewsRequest));
+        }
+
+        [Test]
+        public void BadValidatorTest()
         {
             _validatorMock
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult(
                     new List<ValidationFailure>
-                    {
-                        new ValidationFailure("error", "something", null)
-                    }));
+                        {
+                            new ValidationFailure("error", "something", null)
+                        }));
 
-            Assert.Throws<ValidationException>(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
+            Assert.Throws<ValidationException>(() => _command.Execute(_goodNewsId, _goodEditNewsRequest));
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenMapperThrowException()
+        public void MapperExceptionTest()
         {
-            _validatorMock
-                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-                .Returns(new ValidationResult());
-
-            _mapperMock
-                .Setup(x => x.Map(It.IsAny<News>()))
-                .Throws(new Exception());
-
-            Assert.Throws<Exception>(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Never);
+            Assert.Throws<ArgumentNullException>(() => _command.Execute(It.IsAny<Guid>(), _badEditNewsRequest));
         }
 
         [Test]
-        public void ShouldThrowExceptionWhenRepositoryThrowException()
+        public void RepositoryExceptionTest()
         {
-            _validatorMock
-                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-                .Returns(new ValidationResult());
-
-            _mapperMock
-                .Setup(x => x.Map(It.IsAny<News>()))
-                .Returns(_dbNews);
-
-            _repositoryMock
-                .Setup(x => x.EditNews(It.IsAny<DbNews>()))
-                .Throws(new Exception());
-
-            Assert.Throws<Exception>(() => _command.Execute(_request));
+            Assert.Throws<NotFoundException> (() => _command.Execute(_badNewsId, _goodEditNewsRequest));
         }
 
-        [Test]
-        public void ShouldEditNews()
-        {
-            _validatorMock
-                .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-                .Returns(new ValidationResult());
-
-            _mapperMock
-                .Setup(x => x.Map(It.IsAny<News>()))
-                .Returns(_dbNews);
-
-            _repositoryMock
-                .Setup(x => x.EditNews(It.IsAny<DbNews>()));
-
-            Assert.DoesNotThrow(() => _command.Execute(_request));
-            _repositoryMock.Verify(repository => repository.EditNews(It.IsAny<DbNews>()), Times.Once);
-        }
     }
 }

@@ -3,7 +3,9 @@ using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,19 +22,19 @@ namespace LT.DigitalOffice.NewsService.Data
             _provider = provider;
         }
 
-        public void EditNews(DbNews news)
+        public bool EditNews(Guid newsId, JsonPatchDocument<DbNews> news)
         {
-            var dbNews = _provider.News
-                .AsNoTracking()
-                .FirstOrDefault(x => x.Id == news.Id);
+            var dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
 
             if (dbNews == null)
             {
-                throw new Exception("News was not found.");
+                throw new NotFoundException("News was not found.");
             }
 
-            _provider.News.Update(news);
+            news.ApplyTo(dbNews);
             _provider.Save();
+
+            return true;
         }
 
         public Guid CreateNews(DbNews news)

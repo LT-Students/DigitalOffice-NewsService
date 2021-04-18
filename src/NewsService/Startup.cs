@@ -109,7 +109,7 @@ namespace LT.DigitalOffice.NewsService
 
             services.AddHttpContextAccessor();
 
-            services.AddControllers().AddJsonOptions(option =>
+            services.AddControllers().AddNewtonsoftJson().AddJsonOptions(option =>
             {
                 option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });

@@ -1,9 +1,9 @@
-﻿using LT.DigitalOffice.NewsService.Mappers.ModelMappers.Interfaces;
+﻿using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
 
-namespace LT.DigitalOffice.NewsService.Mappers.ModelMappers
+namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
     public class NewsMapper : INewsMapper
     {
@@ -14,27 +14,18 @@ namespace LT.DigitalOffice.NewsService.Mappers.ModelMappers
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var dbNews = new DbNews
+            return new DbNews
             {
+                Id = Guid.NewGuid(),
                 Content = request.Content,
                 Subject = request.Subject,
                 Pseudonym = request.Pseudonym,
                 AuthorId = request.AuthorId,
                 SenderId = request.SenderId,
+                DepartmentId = request.DepartmentId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
-
-            if (request.Id != null)
-            {
-                dbNews.Id = (Guid)request.Id;
-            }
-            else
-            {
-                dbNews.Id = Guid.NewGuid();
-            }
-
-            return dbNews;
         }
     }
 }
