@@ -87,7 +87,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Returns(false);
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
-
+            _repositoryMock.Verify(x => x.CreateNews(It.IsAny<DbNews>()), Times.Never);
         }
 
         [Test]

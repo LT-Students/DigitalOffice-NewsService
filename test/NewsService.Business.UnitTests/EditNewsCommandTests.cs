@@ -95,7 +95,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Returns(false);
 
             Assert.Throws<ForbiddenException>(() => _command.Execute(_goodNewsId, _goodEditNewsRequest));
-
+            _repositoryMock.Verify(x => x.EditNews(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<DbNews>>()), Times.Never);
         }
 
         [Test]
