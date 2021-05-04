@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
@@ -18,15 +21,16 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         private Mock<INewsMapper> _mapperMock;
         private Mock<INewsRepository> _repositoryMock;
         private Mock<INewsValidator> _validatorMock;
+        private Mock<IAccessValidator> _accessValidatorMock;
 
-        private ICreateNewsCommand command;
-        private News request;
-        private DbNews createdNews;
+        private ICreateNewsCommand _command;
+        private News _request;
+        private DbNews _createdNews;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            request = new News
+            _request = new News
             {
                 Content = "Content",
                 Subject = "Subject",
@@ -35,14 +39,14 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 SenderId = Guid.NewGuid()
             };
 
-            createdNews = new DbNews
+            _createdNews = new DbNews
             {
                 Id = Guid.NewGuid(),
                 Content = "Content",
                 Subject = "Subject",
                 Pseudonym = "AuthorName",
-                AuthorId = request.AuthorId,
-                SenderId = request.SenderId,
+                AuthorId = _request.AuthorId,
+                SenderId = _request.SenderId,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -54,8 +58,36 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             _mapperMock = new Mock<INewsMapper>();
             _repositoryMock = new Mock<INewsRepository>();
             _validatorMock = new Mock<INewsValidator>();
+            _accessValidatorMock = new Mock<IAccessValidator>();
 
-            command = new CreateNewsCommand(_repositoryMock.Object, _mapperMock.Object, _validatorMock.Object);
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(true);
+
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemoveNews))
+                .Returns(true);
+
+            _command = new CreateNewsCommand(
+                _repositoryMock.Object,
+                _mapperMock.Object,
+                _validatorMock.Object,
+                _accessValidatorMock.Object);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenNotEnoughRights()
+        {
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemoveNews))
+                .Returns(false);
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(false);
+
+            Assert.Throws<ForbiddenException>(() => _command.Execute(_request));
+            _repositoryMock.Verify(x => x.CreateNews(It.IsAny<DbNews>()), Times.Never);
         }
 
         [Test]
@@ -69,7 +101,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                         new ValidationFailure("error", "something", null)
                     }));
 
-            Assert.Throws<ValidationException>(() => command.Execute(request));
+            Assert.Throws<ValidationException>(() => _command.Execute(_request));
         }
 
         [Test]
@@ -83,7 +115,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Setup(x => x.Map(It.IsAny<News>()))
                 .Throws(new Exception());
 
-            Assert.Throws<Exception>(() => command.Execute(request));
+            Assert.Throws<Exception>(() => _command.Execute(_request));
         }
 
         [Test]
@@ -95,13 +127,13 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 
             _mapperMock
                 .Setup(x => x.Map(It.IsAny<News>()))
-                .Returns(createdNews);
+                .Returns(_createdNews);
 
             _repositoryMock
                 .Setup(x => x.CreateNews(It.IsAny<DbNews>()))
                 .Throws(new Exception());
 
-            Assert.Throws<Exception>(() => command.Execute(request));
+            Assert.Throws<Exception>(() => _command.Execute(_request));
         }
 
         [Test]
@@ -113,13 +145,13 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 
             _mapperMock
                 .Setup(x => x.Map(It.IsAny<News>()))
-                .Returns(createdNews);
+                .Returns(_createdNews);
 
             _repositoryMock
                 .Setup(x => x.CreateNews(It.IsAny<DbNews>()))
-                .Returns(createdNews.Id);
+                .Returns(_createdNews.Id);
 
-            Assert.AreEqual(createdNews.Id, command.Execute(request));
+            Assert.AreEqual(_createdNews.Id, _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.CreateNews(It.IsAny<DbNews>()), Times.Once);
         }
     }

@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
@@ -21,6 +23,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         private Mock<INewsRepository> _repositoryMock;
         private Mock<IPatchNewsMapper> _mapperMock;
         private Mock<IEditNewsValidator> _validatorMock;
+        private Mock<IAccessValidator> _accessValidatorMock;
 
         private JsonPatchDocument<EditNewsRequest> _goodEditNewsRequest;
         private JsonPatchDocument<EditNewsRequest> _badEditNewsRequest;
@@ -63,7 +66,36 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
                 .Returns(new ValidationResult());
 
-            _command = new EditNewsCommand(_repositoryMock.Object, _mapperMock.Object, _validatorMock.Object);
+            _accessValidatorMock = new Mock<IAccessValidator>();
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(true);
+
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemoveNews))
+                .Returns(true);
+
+            _command = new EditNewsCommand(
+                _repositoryMock.Object,
+                _mapperMock.Object,
+                _validatorMock.Object,
+                _accessValidatorMock.Object);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenNotEnoughRights()
+        {
+            _accessValidatorMock
+                .Setup(x => x.HasRights(Rights.AddEditRemoveNews))
+                .Returns(false);
+
+            _accessValidatorMock
+                .Setup(x => x.IsAdmin(null))
+                .Returns(false);
+
+            Assert.Throws<ForbiddenException>(() => _command.Execute(_goodNewsId, _goodEditNewsRequest));
+            _repositoryMock.Verify(x => x.EditNews(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<DbNews>>()), Times.Never);
         }
 
         [Test]
