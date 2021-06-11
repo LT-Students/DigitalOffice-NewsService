@@ -1,7 +1,8 @@
-﻿using LT.DigitalOffice.Broker.Requests;
-using LT.DigitalOffice.Broker.Responses;
-using LT.DigitalOffice.Kernel.Broker;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
+﻿using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Requests.User;
+using LT.DigitalOffice.Models.Broker.Responses.Company;
+using LT.DigitalOffice.Models.Broker.Responses.User;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
@@ -50,7 +51,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 
             try
             {
-                var request = IGetDepartmentRequest.CreateObj(departmentId);
+                var request = IGetDepartmentRequest.CreateObj(null, departmentId);
                 var response = _departmentRequestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
 
                 if (!response.Message.IsSuccess)

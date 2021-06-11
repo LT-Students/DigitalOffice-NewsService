@@ -37,8 +37,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Validation.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService", "src\NewsService\NewsService.csproj", "{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsService.Models.Broker", "src\NewsService.Models.Broker\NewsService.Models.Broker.csproj", "{187ABF2A-F590-4807-ACB0-935B83E88FC9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7DFFE362-A67F-414D-83BC-B736555DDAE9}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
@@ -115,10 +113,6 @@ Global
 		{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{187ABF2A-F590-4807-ACB0-935B83E88FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{187ABF2A-F590-4807-ACB0-935B83E88FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{187ABF2A-F590-4807-ACB0-935B83E88FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{187ABF2A-F590-4807-ACB0-935B83E88FC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,7 +133,6 @@ Global
 		{93B126D0-DF48-4B9B-BE5C-8D973B0CD26E} = {8ADBD1D2-15C2-40C8-BDEF-9A32233B9C76}
 		{0E1C52C2-9E1E-4B70-889C-85FC23CD91BE} = {8ADBD1D2-15C2-40C8-BDEF-9A32233B9C76}
 		{4872A959-C5E5-4D0A-91EA-1C76D3C09A4F} = {1445EAD3-E716-49C0-B381-14983084D460}
-		{187ABF2A-F590-4807-ACB0-935B83E88FC9} = {1445EAD3-E716-49C0-B381-14983084D460}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3CEF5A2D-0059-47BF-B80C-7B3887E09BAF}

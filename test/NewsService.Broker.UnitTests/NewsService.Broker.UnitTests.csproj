@@ -3,10 +3,6 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NewsService.Models.Broker\NewsService.Models.Broker.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Consumers\" />
   </ItemGroup>
 
