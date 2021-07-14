@@ -2,6 +2,7 @@
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
+using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
@@ -19,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 Id = Guid.NewGuid(),
                 Content = request.Content,
                 Subject = request.Subject,
-                Pseudonym = request.Pseudonym,
+                Pseudonym = request.Pseudonym.Trim().Any() ? request.Pseudonym.Trim() : null,
                 AuthorId = request.AuthorId,
                 SenderId = request.SenderId,
                 DepartmentId = request.DepartmentId,

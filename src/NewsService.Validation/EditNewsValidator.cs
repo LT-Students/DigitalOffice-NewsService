@@ -55,7 +55,6 @@ namespace LT.DigitalOffice.NewsService.Validation
                             .UniqueOperationWithAllowedOp(Subject, "replace");
 
                         RuleFor(x => (string)GetOperationByPath(x, Subject).value)
-                            .NotEmpty()
                             .MaximumLength(120)
                             .WithMessage("News subject is too long.");
                     });
