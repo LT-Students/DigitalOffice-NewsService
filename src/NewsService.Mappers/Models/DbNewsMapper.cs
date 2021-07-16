@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
-    public class DbNewsMapper : INewsMapper
+    public class DbNewsMapper : IDbNewsMapper
     {
         public DbNews Map(News request)
         {

@@ -18,7 +18,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class CreateNewsCommandTests
     {
-        private Mock<INewsMapper> _mapperMock;
+        private Mock<IDbNewsMapper> _mapperMock;
         private Mock<INewsRepository> _repositoryMock;
         private Mock<INewsValidator> _validatorMock;
         private Mock<IAccessValidator> _accessValidatorMock;
@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         [SetUp]
         public void SetUp()
         {
-            _mapperMock = new Mock<INewsMapper>();
+            _mapperMock = new Mock<IDbNewsMapper>();
             _repositoryMock = new Mock<INewsRepository>();
             _validatorMock = new Mock<INewsValidator>();
             _accessValidatorMock = new Mock<IAccessValidator>();

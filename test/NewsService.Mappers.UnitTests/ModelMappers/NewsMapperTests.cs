@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
 {
     class NewsMapperTests
     {
-        private INewsMapper _mapper;
+        private IDbNewsMapper _mapper;
         private News _newsRequest;
         private DbNews _expectedDbNews;
 
