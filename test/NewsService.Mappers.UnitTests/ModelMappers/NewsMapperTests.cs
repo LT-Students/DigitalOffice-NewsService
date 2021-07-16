@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _mapper = new NewsMapper();
+            _mapper = new DbNewsMapper();
 
             _newsRequest = new News
             {
