@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewsService.Data.Provider\NewsService.Data.Provider.csproj" />
+    <ProjectReference Include="..\NewsService.Models.Db\NewsService.Models.Db.csproj" />
+    <ProjectReference Include="..\NewsService.Models.Dto\NewsService.Models.Dto.csproj" />
+  </ItemGroup>
+
+</Project>
