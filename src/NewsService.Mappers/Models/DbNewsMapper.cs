@@ -2,10 +2,11 @@
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
+using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
-    public class NewsMapper : INewsMapper
+    public class DbNewsMapper : IDbNewsMapper
     {
         public DbNews Map(News request)
         {
@@ -19,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 Id = Guid.NewGuid(),
                 Content = request.Content,
                 Subject = request.Subject,
-                Pseudonym = request.Pseudonym,
+                Pseudonym = !string.IsNullOrEmpty(request.Pseudonym?.Trim()) ? request.Pseudonym.Trim() : null,
                 AuthorId = request.AuthorId,
                 SenderId = request.SenderId,
                 DepartmentId = request.DepartmentId,

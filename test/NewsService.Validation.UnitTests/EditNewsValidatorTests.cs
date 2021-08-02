@@ -9,8 +9,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LT.DigitalOffice.NewsService.Validation.UnitTests
 {
@@ -90,13 +88,13 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [Test]
         public void ExceptionSubjectIsTooLong()
         {
-            GetOperationByPath(EditNewsValidator.Subject).value = "".PadLeft(33);
+            GetOperationByPath(EditNewsValidator.Subject).value = "".PadLeft(333);
 
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
         }
 
         [Test]
-        public void ExceptionSubjectIsTooShort()
+        public void ExceptionEmptySubject()
         {
             GetOperationByPath(EditNewsValidator.Subject).value = "";
 
