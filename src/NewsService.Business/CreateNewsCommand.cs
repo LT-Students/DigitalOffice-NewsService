@@ -7,7 +7,6 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LT.DigitalOffice.NewsService.Business
@@ -15,13 +14,13 @@ namespace LT.DigitalOffice.NewsService.Business
     public class CreateNewsCommand : ICreateNewsCommand
     {
         private readonly INewsRepository _repository;
-        private readonly INewsMapper _mapper;
+        private readonly IDbNewsMapper _mapper;
         private readonly INewsValidator _validator;
         private readonly IAccessValidator _accessValidator;
 
         public CreateNewsCommand(
             INewsRepository repository,
-            INewsMapper mapper,
+            IDbNewsMapper mapper,
             INewsValidator validator,
             IAccessValidator accessValidator)
         {
