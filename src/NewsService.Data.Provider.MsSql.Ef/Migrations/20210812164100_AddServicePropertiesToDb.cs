@@ -13,23 +13,23 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
         {
             migrationBuilder.AddColumn<Guid>(
                 name: nameof(DbNews.CreatedBy),
-               table: "News",
-               nullable: false);
+                table: "News",
+                nullable: false);
 
             migrationBuilder.AddColumn<DateTime>(
-               name: nameof(DbNews.CreatedAtUtc),
-               table: "News",
-               nullable: false);
+                name: nameof(DbNews.CreatedAtUtc),
+                table: "News",
+                nullable: false);
 
             migrationBuilder.AddColumn<Guid>(
                 name: nameof(DbNews.ModifiedBy),
-               table: "News",
-               nullable: true);
+                table: "News",
+                nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
-               name: nameof(DbNews.ModifiedAtUtc),
-               table: "News",
-               nullable: true);
+                name: nameof(DbNews.ModifiedAtUtc),
+                table: "News",
+                nullable: true);
 
             migrationBuilder.DropColumn(
                 name: "CreatedAt",

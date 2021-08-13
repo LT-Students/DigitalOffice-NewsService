@@ -86,9 +86,6 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             _editDbNewsIsActive = new JsonPatchDocument<DbNews>();
             _editDbNewsIsActive.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.IsActive)}", "", "true"));
 
-            _provider.News.Add(_dbNews);
-            _provider.Save();
-
             _dbNewsToAdd = new DbNews
             {
                 Id = Guid.NewGuid(),
@@ -102,6 +99,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 CreatedBy = Guid.NewGuid(),
                 CreatedAtUtc = DateTime.UtcNow
             };
+
+            _provider.News.Add(_dbNews);
+            _provider.Save();
         }
 
         [TearDown]
@@ -195,7 +195,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsFilter { }));
+                _repository.FindNews(new FindNewsFilter {}));
         }
 
         #endregion
