@@ -37,10 +37,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
                 SenderId = _newsRequest.SenderId,
                 IsActive = true
             };
-
         }
 
         #region NewsRequest to DbNews
+
         [Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
@@ -52,11 +52,13 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
         {
             var dbNews = _mapper.Map(_newsRequest);
             _expectedDbNews.Id = dbNews.Id;
-            _expectedDbNews.CreatedAt = dbNews.CreatedAt;
+            _expectedDbNews.CreatedBy = dbNews.CreatedBy;
+            _expectedDbNews.CreatedAtUtc = dbNews.CreatedAtUtc;
 
             Assert.IsInstanceOf<Guid>(dbNews.Id);
             SerializerAssert.AreEqual(_expectedDbNews, dbNews);
         }
+
         #endregion
     }
 }

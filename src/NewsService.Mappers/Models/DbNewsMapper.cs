@@ -2,7 +2,6 @@
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
-using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
@@ -24,8 +23,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 AuthorId = request.AuthorId,
                 SenderId = request.SenderId,
                 DepartmentId = request.DepartmentId,
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
+                IsActive = true,
+                CreatedBy = Guid.NewGuid(),
+                CreatedAtUtc = DateTime.UtcNow
             };
         }
     }

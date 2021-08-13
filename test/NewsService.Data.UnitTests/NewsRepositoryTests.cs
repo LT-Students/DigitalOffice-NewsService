@@ -5,9 +5,11 @@ using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.UnitTestKernel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
     {
         private IDataProvider _provider;
         private INewsRepository _repository;
+        private Mock<IHttpContextAccessor> _accessorMock;
 
+        private Guid _userId = Guid.NewGuid();
         private DbNews _dbNews;
         private DbNews _dbNewsToAdd;
         private JsonPatchDocument<DbNews> _editDbNews;
@@ -34,12 +38,21 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
+
             var dbOptions = new DbContextOptionsBuilder<NewsServiceDbContext>()
                    .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
                    .Options;
+
             _provider = new NewsServiceDbContext(dbOptions);
 
-            _repository = new NewsRepository(_provider);
+            _repository = new NewsRepository(_provider, _accessorMock.Object);
         }
 
         [SetUp]
@@ -53,9 +66,10 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Pseudonym = "Pseudonym",
                 AuthorId = _firstUserId,
                 SenderId = _firstUserId,
-                CreatedAt = DateTime.UtcNow,
                 DepartmentId = Guid.NewGuid(),
-                IsActive = true
+                IsActive = true,
+                CreatedBy = Guid.NewGuid(),
+                CreatedAtUtc = DateTime.UtcNow
             };
 
             _editDbNews = new JsonPatchDocument<DbNews>();
@@ -72,6 +86,9 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             _editDbNewsIsActive = new JsonPatchDocument<DbNews>();
             _editDbNewsIsActive.Operations.Add(new Operation<DbNews>("replace", $"/{nameof(DbNews.IsActive)}", "", "true"));
 
+            _provider.News.Add(_dbNews);
+            _provider.Save();
+
             _dbNewsToAdd = new DbNews
             {
                 Id = Guid.NewGuid(),
@@ -80,13 +97,11 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Pseudonym = "Pseudonym",
                 AuthorId = _firstUserId,
                 SenderId = _secondUserId,
-                CreatedAt = DateTime.UtcNow,
                 DepartmentId = Guid.NewGuid(),
-                IsActive = true
+                IsActive = true,
+                CreatedBy = Guid.NewGuid(),
+                CreatedAtUtc = DateTime.UtcNow
             };
-
-            _provider.News.Add(_dbNews);
-            _provider.Save();
         }
 
         [TearDown]
@@ -99,10 +114,12 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         }
 
         #region EditNews
+
         [Test]
         public void SuccessfullyEditNewsWithAnyСombinationRequestProperties()
         {
-            SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNews));
+            var editNews = _repository.EditNews(_dbNews.Id, _editDbNews);
+            SerializerAssert.AreEqual(true, editNews);
             var check = _provider.News.Find(_dbNews.Id);
             Assert.AreEqual(_firstValue, check.Subject);
             Assert.AreEqual(_firstValue, check.Content);
@@ -114,7 +131,6 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsContent));
             Assert.AreEqual(_secondValue, _provider.News.Find(_dbNews.Id).Content);
 
-
             SerializerAssert.AreEqual(true, _repository.EditNews(_dbNews.Id, _editDbNewsIsActive));
             Assert.AreEqual(true, _provider.News.Find(_dbNews.Id).IsActive);
         }
@@ -123,20 +139,23 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         public void ExceptionIfNewsNotFound()
         {
             Assert.Throws<NotFoundException>(() => _repository.EditNews(Guid.NewGuid(), _editDbNews));
-
         }
+
         #endregion
 
         #region CreateNews
+
         [Test]
         public void ShouldReturnMatchingIdAndCreateNews()
         {
             SerializerAssert.AreEqual(_dbNewsToAdd.Id, _repository.CreateNews(_dbNewsToAdd));
             Assert.NotNull(_provider.News.Find(_dbNewsToAdd.Id));
         }
+
         #endregion
 
         #region FindNews
+
         [Test]
         public void ExceptionNullFindNewsParams()
         {
@@ -150,7 +169,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsFilter { AuthorId = _firstUserId}));
+                _repository.FindNews(new FindNewsFilter { AuthorId = _firstUserId }));
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
@@ -176,11 +195,13 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
-                _repository.FindNews(new FindNewsFilter {}));
+                _repository.FindNews(new FindNewsFilter { }));
         }
+
         #endregion
 
         #region GetNews
+
         [Test]
         public void ShouldThrowExceptionWhenThereNoNewsInDatabaseWithSuchId()
         {
@@ -200,13 +221,15 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
                 Pseudonym = _dbNews.Pseudonym,
                 AuthorId = _dbNews.AuthorId,
                 SenderId = _dbNews.SenderId,
-                CreatedAt = _dbNews.CreatedAt,
                 DepartmentId = _dbNews.DepartmentId,
-                IsActive = _dbNews.IsActive
+                IsActive = _dbNews.IsActive,
+                CreatedBy = _dbNews.CreatedBy,
+                CreatedAtUtc = _dbNews.CreatedAtUtc
             };
 
             SerializerAssert.AreEqual(expected, result);
         }
+
         #endregion
     }
 }

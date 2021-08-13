@@ -47,7 +47,8 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 Pseudonym = "AuthorName",
                 AuthorId = _request.AuthorId,
                 SenderId = _request.SenderId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedBy = Guid.NewGuid(),
+                CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
         }

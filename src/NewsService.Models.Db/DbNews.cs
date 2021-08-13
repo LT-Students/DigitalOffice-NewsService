@@ -14,9 +14,12 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         public string Pseudonym { get; set; }
         public Guid AuthorId { get; set; }
         public Guid SenderId { get; set; }
-        public DateTime CreatedAt { get; set; }
         public Guid? DepartmentId { get; set; }
         public bool IsActive { get; set; }
+        public Guid CreatedBy { get; set; }
+        public DateTime CreatedAtUtc { get; set; }
+        public Guid? ModifiedBy { get; set; }
+        public DateTime? ModifiedAtUtc { get; set; }
     }
 
     public class DbNewsConfiguration : IEntityTypeConfiguration<DbNews>
@@ -28,10 +31,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 
             builder.
                 HasKey(p => p.Id);
-
-            builder
-                .Property(p => p.CreatedAt)
-                .IsRequired();
 
             builder
                 .Property(p => p.Content)
