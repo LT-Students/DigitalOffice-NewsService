@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.NewsService.Data
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public bool EditNews(Guid newsId, JsonPatchDocument<DbNews> news)
+        public bool EditNews(Guid newsId, JsonPatchDocument<DbNews> request)
         {
             var dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
 
@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.NewsService.Data
                 throw new NotFoundException("News was not found.");
             }
 
-            news.ApplyTo(dbNews);
+            request.ApplyTo(dbNews);
             dbNews.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
             dbNews.ModifiedAtUtc = DateTime.UtcNow;
             _provider.Save();
