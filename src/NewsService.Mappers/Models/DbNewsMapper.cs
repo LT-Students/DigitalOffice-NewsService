@@ -1,12 +1,21 @@
-﻿using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+﻿using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
     public class DbNewsMapper : IDbNewsMapper
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public DbNewsMapper (IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
         public DbNews Map(News request)
         {
             if (request == null)
@@ -24,7 +33,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 SenderId = request.SenderId,
                 DepartmentId = request.DepartmentId,
                 IsActive = true,
-                CreatedBy = request.CreatedBy,
+                CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
                 CreatedAtUtc = DateTime.UtcNow
             };
         }

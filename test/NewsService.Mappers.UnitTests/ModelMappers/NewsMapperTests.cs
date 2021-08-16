@@ -5,6 +5,9 @@ using NUnit.Framework;
 using System;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models;
+using Microsoft.AspNetCore.Http;
+using Moq;
+using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
 {
@@ -13,11 +16,22 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
         private IDbNewsMapper _mapper;
         private News _newsRequest;
         private DbNews _expectedDbNews;
+        private Mock<IHttpContextAccessor> _accessorMock;
+
+        private Guid _userId = Guid.NewGuid();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _mapper = new DbNewsMapper();
+            _accessorMock = new();
+            IDictionary<object, object> _items = new Dictionary<object, object>();
+            _items.Add("UserId", _userId);
+
+            _accessorMock
+                .Setup(x => x.HttpContext.Items)
+                .Returns(_items);
+
+            _mapper = new DbNewsMapper(_accessorMock.Object);
 
             _newsRequest = new News
             {
