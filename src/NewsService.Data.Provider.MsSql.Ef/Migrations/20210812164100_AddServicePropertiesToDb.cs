@@ -6,8 +6,8 @@ using System;
 namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
 {
     [DbContext(typeof(NewsServiceDbContext))]
-    [Migration("20210812164100_AddServicePropertiesToDb")]
-    public class AddServicePropertiesToDb : Migration
+    [Migration("20210812164100_AddServiceProperties")]
+    public class AddServiceProperties : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
