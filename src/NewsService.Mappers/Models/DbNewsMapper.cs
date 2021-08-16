@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 SenderId = request.SenderId,
                 DepartmentId = request.DepartmentId,
                 IsActive = true,
-                CreatedBy = Guid.NewGuid(),
+                CreatedBy = request.CreatedBy,
                 CreatedAtUtc = DateTime.UtcNow
             };
         }

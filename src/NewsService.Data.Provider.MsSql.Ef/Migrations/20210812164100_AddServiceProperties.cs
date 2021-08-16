@@ -13,49 +13,49 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
         {
             migrationBuilder.AddColumn<Guid>(
                 name: nameof(DbNews.CreatedBy),
-                table: "News",
+                table: DbNews.TableName,
                 nullable: false);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: nameof(DbNews.CreatedAtUtc),
-                table: "News",
+                table: DbNews.TableName,
                 nullable: false);
 
             migrationBuilder.AddColumn<Guid>(
                 name: nameof(DbNews.ModifiedBy),
-                table: "News",
+                table: DbNews.TableName,
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: nameof(DbNews.ModifiedAtUtc),
-                table: "News",
+                table: DbNews.TableName,
                 nullable: true);
 
             migrationBuilder.DropColumn(
                 name: "CreatedAt",
-                table: "News");
+                table: DbNews.TableName);
         }
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
                 name: "CreatedBy",
-                table: "News");
+                table: DbNews.TableName);
 
             migrationBuilder.DropColumn(
                 name: "CreatedAtUtc",
-                table: "News");
+                table: DbNews.TableName);
 
             migrationBuilder.DropColumn(
                 name: "ModifiedBy",
-                table: "News");
+                table: DbNews.TableName);
 
             migrationBuilder.DropColumn(
                 name: "ModifiedAtUtc",
-                table: "News");
+                table: DbNews.TableName);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreatedAt",
-                table: "News");
+                table: DbNews.TableName);
         }
     }
 }

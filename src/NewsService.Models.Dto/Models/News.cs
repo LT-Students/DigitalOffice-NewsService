@@ -10,5 +10,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Models
         public Guid AuthorId { get; set; }
         public Guid SenderId { get; set; }
         public Guid? DepartmentId { get; set; }
+        public Guid CreatedBy { get; set; }
+        public Guid ModifiedBy { get; set; }
     }
 }

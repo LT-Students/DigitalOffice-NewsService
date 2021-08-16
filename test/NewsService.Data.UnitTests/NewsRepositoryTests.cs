@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
     {
         private IDataProvider _provider;
         private INewsRepository _repository;
-        private Mock<IHttpContextAccessor> _httpContext;
+        private Mock<IHttpContextAccessor> _accessorMock;
 
         private Guid _userId = Guid.NewGuid();
         private DbNews _dbNews;
@@ -38,11 +38,11 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _httpContext = new();
+            _accessorMock = new();
             IDictionary<object, object> _items = new Dictionary<object, object>();
             _items.Add("UserId", _userId);
 
-            _httpContext
+            _accessorMock
                 .Setup(x => x.HttpContext.Items)
                 .Returns(_items);
 
@@ -52,7 +52,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
             _provider = new NewsServiceDbContext(dbOptions);
 
-            _repository = new NewsRepository(_provider, _httpContext.Object);
+            _repository = new NewsRepository(_provider, _accessorMock.Object);
         }
 
         [SetUp]
