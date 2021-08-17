@@ -13,7 +13,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         public string Subject { get; set; }
         public string Pseudonym { get; set; }
         public Guid AuthorId { get; set; }
-        public Guid SenderId { get; set; }
         public Guid? DepartmentId { get; set; }
         public bool IsActive { get; set; }
         public Guid CreatedBy { get; set; }
@@ -42,10 +41,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 
             builder
                 .Property(p => p.AuthorId)
-                .IsRequired();
-
-            builder
-                .Property(p => p.SenderId)
                 .IsRequired();
 
             builder

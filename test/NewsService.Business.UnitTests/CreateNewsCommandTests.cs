@@ -36,7 +36,6 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 Subject = "Subject",
                 Pseudonym = "AuthorName",
                 AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid()
             };
 
             _createdNews = new DbNews
@@ -46,7 +45,6 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 Subject = "Subject",
                 Pseudonym = "AuthorName",
                 AuthorId = _request.AuthorId,
-                SenderId = _request.SenderId,
                 CreatedBy = Guid.NewGuid(),
                 CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true

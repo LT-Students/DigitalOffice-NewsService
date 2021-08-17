@@ -34,6 +34,10 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
             migrationBuilder.DropColumn(
                 name: "CreatedAt",
                 table: DbNews.TableName);
+
+            migrationBuilder.DropColumn(
+                name: "SenderId",
+                table: DbNews.TableName);
         }
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -55,6 +59,10 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreatedAt",
+                table: DbNews.TableName);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "SenderId",
                 table: DbNews.TableName);
         }
     }

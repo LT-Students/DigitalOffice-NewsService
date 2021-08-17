@@ -38,8 +38,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
                 Content = "Content",
                 Subject = "Subject",
                 Pseudonym = "AuthorName",
-                AuthorId = Guid.NewGuid(),
-                SenderId = Guid.NewGuid()
+                AuthorId = Guid.NewGuid()
             };
 
             _expectedDbNews = new DbNews
@@ -48,7 +47,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
                 Subject = "Subject",
                 Pseudonym = "AuthorName",
                 AuthorId = _newsRequest.AuthorId,
-                SenderId = _newsRequest.SenderId,
                 IsActive = true
             };
         }
