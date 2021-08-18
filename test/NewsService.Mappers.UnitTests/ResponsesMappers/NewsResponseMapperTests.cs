@@ -55,8 +55,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Subject = "Subject",
                 Pseudonym = "Pseudonym",
                 AuthorId = _user.Id,
-                SenderId = _user.Id,
-                CreatedAt = DateTime.UtcNow,
                 DepartmentId = _department.Id,
                 IsActive = true
             };
@@ -67,8 +65,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 Content = _dbNews.Content,
                 Subject = _dbNews.Subject,
                 Author = _user,
-                Sender = _user,
-                CreatedAt = _dbNews.CreatedAt,
                 Department = _department,
                 IsActive = _dbNews.IsActive
             };
@@ -76,6 +72,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
             #endregion
 
             #region Broker user mocks
+
             _userResponseMock = new Mock<IOperationResult<IGetUserDataResponse>>();
 
             _userResponseMock

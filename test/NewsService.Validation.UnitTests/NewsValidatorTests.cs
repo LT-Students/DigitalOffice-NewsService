@@ -23,7 +23,6 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
                 AuthorId = Guid.NewGuid(),
                 Pseudonym = "Spartak Ryabtsev",
                 Content = "Content",
-                SenderId = Guid.NewGuid()
             };
         }
 
@@ -59,12 +58,6 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         public void ShouldThrowValidationExceptionWhenContentIsEmpty()
         {
             validator.ShouldHaveValidationErrorFor(x => x.Subject, "");
-        }
-
-        [Test]
-        public void ShouldThrowValidationExceptionWhenSenderIdIsEmpty()
-        {
-            validator.ShouldHaveValidationErrorFor(x => x.SenderId, Guid.Empty);
         }
 
         [Test]

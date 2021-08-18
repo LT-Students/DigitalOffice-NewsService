@@ -11,9 +11,6 @@ namespace LT.DigitalOffice.NewsService.Validation
             RuleFor(news => news.AuthorId)
                 .NotEmpty();
 
-            RuleFor(news => news.SenderId)
-                .NotEmpty();
-
             RuleFor(news => news.Pseudonym)
                 .MaximumLength(50)
                 .WithMessage("Pseudonym is too long.");
