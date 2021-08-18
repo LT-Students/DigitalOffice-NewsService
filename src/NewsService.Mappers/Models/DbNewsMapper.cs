@@ -4,6 +4,8 @@ using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
@@ -16,7 +18,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public DbNews Map(News request)
+        public DbNews Map(News request, List<Guid> departmentId)
         {
             if (request == null)
             {
@@ -30,7 +32,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 Subject = request.Subject,
                 Pseudonym = !string.IsNullOrEmpty(request.Pseudonym?.Trim()) ? request.Pseudonym.Trim() : null,
                 AuthorId = request.AuthorId,
-                DepartmentId = request.DepartmentId,
+                DepartmentId = departmentId.FirstOrDefault(),
                 IsActive = true,
                 CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
                 CreatedAtUtc = DateTime.UtcNow

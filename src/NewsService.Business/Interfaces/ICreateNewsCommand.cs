@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using System;
 
@@ -16,6 +17,8 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
         /// </summary>
         /// <param name="request">News data.</param>
         /// <returns>Guid of added news.</returns>
-        Guid Execute(News request);
+        
+        OperationResultResponse<Guid> Execute(News request);
+
     }
 }
