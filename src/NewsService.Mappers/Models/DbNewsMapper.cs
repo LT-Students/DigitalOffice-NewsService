@@ -40,4 +40,3 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         }
     }
 }
-
