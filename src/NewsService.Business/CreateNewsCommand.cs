@@ -28,11 +28,11 @@ namespace LT.DigitalOffice.NewsService.Business
         private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
         private readonly ILogger<CreateNewsCommand> _logger;
 
-        private List<Guid> CheckDepartmentExistence(List<Guid> departmentIds, List<string> errors)
+        private List<Guid> CheckDepartmentExistence(Guid? departmentId, List<string> errors)
         {
-            if (!departmentIds.Any())
+            if (!departmentId.HasValue || departmentId == Guid.Empty)
             {
-                return departmentIds;
+                return new List<Guid>();
             }
 
             string errorMessage = "Failed to check the existing department.";
@@ -41,13 +41,17 @@ namespace LT.DigitalOffice.NewsService.Business
             try
             {
                 var response = _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
-                    ICheckDepartmentsExistence.CreateObj(departmentIds)).Result;
+                    ICheckDepartmentsExistence.CreateObj(new List<Guid> { departmentId.Value })).Result;
                 if (response.Message.IsSuccess)
                 {
+                    if (!response.Message.Body.DepartmentIds.Any())
+                    {
+                        errors.Add("Department Id does not exist");
+                    }
                     return response.Message.Body.DepartmentIds;
                 }
 
-                _logger.LogWarning($"Can not find {departmentIds} with this Ids '{departmentIds}': " +
+                _logger.LogWarning($"Can not find {departmentId} with this Ids '{departmentId}': " +
                     $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
             }
             catch (Exception exc)
@@ -56,8 +60,7 @@ namespace LT.DigitalOffice.NewsService.Business
             }
 
             errors.Add(errorMessage);
-            return null;
-
+            return new List<Guid>();
         }
 
         public CreateNewsCommand(
@@ -88,26 +91,15 @@ namespace LT.DigitalOffice.NewsService.Business
 
             _validator.ValidateAndThrowCustom(request);
 
-            List<Guid> departments = new List<Guid>();
-            departments.Add(request.DepartmentId.Value);
+            List<Guid> existDepartments = CheckDepartmentExistence(request.DepartmentId, response.Errors);
 
-            var existDepartments = CheckDepartmentExistence(departments, response.Errors);
-            if (!response.Errors.Any()
-                && existDepartments.Count() != departments.Count())
-            {
-                response.Errors.Add("Department does not exist.");
-            }
-            else if (response.Errors.Any())
-            {
-                response.Status = OperationResultStatusType.Failed;
-                return response;
-            }
             var news = _mapper.Map(request, existDepartments);
 
             return new OperationResultResponse<Guid>
             {
                 Body = _repository.CreateNews(news),
-                Status = OperationResultStatusType.FullSuccess
+                Status = OperationResultStatusType.FullSuccess,
+                Errors = response.Errors
             };
         }
     }
