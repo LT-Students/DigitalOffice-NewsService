@@ -53,7 +53,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
 
         #region NewsRequest to DbNews
 
-        [Test]
+        /*[Test]
         public void ShouldThrowArgumentNullExceptionWhenRequestIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => _mapper.Map(null));
@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ModelMappers
 
             Assert.IsInstanceOf<Guid>(dbNews.Id);
             SerializerAssert.AreEqual(_expectedDbNews, dbNews);
-        }
+        }*/
 
         #endregion
     }
