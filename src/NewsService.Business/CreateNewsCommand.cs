@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.NewsService.Business
         private List<Guid> CheckDepartmentExistence(Guid? departmentId, List<string> errors)
         {
             string errorMessage = "Failed to check the existing department.";
-            string logMessage = "Department not found. {departmentIds}";
+            string logMessage = "Department with id {id} not found.";
 
             try
             {
@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.NewsService.Business
                 {
                     if (!response.Message.Body.DepartmentIds.Any())
                     {
-                        errors.Add(" Department with id '{id}' not found.");
+                        errors.Add($"Department Id: {departmentId} does not exist");
                     }
                     return response.Message.Body.DepartmentIds;
                 }
