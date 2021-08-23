@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.NewsService.Business
                 {
                     if (!response.Message.Body.DepartmentIds.Any())
                     {
-                        errors.Add("Department Id does not exist");
+                        errors.Add(" Department with id '{id}' not found.");
                     }
                     return response.Message.Body.DepartmentIds;
                 }
@@ -82,20 +82,17 @@ namespace LT.DigitalOffice.NewsService.Business
                 throw new ForbiddenException("Not enough rights.");
             }
 
-            OperationResultResponse<Guid> response = new();
-
             _validator.ValidateAndThrowCustom(request);
+
+            OperationResultResponse<Guid> response = new();
 
             List<Guid> existDepartments = CheckDepartmentExistence(request.DepartmentId, response.Errors);
 
-            var news = _mapper.Map(request, existDepartments);
+            response.Body = _repository.CreateNews(_mapper.Map(request, existDepartments));
 
-            return new OperationResultResponse<Guid>
-            {
-                Body = _repository.CreateNews(news),
-                Status = OperationResultStatusType.FullSuccess,
-                Errors = response.Errors
-            };
+            response.Status = response.Errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess;
+
+            return response;
         }
     }
 }
