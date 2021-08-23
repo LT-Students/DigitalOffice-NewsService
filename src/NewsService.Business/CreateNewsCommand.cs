@@ -30,11 +30,6 @@ namespace LT.DigitalOffice.NewsService.Business
 
         private List<Guid> CheckDepartmentExistence(Guid? departmentId, List<string> errors)
         {
-            if (!departmentId.HasValue || departmentId == Guid.Empty)
-            {
-                return new List<Guid>();
-            }
-
             string errorMessage = "Failed to check the existing department.";
             string logMessage = "Department not found. {departmentIds}";
 
