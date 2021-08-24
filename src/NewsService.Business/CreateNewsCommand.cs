@@ -30,6 +30,10 @@ namespace LT.DigitalOffice.NewsService.Business
 
         private List<Guid> CheckDepartmentExistence(Guid? departmentId, List<string> errors)
         {
+            if(!departmentId.HasValue)
+            {
+                return null;
+            }
             string errorMessage = "Failed to check the existing department.";
             string logMessage = "Department with id {id} not found.";
 
@@ -42,11 +46,12 @@ namespace LT.DigitalOffice.NewsService.Business
                     if (!response.Message.Body.DepartmentIds.Any())
                     {
                         errors.Add($"Department Id: {departmentId} does not exist");
+                        return null;
                     }
                     return response.Message.Body.DepartmentIds;
                 }
 
-                _logger.LogWarning($"Can not find {departmentId} with this Ids '{departmentId}': " +
+                _logger.LogWarning("Can not find {departmentId} with this Id: {departmentId}: " +
                     $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
             }
             catch (Exception exc)
@@ -55,7 +60,7 @@ namespace LT.DigitalOffice.NewsService.Business
             }
 
             errors.Add(errorMessage);
-            return new List<Guid>();
+            return null;
         }
 
         public CreateNewsCommand(

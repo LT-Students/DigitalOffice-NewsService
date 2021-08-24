@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 Subject = request.Subject,
                 Pseudonym = !string.IsNullOrEmpty(request.Pseudonym?.Trim()) ? request.Pseudonym.Trim() : null,
                 AuthorId = request.AuthorId,
-                DepartmentId = departmentId.Any() ? departmentId[0] : null,
+                DepartmentId = departmentId?[0],
                 IsActive = true,
                 CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
                 CreatedAtUtc = DateTime.UtcNow
