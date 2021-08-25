@@ -94,7 +94,6 @@ namespace LT.DigitalOffice.NewsService.Business
             List<Guid> existDepartments = CheckDepartmentExistence(request.DepartmentId, response.Errors);
 
             response.Body = _repository.CreateNews(_mapper.Map(request, existDepartments));
-
             response.Status = response.Errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess;
 
             return response;
