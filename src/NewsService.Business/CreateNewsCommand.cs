@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.NewsService.Business
                 return null;
             }
             string errorMessage = "Failed to check the existing department.";
-            string logMessage = "Department with id {id} not found.";
+            string logMessage = "Department with id: {id} not found.";
 
             try
             {
@@ -51,7 +51,7 @@ namespace LT.DigitalOffice.NewsService.Business
                     return response.Message.Body.DepartmentIds;
                 }
 
-                _logger.LogWarning("Can not find {departmentId} with this Id: {departmentId}: " +
+                _logger.LogWarning("Can not find department with this Id: {departmentId}: " +
                     $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
             }
             catch (Exception exc)
