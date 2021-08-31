@@ -51,7 +51,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             };
         }
 
-        [SetUp]
+/*        [SetUp]
         public void SetUp()
         {
             _mapperMock = new Mock<IDbNewsMapper>();
@@ -153,5 +153,5 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             Assert.AreEqual(_createdNews.Id, _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.CreateNews(It.IsAny<DbNews>()), Times.Once);
         }
-    }
+*/    }
 }

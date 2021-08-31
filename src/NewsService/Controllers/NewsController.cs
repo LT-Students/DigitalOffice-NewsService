@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
+using LT.DigitalOffice.Kernel.Responses;
 
 namespace LT.DigitalOffice.NewsService.Controllers
 {
@@ -32,7 +33,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
         }
 
         [HttpPost("create")]
-        public Guid Create(
+        public OperationResultResponse<Guid> Create(
             [FromServices] ICreateNewsCommand command,
             [FromBody] News request)
         {
