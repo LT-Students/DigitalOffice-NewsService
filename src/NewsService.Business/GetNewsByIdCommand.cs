@@ -1,4 +1,6 @@
-﻿using LT.DigitalOffice.NewsService.Business.Interfaces;
+﻿using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
@@ -17,9 +19,13 @@ namespace LT.DigitalOffice.NewsService.Business
             _mapper = mapper;
         }
 
-        public NewsResponse Execute(Guid newsId)
+        public OperationResultResponse<NewsResponse> Execute(Guid newsId)
         {
-            return _mapper.Map(_repository.GetNewsInfoById(newsId));
+            OperationResultResponse<NewsResponse> response = new();
+
+            response.Body = _mapper.Map(_repository.GetNewsInfoById(newsId));
+            response.Status = OperationResultStatusType.FullSuccess;
+            return response;
         }
     }
 }

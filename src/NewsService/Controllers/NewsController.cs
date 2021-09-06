@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
     public class NewsController : ControllerBase
     {
         [HttpGet("getNewsById")]
-        public NewsResponse GetNewsInfoById(
+        public OperationResultResponse<NewsResponse> GetNewsInfoById(
             [FromServices] IGetNewsByIdCommand command,
             [FromQuery] Guid newsId)
         {
@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
         }
 
         [HttpPatch("edit")]
-        public bool Edit(
+        public OperationResultResponse<bool> Edit(
             [FromServices] IEditNewsCommand command,
             [FromQuery] Guid newsId,
             [FromBody] JsonPatchDocument<EditNewsRequest> request)

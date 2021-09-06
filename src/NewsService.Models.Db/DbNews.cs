@@ -19,6 +19,7 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         public DateTime CreatedAtUtc { get; set; }
         public Guid? ModifiedBy { get; set; }
         public DateTime? ModifiedAtUtc { get; set; }
+        public string Prewiew { get; set; }
     }
 
     public class DbNewsConfiguration : IEntityTypeConfiguration<DbNews>

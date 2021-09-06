@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using System;
 
@@ -16,6 +17,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
         /// </summary>
         /// <param name="newsId">Specified id of news.</param>
         /// <returns>News model with specified id.</returns>
-        NewsResponse Execute(Guid newsId);
+        OperationResultResponse<NewsResponse> Execute(Guid newsId);
     }
 }

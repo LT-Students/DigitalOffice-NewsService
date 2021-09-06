@@ -12,10 +12,12 @@ using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace LT.DigitalOffice.NewsService.Business
 {
@@ -27,6 +29,7 @@ namespace LT.DigitalOffice.NewsService.Business
         private readonly IAccessValidator _accessValidator;
         private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
         private readonly ILogger<CreateNewsCommand> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private List<Guid> CheckDepartmentExistence(Guid? departmentId, List<string> errors)
         {
@@ -69,7 +72,8 @@ namespace LT.DigitalOffice.NewsService.Business
             INewsValidator validator,
             IAccessValidator accessValidator,
             IRequestClient<ICheckDepartmentsExistence> rcCheckDepartmentsExistence,
-            ILogger<CreateNewsCommand> logger)
+            ILogger<CreateNewsCommand> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
@@ -77,23 +81,41 @@ namespace LT.DigitalOffice.NewsService.Business
             _accessValidator = accessValidator;
             _rcCheckDepartmentsExistence = rcCheckDepartmentsExistence;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public OperationResultResponse<Guid> Execute(News request)
         {
-            if (!(_accessValidator.IsAdmin() ||
-                 _accessValidator.HasRights(Rights.AddEditRemoveNews)))
+            if (!(_accessValidator.HasRights(Rights.AddEditRemoveNews)))
             {
-                throw new ForbiddenException("Not enough rights.");
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = new() { "Not enough rights." }
+                };
             }
 
-            _validator.ValidateAndThrowCustom(request);
+            if (!_validator.ValidateCustom(request, out List<string> errors))
+            {
+                _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                return new OperationResultResponse<Guid>
+                {
+                    Status = OperationResultStatusType.Failed,
+                    Errors = errors
+                };
+            }
 
             OperationResultResponse<Guid> response = new();
 
             List<Guid> existDepartments = CheckDepartmentExistence(request.DepartmentId, response.Errors);
 
             response.Body = _repository.CreateNews(_mapper.Map(request, existDepartments));
+
+            _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+
             response.Status = response.Errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess;
 
             return response;
