@@ -100,7 +100,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
                 Subject = dbNews.Subject,
                 Author = new User { Id = dbNews.AuthorId, FullName = GetUserFullName(dbNews.AuthorId) },
                 Department = department,
-                IsActive = dbNews.IsActive
+                IsActive = dbNews.IsActive,
+                Prewiew = dbNews.Prewiew
             };
         }
     }

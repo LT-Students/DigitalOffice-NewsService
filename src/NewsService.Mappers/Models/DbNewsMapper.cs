@@ -35,7 +35,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
                 DepartmentId = departmentId?[0],
                 IsActive = true,
                 CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
-                CreatedAtUtc = DateTime.UtcNow
+                CreatedAtUtc = DateTime.UtcNow,
+                Prewiew = request.Prewiew
             };
         }
     }
