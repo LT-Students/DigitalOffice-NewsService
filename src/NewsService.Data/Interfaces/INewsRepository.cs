@@ -20,25 +20,25 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
         /// </summary>
         /// <param name="news">News to add.</param>
         /// <returns>Guid of added news.</returns>
-        Guid CreateNews(DbNews news);
+        Guid? Create(DbNews news);
 
         /// <summary>
         /// Update existing news in the database.
         /// </summary>
         /// <param name="news">News to edit.</param>
-        bool EditNews(Guid newsId, JsonPatchDocument<DbNews> news);
+        bool Edit(Guid newsId, JsonPatchDocument<DbNews> news);
 
         /// <summary>
         /// Returns the DbNews with the specified id from database.
         /// </summary>
         /// <param name="newsId">Specified id of DbNews.</param>
         /// <returns>News with specified id.</returns>
-        DbNews GetNewsInfoById(Guid newsId);
+        DbNews Get(Guid newsId);
 
         /// <summary>
         /// Find news in the database.
         /// </summary>
         /// <param name="findNewsFilter">Filter for serch.</param>
-        List<DbNews> FindNews(FindNewsFilter findNewsFilter);
+        List<DbNews> Find(FindNewsFilter findNewsFilter, int skipCount, int takeCount, List<string> errors, out int totalCount);
     }
 }

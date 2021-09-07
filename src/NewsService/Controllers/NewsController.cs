@@ -15,9 +15,9 @@ namespace LT.DigitalOffice.NewsService.Controllers
   [ApiController]
   public class NewsController : ControllerBase
   {
-    [HttpGet("getNewsById")]
-    public OperationResultResponse<NewsResponse> GetNewsInfoById(
-      [FromServices] IGetNewsByIdCommand command,
+    [HttpGet("get")]
+    public OperationResultResponse<NewsResponse> Get(
+      [FromServices] IGetNewsCommand command,
       [FromQuery] Guid newsId)
     {
       return command.Execute(newsId);
@@ -33,19 +33,21 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpPost("create")]
-    public OperationResultResponse<Guid> Create(
+    public OperationResultResponse<Guid?> Create(
       [FromServices] ICreateNewsCommand command,
-      [FromBody] News request)
+      [FromBody] CreateNewsRequest request)
     {
       return command.Execute(request);
     }
 
     [HttpGet("find")]
-    public List<NewsResponse> Find(
+    public FindResultResponse<NewsInfo> Find(
       [FromServices] IFindNewsCommand command,
-      [FromQuery] FindNewsFilter findNewsFilter)
+      [FromQuery] FindNewsFilter findNewsFilter,
+      [FromQuery] int skipCount,
+      [FromQuery] int takeCount)
     {
-      return command.Execute(findNewsFilter);
+      return command.Execute(findNewsFilter, skipCount, takeCount);
     }
   }
 }

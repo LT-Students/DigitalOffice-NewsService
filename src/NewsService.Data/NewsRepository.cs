@@ -25,7 +25,7 @@ namespace LT.DigitalOffice.NewsService.Data
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public bool EditNews(Guid newsId, JsonPatchDocument<DbNews> request)
+    public bool Edit(Guid newsId, JsonPatchDocument<DbNews> request)
     {
       var dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
 
@@ -42,53 +42,63 @@ namespace LT.DigitalOffice.NewsService.Data
       return true;
     }
 
-    public Guid CreateNews(DbNews news)
+    public Guid? Create(DbNews news)
     {
+      if (news == null)
+      {
+        return null;
+      }
+
       _provider.News.Add(news);
       _provider.Save();
 
       return news.Id;
     }
 
-    public List<DbNews> FindNews(FindNewsFilter findNewsFilter)
+    public List<DbNews> Find(FindNewsFilter findNewsFilter, int skipCount, int takeCount, List<string> errors, out int totalCount)
     {
+      totalCount = 0;
+
       if (findNewsFilter == null)
       {
-        throw new ArgumentNullException("search parameters not passed.");
+        return null;
+      }
+
+      if (skipCount < 0)
+      {
+        errors.Add("Skip count can't be less than 0.");
+        return null;
+      }
+
+      if (takeCount < 1)
+      {
+        errors.Add("Take count can't be less than 1.");
+        return null;
       }
 
       var dbNewsList = _provider.News.AsQueryable();
 
-      if (findNewsFilter.AuthorId != null)
+      if (findNewsFilter.AuthorId.HasValue)
       {
         dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
       }
 
-      if (findNewsFilter.DepartmentId != null)
+      if (findNewsFilter.DepartmentId.HasValue)
       {
         dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
       }
 
-      if (findNewsFilter.Pseudonym != null)
+      if (!findNewsFilter.IncludeDeactivated)
       {
-        dbNewsList = dbNewsList.Where(x => x.Pseudonym == findNewsFilter.Pseudonym);
+        dbNewsList = dbNewsList.Where(x => x.IsActive);
       }
 
-      if (findNewsFilter.Subject != null)
-      {
-        dbNewsList = dbNewsList.Where(x => x.Subject == findNewsFilter.Subject);
-      }
-
-      if (findNewsFilter.Prewiew != null)
-      {
-        dbNewsList = dbNewsList.Where(x => x.Subject == findNewsFilter.Prewiew);
-      }
-
-      return dbNewsList.ToList();
+      return dbNewsList.Skip(skipCount).Take(takeCount).ToList();
     }
 
-    public DbNews GetNewsInfoById(Guid newsId)
-      => _provider.News.FirstOrDefault(dbNews => dbNews.Id == newsId) ??
-        throw new NotFoundException($"News with this id: '{newsId}' was not found.");
+    public DbNews Get(Guid newsId)
+    {
+      return _provider.News.FirstOrDefault(dbNews => dbNews.Id == newsId);
+    }
   }
 }

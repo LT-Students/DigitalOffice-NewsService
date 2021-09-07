@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto.Models
+namespace LT.DigitalOffice.NewsService.Models.Dto.Requests
 {
-  public class News
+  public record CreateNewsRequest
   {
     public string Preview { get; set; }
     public string Content { get; set; }

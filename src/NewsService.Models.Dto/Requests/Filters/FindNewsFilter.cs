@@ -11,13 +11,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
     [FromQuery(Name = "departmentid")]
     public Guid? DepartmentId { get; set; }
 
-    [FromQuery(Name = "pseudonym")]
-    public string Pseudonym { get; set; }
-
-    [FromQuery(Name = "subject")]
-    public string Subject { get; set; }
-
-    [FromQuery(Name = "prewiew")]
-    public string Prewiew { get; set; }
+    [FromQuery(Name = "includeDeactivated")]
+    public bool IncludeDeactivated { get; set; } = false;
   }
 }

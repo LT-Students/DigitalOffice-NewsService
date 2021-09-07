@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public DateTime CreatedAtUtc { get; set; }
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
-    public string Prewiew { get; set; }
+    public string Preview { get; set; }
   }
 
   public class DbNewsConfiguration : IEntityTypeConfiguration<DbNews>
@@ -38,10 +38,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 
       builder
         .Property(p => p.Subject)
-        .IsRequired();
-
-      builder
-        .Property(p => p.AuthorId)
         .IsRequired();
 
       builder

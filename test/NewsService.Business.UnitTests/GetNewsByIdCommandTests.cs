@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 {
     public class GetNewsByIdCommandTests
     {
-        private IGetNewsByIdCommand _getNewsInfoByIdCommand;
+        private IGetNewsCommand _getNewsInfoByIdCommand;
         private Mock<INewsRepository> _repositoryMock;
         private Mock<INewsResponseMapper> _mapperMock;
 
@@ -28,7 +28,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         {
             _repositoryMock = new Mock<INewsRepository>();
             _mapperMock = new Mock<INewsResponseMapper>();
-            _getNewsInfoByIdCommand = new GetNewsByIdCommand(_repositoryMock.Object, _mapperMock.Object);
+            _getNewsInfoByIdCommand = new GetNewsCommand(_repositoryMock.Object, _mapperMock.Object);
 
             _newsId = Guid.NewGuid();
             _newsresponse = new NewsResponse { Id = _newsId };

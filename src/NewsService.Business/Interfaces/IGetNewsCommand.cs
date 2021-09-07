@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
   /// Provides method for getting NewsResponse model by id.
   /// </summary>
   [AutoInject]
-  public interface IGetNewsByIdCommand
+  public interface IGetNewsCommand
   {
     /// <summary>
     /// Returns the NewsResponse model with the specified id.

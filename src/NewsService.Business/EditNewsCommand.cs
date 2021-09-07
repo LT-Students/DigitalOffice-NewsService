@@ -67,7 +67,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
       JsonPatchDocument<DbNews> dbRequest = _mapper.Map(request);
 
-      response.Body = _repository.EditNews(newsId, dbRequest);
+      response.Body = _repository.Edit(newsId, dbRequest);
 
       if (!response.Body)
       {

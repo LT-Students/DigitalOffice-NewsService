@@ -1,37 +1,54 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Net;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
-using LT.DigitalOffice.NewsService.Models.Dto.Responses;
+using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.NewsService.Business
 {
   public class FindNewsCommand : IFindNewsCommand
   {
     private readonly INewsRepository _repository;
-    private readonly INewsResponseMapper _mapper;
+    private readonly INewsInfoMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public FindNewsCommand(
-        INewsRepository repository,
-        INewsResponseMapper mapper)
+      INewsRepository repository,
+      INewsInfoMapper mapper,
+      IHttpContextAccessor httpContextAccessor)
     {
       _repository = repository;
       _mapper = mapper;
+      _httpContextAccessor = httpContextAccessor;
     }
 
-    public List<NewsResponse> Execute(FindNewsFilter findNewsFilter)
+    public FindResultResponse<NewsInfo> Execute(FindNewsFilter findNewsFilter, int skipCount, int takeCount)
     {
-      List<DbNews> dbNewsList = _repository.FindNews(findNewsFilter);
-      List<NewsResponse> newsResponseList = new List<NewsResponse>();
+      FindResultResponse<NewsInfo> response = new();
 
-      foreach (DbNews dbNews in dbNewsList)
+      response.Body = _repository
+        .Find(findNewsFilter, skipCount, takeCount, response.Errors, out int totalCount)
+        .Select(n => _mapper.Map(n))
+        .ToList();
+
+      response.TotalCount = totalCount;
+
+      if (response.Errors.Any())
       {
-        newsResponseList.Add(_mapper.Map(dbNews));
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+        response.Status = OperationResultStatusType.Failed;
+        return response;
       }
 
-      return newsResponseList;
+      response.Status = OperationResultStatusType.FullSuccess;
+
+      return response;
     }
   }
 }

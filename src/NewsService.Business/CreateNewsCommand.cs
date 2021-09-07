@@ -13,6 +13,7 @@ using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -83,13 +84,13 @@ namespace LT.DigitalOffice.NewsService.Business
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<Guid> Execute(News request)
+    public OperationResultResponse<Guid?> Execute(CreateNewsRequest request)
     {
-      if (!(_accessValidator.HasRights(Rights.AddEditRemoveNews)))
+      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
-        return new OperationResultResponse<Guid>
+        return new OperationResultResponse<Guid?>
         {
           Status = OperationResultStatusType.Failed,
           Errors = new() { "Not enough rights." }
@@ -100,22 +101,29 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        return new OperationResultResponse<Guid>
+        return new OperationResultResponse<Guid?>
         {
           Status = OperationResultStatusType.Failed,
           Errors = errors
         };
       }
 
-      OperationResultResponse<Guid> response = new();
+      OperationResultResponse<Guid?> response = new();
 
       List<Guid> existDepartments = CheckDepartmentExistence(request.DepartmentId, response.Errors);
 
-      response.Body = _repository.CreateNews(_mapper.Map(request, existDepartments));
+      response.Body = _repository.Create(_mapper.Map(request, existDepartments));
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       response.Status = response.Errors.Any() ? OperationResultStatusType.PartialSuccess : OperationResultStatusType.FullSuccess;
+
+      if (response.Body == null)
+      {
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+        response.Status = OperationResultStatusType.Failed;
+      }
 
       return response;
     }

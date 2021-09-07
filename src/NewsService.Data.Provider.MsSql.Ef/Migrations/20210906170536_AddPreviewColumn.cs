@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
 {
   [DbContext(typeof(NewsServiceDbContext))]
-  [Migration("20210906170536_AddPrewiewAndDropSenderIdColumn")]
-  public class AddPrewiewColumn : Migration
+  [Migration("20210906170536_AddPreviewColumn")]
+  public class AddPreviewColumn : Migration
   {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
       migrationBuilder.AddColumn<string>(
-        name: nameof(DbNews.Prewiew),
+        name: nameof(DbNews.Preview),
         table: DbNews.TableName,
-        nullable: true);
+        nullable: false);
     }
   }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
+namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {
-  public record NewsResponse
+  public record NewsInfo
   {
     public Guid Id { get; set; }
     public string Preview { get; set; }
-    public string Content { get; set; }
     public string Subject { get; set; }
     public User Author { get; set; }
     public Department Department { get; set; }
