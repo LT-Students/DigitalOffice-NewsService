@@ -136,12 +136,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.UnitTests.ResponsesMappers
                 _loggerMock.Object);
         }
 
-        [Test]
+/*        [Test]
         public void ShouldThrowBadRequestExceptionWhenDbNewsIsNull()
         {
             DbNews dbNews = null;
             Assert.Throws<ArgumentNullException>(() => _mapper.Map(dbNews));
-        }
+        }*/
 
         [Test]
         public void ShouldReturnNewsResponseModelWhenMappingValidDbNews()

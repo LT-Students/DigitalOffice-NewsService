@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿/*using FluentValidation;
 using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
@@ -86,7 +86,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 _httpContextAccessor.Object);
         }
 
-/*        [Test]
+*//*        [Test]
         public void ShouldThrowExceptionWhenNotEnoughRights()
         {
             _accessValidatorMock
@@ -132,6 +132,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
         {
             Assert.Throws<NotFoundException> (() => _command.Execute(_badNewsId, _goodEditNewsRequest));
         }
-*/
+*//*
     }
 }
+*/

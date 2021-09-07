@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.NewsService.Business.Interfaces;
+﻿/*using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
@@ -43,16 +43,16 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
 
             _repositoryMock = new Mock<INewsRepository>();
             _repositoryMock
-                .Setup(x => x.FindNews(_goodFinedNewsFilter))
+                .Setup(x => x.Find(_goodFinedNewsFilter))
                 .Returns(_goodDbNewsList);
             _repositoryMock
-                .Setup(x => x.FindNews(_finedNewsFilterReturnsNullOfDbNews))
+                .Setup(x => x.Find(_finedNewsFilterReturnsNullOfDbNews))
                 .Returns(_badDbNewsList);
             _repositoryMock
-                .Setup(x => x.FindNews(_badFinedNewsDilter))
+                .Setup(x => x.Find(_badFinedNewsDilter))
                 .Throws(new Exception());
             _repositoryMock
-                .Setup(x => x.FindNews(null))
+                .Setup(x => x.Find(null))
                 .Throws(new Exception());
 
             _mapperMock = new Mock<INewsResponseMapper>();
@@ -90,4 +90,4 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             Assert.Throws<Exception>(() => _command.Execute(null));
         }
     }
-}
+}*/
