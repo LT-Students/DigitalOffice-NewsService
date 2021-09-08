@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.Kernel.Exceptions.Models;
+﻿/*using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
@@ -154,7 +154,7 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
 
         #region FindNews
 
-/*        [Test]
+*//*        [Test]
         public void ExceptionNullFindNewsParams()
         {
             Assert.Throws<ArgumentNullException>(() => _repository.Find(null));
@@ -184,17 +184,17 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
             SerializerAssert.AreEqual(
                 new List<DbNews> { _dbNews },
                 _repository.Find(new FindNewsFilter {}));
-        }*/
+        }*//*
 
         #endregion
 
         #region GetNews
 
-/*        [Test]
+*//*        [Test]
         public void ShouldThrowExceptionWhenThereNoNewsInDatabaseWithSuchId()
         {
             Assert.Throws<NotFoundException>(() => _repository.Get(Guid.NewGuid()));
-        }*/
+        }*//*
 
         [Test]
         public void ShouldReturnNewsInfoWhenGettingFileById()
@@ -220,3 +220,4 @@ namespace LT.DigitalOffice.NewsService.Data.UnitTests
         #endregion
     }
 }
+*/
