@@ -56,22 +56,23 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public List<DbNews> Find(FindNewsFilter findNewsFilter, List<string> errors, out int totalCount)
     {
-      totalCount = 0;
-
       if (findNewsFilter == null)
       {
+        totalCount = 0;
         return null;
       }
 
       if (findNewsFilter.SkipCount < 0)
       {
         errors.Add("Skip count can't be less than 0.");
+        totalCount = 0;
         return null;
       }
 
       if (findNewsFilter.TakeCount < 1)
       {
         errors.Add("Take count can't be less than 1.");
+        totalCount = 0;
         return null;
       }
 
@@ -91,6 +92,8 @@ namespace LT.DigitalOffice.NewsService.Data
       {
         dbNewsList = dbNewsList.Where(x => x.IsActive);
       }
+
+      totalCount = dbNewsList.Count();
 
       return dbNewsList.Skip(findNewsFilter.SkipCount).Take(findNewsFilter.TakeCount).ToList();
     }

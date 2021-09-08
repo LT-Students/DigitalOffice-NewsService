@@ -7,6 +7,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
   {
     [FromQuery(Name = "skipCount")]
     public int SkipCount { get; set; }
+
     [FromQuery(Name = "takeCount")]
     public int TakeCount { get; set; }
 
