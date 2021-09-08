@@ -43,11 +43,9 @@ namespace LT.DigitalOffice.NewsService.Controllers
     [HttpGet("find")]
     public FindResultResponse<NewsInfo> Find(
       [FromServices] IFindNewsCommand command,
-      [FromQuery] FindNewsFilter findNewsFilter,
-      [FromQuery] int skipCount,
-      [FromQuery] int takeCount)
+      [FromQuery] FindNewsFilter findNewsFilter)
     {
-      return command.Execute(findNewsFilter, skipCount, takeCount);
+      return command.Execute(findNewsFilter);
     }
   }
 }

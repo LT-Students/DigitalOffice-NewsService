@@ -27,13 +27,13 @@ namespace LT.DigitalOffice.NewsService.Business
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public FindResultResponse<NewsInfo> Execute(FindNewsFilter findNewsFilter, int skipCount, int takeCount)
+    public FindResultResponse<NewsInfo> Execute(FindNewsFilter findNewsFilter)
     {
       FindResultResponse<NewsInfo> response = new();
 
       response.Body = _repository
-        .Find(findNewsFilter, skipCount, takeCount, response.Errors, out int totalCount)
-        .Select(n => _mapper.Map(n))
+        .Find(findNewsFilter, response.Errors, out int totalCount)
+        .Select(_mapper.Map)
         .ToList();
 
       response.TotalCount = totalCount;

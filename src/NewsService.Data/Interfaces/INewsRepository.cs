@@ -1,22 +1,21 @@
-﻿using LT.DigitalOffice.Kernel.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using Microsoft.AspNetCore.JsonPatch;
-using System;
-using System.Collections.Generic;
 
 namespace LT.DigitalOffice.NewsService.Data.Interfaces
 {
-    [AutoInject]
-    public interface INewsRepository
-    {
-        Guid? Create(DbNews news);
+  [AutoInject]
+  public interface INewsRepository
+  {
+    Guid? Create(DbNews news);
 
-        bool Edit(Guid newsId, JsonPatchDocument<DbNews> news);
+    bool Edit(Guid newsId, JsonPatchDocument<DbNews> news);
 
-        DbNews Get(Guid newsId);
+    DbNews Get(Guid newsId);
 
-        List<DbNews> Find(FindNewsFilter findNewsFilter, int skipCount, int takeCount, List<string> errors, out int totalCount);
-    }
+    List<DbNews> Find(FindNewsFilter findNewsFilter, List<string> errors, out int totalCount);
+  }
 }

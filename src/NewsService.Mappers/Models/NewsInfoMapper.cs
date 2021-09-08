@@ -14,8 +14,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class NewsInfoMapper : INewsInfoMapper
   {
-    private IRequestClient<IGetUserDataRequest> _userRequestClient;
-    private IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
+    private readonly IRequestClient<IGetUserDataRequest> _userRequestClient;
+    private readonly IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
     private readonly ILogger _logger;
 
     private string GetUserFullName(Guid userId)

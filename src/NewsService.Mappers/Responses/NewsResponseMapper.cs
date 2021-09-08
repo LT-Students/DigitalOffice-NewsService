@@ -15,8 +15,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
   public class NewsResponseMapper : INewsResponseMapper
   {
-    private IRequestClient<IGetUserDataRequest> _userRequestClient;
-    private IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
+    private readonly IRequestClient<IGetUserDataRequest> _userRequestClient;
+    private readonly IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
     private readonly ILogger _logger;
 
     private string GetUserFullName(Guid userId)

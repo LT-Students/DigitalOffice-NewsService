@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
   [AutoInject]
   public interface IFindNewsCommand
   {
-    FindResultResponse<NewsInfo> Execute(FindNewsFilter findNewsFilter, int skipCount, int takeCount);
+    FindResultResponse<NewsInfo> Execute(FindNewsFilter findNewsFilter);
   }
 }

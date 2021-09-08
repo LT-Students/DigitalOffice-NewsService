@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
@@ -55,7 +54,7 @@ namespace LT.DigitalOffice.NewsService.Data
       return news.Id;
     }
 
-    public List<DbNews> Find(FindNewsFilter findNewsFilter, int skipCount, int takeCount, List<string> errors, out int totalCount)
+    public List<DbNews> Find(FindNewsFilter findNewsFilter, List<string> errors, out int totalCount)
     {
       totalCount = 0;
 
@@ -64,13 +63,13 @@ namespace LT.DigitalOffice.NewsService.Data
         return null;
       }
 
-      if (skipCount < 0)
+      if (findNewsFilter.SkipCount < 0)
       {
         errors.Add("Skip count can't be less than 0.");
         return null;
       }
 
-      if (takeCount < 1)
+      if (findNewsFilter.TakeCount < 1)
       {
         errors.Add("Take count can't be less than 1.");
         return null;
@@ -93,7 +92,7 @@ namespace LT.DigitalOffice.NewsService.Data
         dbNewsList = dbNewsList.Where(x => x.IsActive);
       }
 
-      return dbNewsList.Skip(skipCount).Take(takeCount).ToList();
+      return dbNewsList.Skip(findNewsFilter.SkipCount).Take(findNewsFilter.TakeCount).ToList();
     }
 
     public DbNews Get(Guid newsId)
