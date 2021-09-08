@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 
 namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {
@@ -11,4 +11,4 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Models
     public Guid AuthorId { get; set; }
     public Guid? DepartmentId { get; set; }
   }
-}
+}*/

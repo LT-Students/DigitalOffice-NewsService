@@ -5,10 +5,10 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
 {
   public class FindNewsFilter
   {
-    [FromQuery(Name = "authorid")]
+    [FromQuery(Name = "authorId")]
     public Guid? AuthorId { get; set; }
 
-    [FromQuery(Name = "departmentid")]
+    [FromQuery(Name = "departmentId")]
     public Guid? DepartmentId { get; set; }
 
     [FromQuery(Name = "includeDeactivated")]

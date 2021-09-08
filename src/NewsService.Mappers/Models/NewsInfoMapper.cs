@@ -29,16 +29,16 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 
         if (!response.Message.IsSuccess)
         {
-          _logger.LogWarning($"Can't found user FIO. Reason: '{string.Join(',', response.Message.Errors)}'");
+          _logger.LogWarning($"Can't found user. Reason: '{string.Join(',', response.Message.Errors)}'");
         }
         else
         {
-          fullName = $"{response.Message.Body.LastName} {response.Message.Body.FirstName} {response.Message.Body.MiddleName}".Trim();
+          fullName = $"{response.Message.Body.FirstName} {response.Message.Body.LastName} {response.Message.Body.MiddleName}".Trim();
         }
       }
       catch (Exception exception)
       {
-        _logger.LogError(exception, "Exception on get user FIO data request.");
+        _logger.LogError(exception, "Exception on get user data request.");
       }
 
       return fullName;
@@ -79,6 +79,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
       _departmentRequestClient = departmentClient;
       _logger = logger;
     }
+
     public NewsInfo Map(DbNews dbNews)
     {
       if (dbNews == null)

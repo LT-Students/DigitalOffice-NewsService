@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
     public OperationResultResponse<bool> Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request)
     {
-      if (!(_accessValidator.HasRights(Rights.AddEditRemoveNews)))
+      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -71,9 +71,9 @@ namespace LT.DigitalOffice.NewsService.Business
 
       if (!response.Body)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-        response.Errors.Add("Bad request");
+        response.Errors.Add($"News with ID '{newsId}' was not found.");
         response.Status = OperationResultStatusType.Failed;
         return response;
       }

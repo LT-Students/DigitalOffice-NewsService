@@ -15,5 +15,12 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
         table: DbNews.TableName,
         nullable: false);
     }
+
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+      migrationBuilder.DropColumn(
+        name: "Preview",
+        table: DbNews.TableName);
+    }
   }
 }

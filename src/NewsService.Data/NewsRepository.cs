@@ -31,7 +31,7 @@ namespace LT.DigitalOffice.NewsService.Data
 
       if (dbNews == null)
       {
-        throw new NotFoundException("News was not found.");
+        return false;
       }
 
       request.ApplyTo(dbNews);
