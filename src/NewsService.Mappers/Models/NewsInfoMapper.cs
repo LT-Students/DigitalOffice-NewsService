@@ -18,6 +18,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
     private readonly IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
     private readonly ILogger _logger;
 
+    //TODO Remove to command
     private string GetUserFullName(Guid userId)
     {
       string fullName = null;
@@ -101,6 +102,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Author = new User { Id = dbNews.AuthorId, FullName = GetUserFullName(dbNews.AuthorId) },
         Department = department,
         IsActive = dbNews.IsActive,
+        CreatedAtUtc = DateTime.UtcNow
       };
     }
   }

@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.NewsService.Business
       try
       {
         var response = _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
-            ICheckDepartmentsExistence.CreateObj(new List<Guid> { departmentId.Value })).Result;
+          ICheckDepartmentsExistence.CreateObj(new List<Guid> { departmentId.Value })).Result;
         if (response.Message.IsSuccess)
         {
           if (!response.Message.Body.DepartmentIds.Any())
@@ -55,7 +55,7 @@ namespace LT.DigitalOffice.NewsService.Business
         }
 
         _logger.LogWarning("Can not find department with this Id: {departmentId}: " +
-            $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
+          $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
       }
       catch (Exception exc)
       {
