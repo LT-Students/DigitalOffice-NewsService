@@ -32,7 +32,7 @@ namespace LT.DigitalOffice.NewsService.Business
       FindResultResponse<NewsInfo> response = new();
 
       response.Body = _repository
-        .Find(findNewsFilter, response.Errors, out int totalCount)
+        .Find(findNewsFilter, out int totalCount)
         .Select(_mapper.Map)
         .ToList();
 

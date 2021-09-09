@@ -54,7 +54,7 @@ namespace LT.DigitalOffice.NewsService.Data
       return news.Id;
     }
 
-    public List<DbNews> Find(FindNewsFilter findNewsFilter, List<string> errors, out int totalCount)
+    public List<DbNews> Find(FindNewsFilter findNewsFilter, out int totalCount)
     {
       if (findNewsFilter == null)
       {
@@ -64,14 +64,12 @@ namespace LT.DigitalOffice.NewsService.Data
 
       if (findNewsFilter.SkipCount < 0)
       {
-        errors.Add("Skip count can't be less than 0.");
         totalCount = 0;
         return null;
       }
 
       if (findNewsFilter.TakeCount < 1)
       {
-        errors.Add("Take count can't be less than 1.");
         totalCount = 0;
         return null;
       }

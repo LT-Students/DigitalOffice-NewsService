@@ -16,6 +16,6 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
 
     DbNews Get(Guid newsId);
 
-    List<DbNews> Find(FindNewsFilter findNewsFilter, List<string> errors, out int totalCount);
+    List<DbNews> Find(FindNewsFilter findNewsFilter, out int totalCount);
   }
 }
