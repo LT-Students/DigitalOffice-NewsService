@@ -9,7 +9,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces
     /// Represents mapper. Provides methods for converting an object of News value <see cref="DbNews"/>
     /// </summary>
     [AutoInject]
-    public interface INewsResponseMapper : IMapper<DbNews, NewsResponse>
+    public interface INewsResponseMapper
     {
+      NewsResponse Map(DbNews dbNews);
     }
 }
