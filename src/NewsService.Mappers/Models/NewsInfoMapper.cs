@@ -25,8 +25,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 
       try
       {
-        var request = IGetUserDataRequest.CreateObj(userId);
-        var response = _userRequestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
+        object request = IGetUserDataRequest.CreateObj(userId);
+        Response<IOperationResult<IGetUserDataResponse>> response = _userRequestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
 
         if (!response.Message.IsSuccess)
         {
@@ -51,8 +51,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 
       try
       {
-        var request = IGetDepartmentRequest.CreateObj(null, departmentId);
-        var response = _departmentRequestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
+        object request = IGetDepartmentRequest.CreateObj(null, departmentId);
+        Response<IOperationResult<IGetDepartmentResponse>> response = _departmentRequestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
 
         if (!response.Message.IsSuccess)
         {

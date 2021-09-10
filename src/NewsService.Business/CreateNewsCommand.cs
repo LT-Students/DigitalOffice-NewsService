@@ -42,7 +42,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
       try
       {
-        var response = _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
+        Response<IOperationResult<ICheckDepartmentsExistence>> response = _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
           ICheckDepartmentsExistence.CreateObj(new List<Guid> { departmentId.Value })).Result;
         if (response.Message.IsSuccess)
         {

@@ -26,7 +26,7 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public bool Edit(Guid newsId, JsonPatchDocument<DbNews> request)
     {
-      var dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
+      DbNews dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
 
       if (dbNews == null)
       {
@@ -74,7 +74,7 @@ namespace LT.DigitalOffice.NewsService.Data
         return null;
       }
 
-      var dbNewsList = _provider.News.AsQueryable();
+      IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
 
       if (findNewsFilter.AuthorId.HasValue)
       {

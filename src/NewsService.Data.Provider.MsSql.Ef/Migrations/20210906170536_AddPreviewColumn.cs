@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
     protected override void Down(MigrationBuilder migrationBuilder)
     {
       migrationBuilder.DropColumn(
-        name: "Preview",
+        name: nameof(DbNews.Preview),
         table: DbNews.TableName);
     }
   }
