@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.NewsService.Data
@@ -14,27 +12,21 @@ namespace LT.DigitalOffice.NewsService.Data
   public class NewsRepository : INewsRepository
   {
     private readonly IDataProvider _provider;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public NewsRepository(
-      IDataProvider provider,
-      IHttpContextAccessor httpContextAccessor)
+    public NewsRepository(IDataProvider provider)
     {
       _provider = provider;
-      _httpContextAccessor = httpContextAccessor;
     }
 
-    public bool Edit(Guid newsId, JsonPatchDocument<DbNews> request)
+    public bool Edit(DbNews dbNews, JsonPatchDocument<DbNews> request, Guid editorId)
     {
-      DbNews dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
-
-      if (dbNews == null)
+      if (dbNews == null || request == null)
       {
         return false;
       }
 
       request.ApplyTo(dbNews);
-      dbNews.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
+      dbNews.ModifiedBy = editorId;
       dbNews.ModifiedAtUtc = DateTime.UtcNow;
       _provider.Save();
 

@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _validator = new EditNewsValidator();
+            _validator = new EditNewsRequestValidator();
         }
 
         [SetUp]
@@ -88,7 +88,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [Test]
         public void ExceptionSubjectIsTooLong()
         {
-            GetOperationByPath(EditNewsValidator.Subject).value = "".PadLeft(333);
+            GetOperationByPath(EditNewsRequestValidator.Subject).value = "".PadLeft(333);
 
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
         }
@@ -96,7 +96,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [Test]
         public void ExceptionEmptySubject()
         {
-            GetOperationByPath(EditNewsValidator.Subject).value = "";
+            GetOperationByPath(EditNewsRequestValidator.Subject).value = "";
 
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
         }
@@ -104,7 +104,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [Test]
         public void ExceptionEmptyContent()
         {
-            GetOperationByPath(EditNewsValidator.Content).value = "";
+            GetOperationByPath(EditNewsRequestValidator.Content).value = "";
 
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
         }
@@ -112,7 +112,7 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         [Test]
         public void ExceptionEmptyIsActive()
         {
-            GetOperationByPath(EditNewsValidator.IsActive).value = null;
+            GetOperationByPath(EditNewsRequestValidator.IsActive).value = null;
 
             _validator.TestValidate(_editNewsRequest).ShouldHaveAnyValidationError();
         }

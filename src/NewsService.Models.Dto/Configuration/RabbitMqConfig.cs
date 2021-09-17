@@ -1,20 +1,27 @@
-using LT.DigitalOffice.Kernel.Attributes;
+﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 
 namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
 {
-    public class RabbitMqConfig : BaseRabbitMqConfig
-    {
-        [AutoInjectRequest(typeof(IGetUserDataRequest))]
-        public string GetUserDataEndpoint { get; set; }
+  public class RabbitMqConfig : BaseRabbitMqConfig
+  {
+    [AutoInjectRequest(typeof(IGetImagesRequest))]
+    public string GetImagesEndpoint { get; set; }
 
-        [AutoInjectRequest(typeof(IGetDepartmentRequest))]
-        public string GetDepartmentEndpoint { get; set; }
+    [AutoInjectRequest(typeof(IGetUserDataRequest))]
+    public string GetUserDataEndpoint { get; set; }
 
-        [AutoInjectRequest(typeof(ICheckDepartmentsExistence))]
-        public string CheckDepartmentsExistenceEndpoint { get; set; }
-    }
+    [AutoInjectRequest(typeof(IGetUsersDataRequest))]
+    public string GetUsersDataEndpoint { get; set; }
+
+    [AutoInjectRequest(typeof(IGetDepartmentsRequest))]
+    public string GetDepartmentsEndpoint { get; set; }
+
+    [AutoInjectRequest(typeof(ICheckDepartmentsExistence))]
+    public string CheckDepartmentsExistenceEndpoint { get; set; }
+  }
 }

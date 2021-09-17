@@ -5,9 +5,9 @@ using LT.DigitalOffice.NewsService.Validation.Interfaces;
 
 namespace LT.DigitalOffice.NewsService.Validation
 {
-  public class NewsValidator : AbstractValidator<CreateNewsRequest>, INewsValidator
+  public class CreateNewsRequestValidator : AbstractValidator<CreateNewsRequest>, ICreateNewsRequestValidator
   {
-    public NewsValidator()
+    public CreateNewsRequestValidator()
     {
       RuleFor(news => news.AuthorId)
         .NotEmpty().WithMessage("AuthorId must not be empty.");
@@ -24,6 +24,9 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       RuleFor(news => news.Content)
         .NotEmpty().WithMessage("Content must not be empty.");
+
+      RuleFor(news => news.AuthorId)
+        .NotEmpty().WithMessage("AuthorId must not be empty.");
 
       When(
         news => news.DepartmentId.HasValue,

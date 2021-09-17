@@ -12,7 +12,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
   {
     Guid? Create(DbNews news);
 
-    bool Edit(Guid newsId, JsonPatchDocument<DbNews> news);
+    bool Edit(DbNews dbNews, JsonPatchDocument<DbNews> news, Guid editorId);
 
     DbNews Get(Guid newsId);
 

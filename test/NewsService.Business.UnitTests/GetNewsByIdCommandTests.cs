@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using LT.DigitalOffice.Kernel.Exceptions.Models;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
@@ -47,7 +47,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
           .Setup(mapper => mapper.Map(_badNews))
           .Throws<Exception>().Verifiable();
     }
-
+*/
 /*    [Test]
     public void ShouldReturnModelOfNews()
     {
@@ -80,6 +80,6 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
       _repositoryMock.Verify();
       _mapperMock
           .Verify(mapper => mapper.Map(It.IsAny<DbNews>()), Times.Never);
-    }*/
+    }
   }
-}
+}*/

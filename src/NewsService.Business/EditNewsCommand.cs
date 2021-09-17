@@ -4,6 +4,7 @@ using System.Net;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
@@ -21,14 +22,14 @@ namespace LT.DigitalOffice.NewsService.Business
   {
     private readonly INewsRepository _repository;
     private readonly IPatchNewsMapper _mapper;
-    private readonly IEditNewsValidator _validator;
+    private readonly IEditNewsRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public EditNewsCommand(
       INewsRepository repository,
       IPatchNewsMapper mapper,
-      IEditNewsValidator validator,
+      IEditNewsRequestValidator validator,
       IAccessValidator accessValidator,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -41,7 +42,11 @@ namespace LT.DigitalOffice.NewsService.Business
 
     public OperationResultResponse<bool> Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request)
     {
-      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
+      DbNews dbNews = _repository.Get(newsId);
+
+      Guid editorId = _httpContextAccessor.HttpContext.GetUserId();
+
+      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews) && dbNews.CreatedBy != editorId)
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -65,20 +70,16 @@ namespace LT.DigitalOffice.NewsService.Business
 
       OperationResultResponse<bool> response = new();
 
-      JsonPatchDocument<DbNews> dbRequest = _mapper.Map(request);
-
-      response.Body = _repository.Edit(newsId, dbRequest);
+      response.Body = _repository.Edit(dbNews, _mapper.Map(request), editorId);
+      response.Status = OperationResultStatusType.FullSuccess;
 
       if (!response.Body)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        response.Errors.Add($"News with ID '{newsId}' was not found.");
         response.Status = OperationResultStatusType.Failed;
-        return response;
       }
 
-      response.Status = OperationResultStatusType.FullSuccess;
       return response;
     }
   }

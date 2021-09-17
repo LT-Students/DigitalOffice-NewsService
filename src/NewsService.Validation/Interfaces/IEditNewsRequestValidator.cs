@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.JsonPatch;
 namespace LT.DigitalOffice.NewsService.Validation.Interfaces
 {
     [AutoInject]
-    public interface IEditNewsValidator : IValidator<JsonPatchDocument<EditNewsRequest>>
+    public interface IEditNewsRequestValidator : IValidator<JsonPatchDocument<EditNewsRequest>>
     {
     }
 }

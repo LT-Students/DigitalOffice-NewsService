@@ -12,7 +12,6 @@ using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using MassTransit;
@@ -25,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Business
   {
     private readonly INewsRepository _repository;
     private readonly IDbNewsMapper _mapper;
-    private readonly INewsValidator _validator;
+    private readonly ICreateNewsRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
     private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
     private readonly ILogger<CreateNewsCommand> _logger;
@@ -37,6 +36,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         return null;
       }
+
       string errorMessage = "Failed to check the existing department.";
       string logMessage = "Department with id: {id} not found.";
 
@@ -69,7 +69,7 @@ namespace LT.DigitalOffice.NewsService.Business
     public CreateNewsCommand(
       INewsRepository repository,
       IDbNewsMapper mapper,
-      INewsValidator validator,
+      ICreateNewsRequestValidator validator,
       IAccessValidator accessValidator,
       IRequestClient<ICheckDepartmentsExistence> rcCheckDepartmentsExistence,
       ILogger<CreateNewsCommand> logger,
