@@ -125,11 +125,11 @@ namespace LT.DigitalOffice.NewsService.Business
       List<DbNews> dbNewsList = _repository.Find(findNewsFilter, out int totalCount);
 
       List<Guid> departmentsIds = dbNewsList.Select(d => d.DepartmentId.Value).ToHashSet().ToList();
-      List<Guid> authorIds = dbNewsList.Select(a => a.AuthorId).ToHashSet().ToList();
+      List<Guid> authorsIds = dbNewsList.Select(a => a.AuthorId).ToHashSet().ToList();
 
       List<DepartmentData> departments = GetDepartments(departmentsIds, response.Errors);
 
-      List<UserData> authors = GetAuthor(authorIds, response.Errors);
+      List<UserData> authors = GetAuthor(authorsIds, response.Errors);
       List<Guid> imagesIds = new();
       if (authors != null)
       {
@@ -147,7 +147,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-        response.Errors = new() { "Not news found." };
+        response.Errors = new() { "News was not found." };
         response.Status = OperationResultStatusType.Failed;
       }
 

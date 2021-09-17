@@ -42,8 +42,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         Author = _userInfoMapper.Map(author, avatarImage?.FirstOrDefault(ai => ai.Id == author.ImageId)),
         Department = department,
         IsActive = dbNews.IsActive,
-        CreatedAtUtc = DateTime.UtcNow,
-        CreatedBy = _httpContextAccessor.HttpContext.GetUserId()
+        CreatedAtUtc = dbNews.CreatedAtUtc,
+        CreatedBy = dbNews.CreatedBy
       };
     }
   }

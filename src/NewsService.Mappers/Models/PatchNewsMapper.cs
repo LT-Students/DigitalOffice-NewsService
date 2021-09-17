@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
     {
       if (request == null)
       {
-        throw new ArgumentNullException("Invalid request value");
+        return null;
       }
 
       var patchDbNews = new JsonPatchDocument<DbNews>();

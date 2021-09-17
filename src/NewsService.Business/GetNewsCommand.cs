@@ -146,7 +146,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-        response.Errors = new() { "Not news found." };
+        response.Errors = new() { "News was not found." };
         response.Status = OperationResultStatusType.Failed;
       }
 

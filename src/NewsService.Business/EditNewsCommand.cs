@@ -44,9 +44,7 @@ namespace LT.DigitalOffice.NewsService.Business
     {
       DbNews dbNews = _repository.Get(newsId);
 
-      Guid editorId = _httpContextAccessor.HttpContext.GetUserId();
-
-      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews) && dbNews.CreatedBy != editorId)
+      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -70,7 +68,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
       OperationResultResponse<bool> response = new();
 
-      response.Body = _repository.Edit(dbNews, _mapper.Map(request), editorId);
+      response.Body = _repository.Edit(dbNews, _mapper.Map(request));
       response.Status = OperationResultStatusType.FullSuccess;
 
       if (!response.Body)
