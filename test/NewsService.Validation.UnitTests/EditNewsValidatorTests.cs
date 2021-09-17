@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿/*using FluentValidation;
 using FluentValidation.TestHelper;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
@@ -119,3 +119,4 @@ namespace LT.DigitalOffice.NewsService.Validation.UnitTests
         #endregion
     }
 }
+*/
