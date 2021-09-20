@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿/*using FluentValidation;
 using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
@@ -49,7 +49,7 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
                 CreatedAtUtc = DateTime.UtcNow,
                 IsActive = true
             };
-        }
+        }*/
 
 /*        [SetUp]
         public void SetUp()
@@ -153,5 +153,5 @@ namespace LT.DigitalOffice.NewsService.Business.UnitTests
             Assert.AreEqual(_createdNews.Id, _command.Execute(_request));
             _repositoryMock.Verify(repository => repository.CreateNews(It.IsAny<DbNews>()), Times.Once);
         }
-*/    }
-}
+   }
+}*/

@@ -1,37 +1,54 @@
-﻿using LT.DigitalOffice.NewsService.Business.Interfaces;
+﻿using System.Linq;
+using System.Net;
+using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
-using LT.DigitalOffice.NewsService.Models.Dto.Responses;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.NewsService.Business
 {
-    public class FindNewsCommand: IFindNewsCommand
+  public class FindNewsCommand : IFindNewsCommand
+  {
+    private readonly INewsRepository _repository;
+    private readonly INewsInfoMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public FindNewsCommand(
+      INewsRepository repository,
+      INewsInfoMapper mapper,
+      IHttpContextAccessor httpContextAccessor)
     {
-        private readonly INewsRepository _repository;
-        private readonly INewsResponseMapper _mapper;
-
-        public FindNewsCommand(
-            INewsRepository repository,
-            INewsResponseMapper mapper)
-        {
-            _repository = repository;
-            _mapper = mapper;
-        }
-
-        public List<NewsResponse> Execute(FindNewsFilter findNewsFilter)
-        {
-            List<DbNews> dbNewsList = _repository.FindNews(findNewsFilter);
-            List<NewsResponse> newsResponseList = new List<NewsResponse>();
-
-            foreach(DbNews dbNews in dbNewsList)
-            {
-                newsResponseList.Add(_mapper.Map(dbNews));
-            }
-
-            return newsResponseList;
-        }
+      _repository = repository;
+      _mapper = mapper;
+      _httpContextAccessor = httpContextAccessor;
     }
+
+    public FindResultResponse<NewsInfo> Execute(FindNewsFilter findNewsFilter)
+    {
+      FindResultResponse<NewsInfo> response = new();
+
+      response.Body = _repository
+        .Find(findNewsFilter, out int totalCount)
+        .Select(_mapper.Map)
+        .ToList();
+
+      response.TotalCount = totalCount;
+
+      if (response.Errors.Any())
+      {
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+        response.Status = OperationResultStatusType.Failed;
+        return response;
+      }
+
+      response.Status = OperationResultStatusType.FullSuccess;
+
+      return response;
+    }
+  }
 }

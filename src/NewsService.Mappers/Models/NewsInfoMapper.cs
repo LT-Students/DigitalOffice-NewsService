@@ -4,16 +4,15 @@ using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
 using LT.DigitalOffice.Models.Broker.Responses.User;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace LT.DigitalOffice.NewsService.Mappers.Responses
+namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
-  public class NewsResponseMapper : INewsResponseMapper
+  public class NewsInfoMapper : INewsInfoMapper
   {
     private readonly IRequestClient<IGetUserDataRequest> _userRequestClient;
     private readonly IRequestClient<IGetDepartmentRequest> _departmentRequestClient;
@@ -26,8 +25,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 
       try
       {
-        var request = IGetUserDataRequest.CreateObj(userId);
-        var response = _userRequestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
+        object request = IGetUserDataRequest.CreateObj(userId);
+        Response<IOperationResult<IGetUserDataResponse>> response = _userRequestClient.GetResponse<IOperationResult<IGetUserDataResponse>>(request).Result;
 
         if (!response.Message.IsSuccess)
         {
@@ -52,8 +51,8 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 
       try
       {
-        var request = IGetDepartmentRequest.CreateObj(null, departmentId);
-        var response = _departmentRequestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
+        object request = IGetDepartmentRequest.CreateObj(null, departmentId);
+        Response<IOperationResult<IGetDepartmentResponse>> response = _departmentRequestClient.GetResponse<IOperationResult<IGetDepartmentResponse>>(request).Result;
 
         if (!response.Message.IsSuccess)
         {
@@ -72,17 +71,17 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
       return name;
     }
 
-    public NewsResponseMapper(
+    public NewsInfoMapper(
       IRequestClient<IGetUserDataRequest> userClient,
       IRequestClient<IGetDepartmentRequest> departmentClient,
-      ILogger<NewsResponseMapper> logger)
+      ILogger<NewsInfoMapper> logger)
     {
       _userRequestClient = userClient;
       _departmentRequestClient = departmentClient;
       _logger = logger;
     }
 
-    public NewsResponse Map(DbNews dbNews)
+    public NewsInfo Map(DbNews dbNews)
     {
       if (dbNews == null)
       {
@@ -95,11 +94,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         department = new Department { Id = (Guid)dbNews.DepartmentId, Name = GetDepartmentName((Guid)dbNews.DepartmentId) };
       }
 
-      return new NewsResponse
+      return new NewsInfo
       {
         Id = dbNews.Id,
         Preview = dbNews.Preview,
-        Content = dbNews.Content,
         Subject = dbNews.Subject,
         Author = new User { Id = dbNews.AuthorId, FullName = GetUserFullName(dbNews.AuthorId) },
         Department = department,
