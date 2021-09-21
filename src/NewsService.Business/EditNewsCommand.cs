@@ -4,13 +4,11 @@ using System.Net;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -42,8 +40,6 @@ namespace LT.DigitalOffice.NewsService.Business
 
     public OperationResultResponse<bool> Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request)
     {
-      DbNews dbNews = _repository.Get(newsId);
-
       if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
@@ -68,7 +64,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
       OperationResultResponse<bool> response = new();
 
-      response.Body = _repository.Edit(dbNews, _mapper.Map(request));
+      response.Body = _repository.Edit(_repository.Get(newsId), _mapper.Map(request));
       response.Status = OperationResultStatusType.FullSuccess;
 
       if (!response.Body)

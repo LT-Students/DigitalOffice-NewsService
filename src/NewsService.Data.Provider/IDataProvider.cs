@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Data.Provider
   [AutoInject(InjectType.Scoped)]
   public interface IDataProvider : IBaseDataProvider
   {
-    public DbSet<DbNews> News { get; set; }
+    DbSet<DbNews> News { get; set; }
   }
 }

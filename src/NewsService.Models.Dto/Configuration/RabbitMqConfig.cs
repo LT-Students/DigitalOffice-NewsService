@@ -23,5 +23,8 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
 
     [AutoInjectRequest(typeof(ICheckDepartmentsExistence))]
     public string CheckDepartmentsExistenceEndpoint { get; set; }
+
+    [AutoInjectRequest(typeof(ICheckUsersExistence))]
+    public string CheckUsersExistenceEndpoint { get; set; }
   }
 }

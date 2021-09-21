@@ -1,16 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FluentValidation;
+using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
+using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.NewsService.Validation
 {
   public class CreateNewsRequestValidator : AbstractValidator<CreateNewsRequest>, ICreateNewsRequestValidator
   {
-    public CreateNewsRequestValidator()
+    private readonly IRequestClient<ICheckUsersExistence> _rcCheckUsersExistence;
+    private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
+    private readonly ILogger<CreateNewsRequestValidator> _logger;
+
+    public CreateNewsRequestValidator(
+      IRequestClient<ICheckUsersExistence> rcCheckUsersExistence,
+      IRequestClient<ICheckDepartmentsExistence> rcCheckDepartmentsExistence,
+      ILogger<CreateNewsRequestValidator> logger)
     {
+      _rcCheckUsersExistence = rcCheckUsersExistence;
+      _rcCheckDepartmentsExistence = rcCheckDepartmentsExistence;
+      _logger = logger;
+
       RuleFor(news => news.AuthorId)
-        .NotEmpty().WithMessage("AuthorId must not be empty.");
+        .NotEmpty().WithMessage("AuthorId must not be empty.")
+        .Must(authorId => CheckUserExistence(new List<Guid>() { authorId }))
+        .WithMessage("This author doesn't exist.");
 
       RuleFor(news => news.Pseudonym)
         .MaximumLength(50).WithMessage("Pseudonym is too long.");
@@ -25,15 +44,66 @@ namespace LT.DigitalOffice.NewsService.Validation
       RuleFor(news => news.Content)
         .NotEmpty().WithMessage("Content must not be empty.");
 
-      RuleFor(news => news.AuthorId)
-        .NotEmpty().WithMessage("AuthorId must not be empty.");
-
       When(
         news => news.DepartmentId.HasValue,
         () =>
           RuleFor(news => news.DepartmentId)
-            .Must(DepartmentId => DepartmentId != Guid.Empty)
-            .WithMessage("Wrong type of department Id."));
+            .Must(departmentId => CheckDepartmentsExistence(new List<Guid>() { departmentId.Value }))
+            .WithMessage("This department doesn't exist."));
+    }
+
+    private bool CheckUserExistence(List<Guid> authorsIds)
+    {
+      if (!authorsIds.Any())
+      {
+        return false;
+      }
+
+      try
+      {
+        var response = _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
+          ICheckUsersExistence.CreateObj(authorsIds)).Result;
+        if (response.Message.IsSuccess)
+        {
+          return authorsIds.Count == response.Message.Body.UserIds.Count;
+        }
+
+        _logger.LogWarning("Can not find author Ids: {authorsIds}: " +
+          $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
+      }
+      catch (Exception exc)
+      {
+        _logger.LogError(exc, "Cannot check existing authors withs this ids {authorsIds}");
+      }
+
+      return false;
+    }
+
+    private bool CheckDepartmentsExistence(List<Guid> departmentsIds)
+    {
+      if (!departmentsIds.Any())
+      {
+        return false;
+      }
+
+      try
+      {
+        var response = _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
+          ICheckDepartmentsExistence.CreateObj(departmentsIds)).Result;
+        if (response.Message.IsSuccess)
+        {
+          return departmentsIds.Count == response.Message.Body.DepartmentIds.Count;
+        }
+
+        _logger.LogWarning($"Can not find Department Ids: {departmentsIds}: " +
+          $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
+      }
+      catch (Exception exc)
+      {
+        _logger.LogError(exc, $"Cannot check existing Departments withs this id {departmentsIds}");
+      }
+
+      return false;
     }
   }
 }

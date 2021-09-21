@@ -28,8 +28,8 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly INewsRepository _repository;
     private readonly INewsResponseMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IRequestClient<IGetUsersDataRequest> _usersRequestClient;
-    private readonly IRequestClient<IGetDepartmentsRequest> _departmentsRequestClient;
+    private readonly IRequestClient<IGetUsersDataRequest> _rcGetUsers;
+    private readonly IRequestClient<IGetDepartmentsRequest> _rcGetDepartments;
     private readonly IDepartmentInfoMapper _departmentInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
       try
       {
-        IOperationResult<IGetUsersDataResponse> response = _usersRequestClient.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+        IOperationResult<IGetUsersDataResponse> response = _rcGetUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
           IGetUsersDataRequest.CreateObj(new List<Guid> { userId })).Result.Message;
 
         if (response.IsSuccess)
@@ -70,7 +70,7 @@ namespace LT.DigitalOffice.NewsService.Business
       try
       {
         IOperationResult<IGetDepartmentsResponse> departmentResponse =
-          _departmentsRequestClient.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
+          _rcGetDepartments.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
             IGetDepartmentsRequest.CreateObj(new List<Guid> { departmentId.Value }))
           .Result.Message;
 
@@ -96,16 +96,16 @@ namespace LT.DigitalOffice.NewsService.Business
       INewsRepository repository,
       INewsResponseMapper mapper,
       IHttpContextAccessor httpContextAccessor,
-      IRequestClient<IGetDepartmentsRequest> departmentsRequestClient,
-      IRequestClient<IGetUsersDataRequest> usersRequestClient,
+      IRequestClient<IGetDepartmentsRequest> rcGetDepartments,
+      IRequestClient<IGetUsersDataRequest> rcGetUsers,
       IDepartmentInfoMapper departmentMapper,
       ILogger<GetNewsCommand> logger)
     {
       _repository = repository;
       _mapper = mapper;
       _httpContextAccessor = httpContextAccessor;
-      _departmentsRequestClient = departmentsRequestClient;
-      _usersRequestClient = usersRequestClient;
+      _rcGetDepartments = rcGetDepartments;
+      _rcGetUsers = rcGetUsers;
       _departmentInfoMapper = departmentMapper;
       _logger = logger;
     }

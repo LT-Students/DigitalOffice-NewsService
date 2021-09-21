@@ -16,6 +16,28 @@ namespace LT.DigitalOffice.NewsService.Data
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    private IQueryable<DbNews> CreateFindPredicates(
+      FindNewsFilter findNewsFilter,
+      IQueryable<DbNews> dbNewsList)
+    {
+      if (findNewsFilter.AuthorId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
+      }
+
+      if (findNewsFilter.DepartmentId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
+      }
+
+      if (!findNewsFilter.IncludeDeactivated)
+      {
+        dbNewsList = dbNewsList.Where(x => x.IsActive);
+      }
+
+      return dbNewsList;
+    }
+
     public NewsRepository(IDataProvider provider, IHttpContextAccessor httpContextAccessor)
     {
       _provider = provider;
@@ -58,38 +80,13 @@ namespace LT.DigitalOffice.NewsService.Data
         return null;
       }
 
-      if (findNewsFilter.SkipCount < 0)
-      {
-        totalCount = 0;
-        return null;
-      }
-
-      if (findNewsFilter.TakeCount < 1)
-      {
-        totalCount = 0;
-        return null;
-      }
-
       IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
 
-      if (findNewsFilter.AuthorId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
-      }
-
-      if (findNewsFilter.DepartmentId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
-      }
-
-      if (!findNewsFilter.IncludeDeactivated)
-      {
-        dbNewsList = dbNewsList.Where(x => x.IsActive);
-      }
+      CreateFindPredicates(findNewsFilter, dbNewsList).FirstOrDefault();
 
       totalCount = dbNewsList.Count();
 
-      return dbNewsList.Skip(findNewsFilter.SkipCount).Take(findNewsFilter.TakeCount).ToList();
+      return dbNewsList.Skip(findNewsFilter.skipCount).Take(findNewsFilter.takeCount).ToList();
     }
 
     public DbNews Get(Guid newsId)

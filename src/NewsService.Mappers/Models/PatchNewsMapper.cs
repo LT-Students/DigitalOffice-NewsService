@@ -24,10 +24,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         {
           patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
         }
-        else
-        {
-          throw new ArgumentException("Invalid operation");
-        }
       }
 
       return patchDbNews;

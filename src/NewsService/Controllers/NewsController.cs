@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
@@ -41,11 +41,11 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpGet("find")]
-    public FindResultResponse<NewsInfo> Find(
+    public async Task<FindResultResponse<NewsInfo>> Find(
       [FromServices] IFindNewsCommand command,
       [FromQuery] FindNewsFilter findNewsFilter)
     {
-      return command.Execute(findNewsFilter);
+      return await command.Execute(findNewsFilter);
     }
   }
 }
