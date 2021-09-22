@@ -46,7 +46,7 @@ namespace LT.DigitalOffice.NewsService.Business
         }
 
         _logger.LogWarning(
-          $"Can not get author. Reason:{Environment.NewLine}{string.Join('\n', response.Errors)}.");
+          "Can not get author. Reason:{errors}", string.Join('\n', response.Errors));
       }
       catch (Exception errorMessage)
       {
@@ -78,7 +78,7 @@ namespace LT.DigitalOffice.NewsService.Business
         }
 
         _logger.LogWarning(
-          $"Can not get department. Reason:{Environment.NewLine}{string.Join('\n', departmentResponse.Errors)}.");
+          "Can not get department. Reason:{errors}", string.Join('\n', departmentResponse.Errors));
       }
       catch (Exception errorMesssage)
       {
@@ -122,8 +122,7 @@ namespace LT.DigitalOffice.NewsService.Business
         return response;
       }
 
-      DepartmentInfo department = null;
-      department = dbNews.DepartmentId.HasValue ? GetDepartment(dbNews.DepartmentId, response.Errors) : null;
+      DepartmentInfo department = dbNews.DepartmentId.HasValue ? GetDepartment(dbNews.DepartmentId, response.Errors) : null;
 
       UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
 
