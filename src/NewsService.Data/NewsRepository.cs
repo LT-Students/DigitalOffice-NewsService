@@ -22,8 +22,10 @@ namespace LT.DigitalOffice.NewsService.Data
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public bool Edit(DbNews dbNews, JsonPatchDocument<DbNews> request)
+    public bool Edit(Guid newsId, JsonPatchDocument<DbNews> request)
     {
+      DbNews dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
+
       if (dbNews == null || request == null)
       {
         return false;

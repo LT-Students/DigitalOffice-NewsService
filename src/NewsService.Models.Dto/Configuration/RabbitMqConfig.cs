@@ -12,9 +12,6 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
     [AutoInjectRequest(typeof(IGetImagesRequest))]
     public string GetImagesEndpoint { get; set; }
 
-    [AutoInjectRequest(typeof(IGetUserDataRequest))]
-    public string GetUserDataEndpoint { get; set; }
-
     [AutoInjectRequest(typeof(IGetUsersDataRequest))]
     public string GetUsersDataEndpoint { get; set; }
 

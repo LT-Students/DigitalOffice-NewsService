@@ -14,12 +14,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
   public class NewsResponseMapper : INewsResponseMapper
   {
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserInfoMapper _userInfoMapper;
 
-    public NewsResponseMapper(IHttpContextAccessor httpContextAccessor, IUserInfoMapper userInfoMapper)
+    public NewsResponseMapper(IUserInfoMapper userInfoMapper)
     {
-      _httpContextAccessor = httpContextAccessor;
       _userInfoMapper = userInfoMapper;
     }
 
@@ -30,8 +28,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         return null;
       }
 
-      List<ImageInfo> avatarImage = new();
-
       return new NewsResponse
       {
         Id = dbNews.Id,
@@ -39,7 +35,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         Content = dbNews.Content,
         Subject = dbNews.Subject,
         Pseudonym = dbNews.Pseudonym,
-        Author = _userInfoMapper.Map(author, avatarImage?.FirstOrDefault(ai => ai.Id == author.ImageId)),
+        Author = _userInfoMapper.Map(author),
         Department = department,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,

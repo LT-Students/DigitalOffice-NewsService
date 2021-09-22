@@ -124,12 +124,12 @@ namespace LT.DigitalOffice.NewsService.Business
     {
       FindResultResponse<NewsInfo> response = new();
 
-      if (!_baseFindValidator.ValidateCustom(findNewsFilter, out List<string> skipTakeCountErrors))
+      if (!_baseFindValidator.ValidateCustom(findNewsFilter, out List<string> errors))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
         response.Status = OperationResultStatusType.Failed;
-        response.Errors = skipTakeCountErrors;
+        response.Errors = errors;
         return response;
       }
 

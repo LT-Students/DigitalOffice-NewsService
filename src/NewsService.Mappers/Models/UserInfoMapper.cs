@@ -6,7 +6,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class UserInfoMapper : IUserInfoMapper
   {
-    public UserInfo Map(UserData author, ImageInfo image)
+    public UserInfo Map(UserData author)
     {
       if (author == null)
       {
@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         FirstName = author.FirstName,
         MiddleName = author.MiddleName,
         LastName = author.LastName,
-        Avatar = image
+        Avatar = author.ImageId
       };
     }
   }

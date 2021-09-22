@@ -27,15 +27,13 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         return null;
       }
 
-      List<ImageInfo> avatarImage = new();
-
       return new NewsInfo
       {
         Id = dbNews.Id,
         Preview = dbNews.Preview,
         Subject = dbNews.Subject,
         Departments = departments?.Select(_departmentInfoMapper.Map).ToList(),
-        Authors = authors?.Select(a => _userInfoMapper.Map(a, avatarImage?.FirstOrDefault(i => i.Id == a.ImageId))).ToList(),
+        Authors = authors?.Select(_userInfoMapper.Map).ToList(),
         IsActive = dbNews.IsActive,
         CreatedAtUtc = DateTime.UtcNow
       };

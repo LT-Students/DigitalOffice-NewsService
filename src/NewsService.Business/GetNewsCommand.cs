@@ -117,7 +117,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        response.Errors = new() { "News can't must be null" };
+        response.Errors = new() { "News was not found." };
         response.Status = OperationResultStatusType.Failed;
         return response;
       }
