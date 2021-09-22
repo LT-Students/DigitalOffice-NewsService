@@ -77,7 +77,7 @@ namespace LT.DigitalOffice.NewsService
                 .Get<BaseServiceInfoConfig>();
 
             Version = "1.2.5.2";
-            Description = "Rework news service";
+            Description = "NewsService, is intended to work with the news - create them, update info and etc.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
         }

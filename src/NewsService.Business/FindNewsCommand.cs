@@ -20,7 +20,6 @@ using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
-using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -37,7 +36,7 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly ILogger<GetNewsCommand> _logger;
     private readonly IBaseFindRequestValidator _baseFindValidator;
 
-    private async Task<List<UserData>> GetAuthor(List<Guid> authorIds, List<string> errors)
+    private async Task<List<UserData>> GetAuthors(List<Guid> authorIds, List<string> errors)
     {
       if (authorIds == null || authorIds.Count == 0)
       {
@@ -45,7 +44,7 @@ namespace LT.DigitalOffice.NewsService.Business
       }
 
       string errorMessage = "Cannot get authors now. Please try again later.";
-      const string logMessage = "Cannot get authors with ids: {authorIds}.";
+      string logMessage = "Cannot get authors with ids: {authorIds}.";
 
       try
       {
@@ -76,7 +75,7 @@ namespace LT.DigitalOffice.NewsService.Business
         return null;
       }
 
-      const string errorMessage = "Can not get departments. Please try again later.";
+      string errorMessage = "Can not get departments. Please try again later.";
 
       try
       {
@@ -135,23 +134,17 @@ namespace LT.DigitalOffice.NewsService.Business
       }
 
       List<DbNews> dbNewsList = _repository.Find(findNewsFilter, out int totalCount);
-      DbNews dbNews = new();
 
       List<Guid> departmentsIds = null;
-      if (dbNews.DepartmentId.HasValue)
-      {
-        departmentsIds = dbNewsList.Select(d => d.DepartmentId.Value).Distinct().ToList();
-      }
+      departmentsIds = dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).Distinct().ToList();
       List<DepartmentData> departments = await GetDepartments(departmentsIds, response.Errors);
 
       List<Guid> authorsIds = dbNewsList.Select(a => a.AuthorId).Distinct().ToList();
-      List<UserData> authors = await GetAuthor(authorsIds, response.Errors);
+      List<UserData> authors = await GetAuthors(authorsIds, response.Errors);
       List<Guid> imagesIds = new();
-
-      imagesIds.AddRange(authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList());
+      imagesIds.AddRange(authors.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList());
 
       response.Body = dbNewsList.Select(dbNews => _mapper.Map(dbNews, departments, authors)).ToList();
-
       response.TotalCount = totalCount;
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess

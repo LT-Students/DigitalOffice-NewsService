@@ -16,14 +16,11 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         return null;
       }
 
-      var patchDbNews = new JsonPatchDocument<DbNews>();
+      JsonPatchDocument<DbNews> patchDbNews = new JsonPatchDocument<DbNews>();
 
-      foreach (var item in request.Operations)
+      foreach (Operation<EditNewsRequest> item in request.Operations)
       {
-        if (item.op == "replace")
-        {
           patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
-        }
       }
 
       return patchDbNews;

@@ -35,9 +35,6 @@ namespace LT.DigitalOffice.NewsService.Business
 
     private UserData GetAuthor(Guid userId, List<string> errors)
     {
-      string errorMessage = "Cannot get author now. Please try again later.";
-      const string logMessage = "Cannot get author with ids: {userId}.";
-
       try
       {
         IOperationResult<IGetUsersDataResponse> response = _rcGetUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
@@ -48,14 +45,15 @@ namespace LT.DigitalOffice.NewsService.Business
           return response.Body.UsersData.FirstOrDefault();
         }
 
-        _logger.LogWarning(logMessage, string.Join(", ", userId));
+        _logger.LogWarning(
+          $"Can not get author. Reason:{Environment.NewLine}{string.Join('\n', response.Errors)}.");
       }
-      catch (Exception exc)
+      catch (Exception errorMessage)
       {
-        _logger.LogError(exc, logMessage, string.Join(", ", userId));
+        _logger.LogError(errorMessage, "Cannot get author now. Please try again later.");
       }
 
-      errors.Add(errorMessage);
+      errors.Add($"Can not get author info for authorId '{userId}'. Please try again later.");
 
       return null;
     }
@@ -82,9 +80,9 @@ namespace LT.DigitalOffice.NewsService.Business
         _logger.LogWarning(
           $"Can not get department. Reason:{Environment.NewLine}{string.Join('\n', departmentResponse.Errors)}.");
       }
-      catch (Exception exc)
+      catch (Exception errorMesssage)
       {
-        _logger.LogError(exc, "Exception on get department request.");
+        _logger.LogError(errorMesssage, "Exception on get department request.");
       }
 
       errors.Add($"Can not get department info for DepartmentId '{departmentId}'. Please try again later.");
@@ -119,27 +117,17 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
+        response.Errors = new() { "News can't must be null" };
         response.Status = OperationResultStatusType.Failed;
         return response;
       }
 
       DepartmentInfo department = null;
-      if (dbNews.DepartmentId.HasValue)
-      {
-        department = GetDepartment(dbNews.DepartmentId, response.Errors);
-      }
+      department = dbNews.DepartmentId.HasValue ? GetDepartment(dbNews.DepartmentId, response.Errors) : null;
 
       UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
-      if (author == null)
-      {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        response.Status = OperationResultStatusType.Failed;
-        return response;
-      }
 
       response.Body = _mapper.Map(dbNews, department, author);
-
       response.Status = OperationResultStatusType.FullSuccess;
 
       if (response.Body == null)

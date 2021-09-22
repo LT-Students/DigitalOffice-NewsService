@@ -16,28 +16,6 @@ namespace LT.DigitalOffice.NewsService.Data
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private IQueryable<DbNews> CreateFindPredicates(
-      FindNewsFilter findNewsFilter,
-      IQueryable<DbNews> dbNewsList)
-    {
-      if (findNewsFilter.AuthorId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
-      }
-
-      if (findNewsFilter.DepartmentId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
-      }
-
-      if (!findNewsFilter.IncludeDeactivated)
-      {
-        dbNewsList = dbNewsList.Where(x => x.IsActive);
-      }
-
-      return dbNewsList;
-    }
-
     public NewsRepository(IDataProvider provider, IHttpContextAccessor httpContextAccessor)
     {
       _provider = provider;
@@ -82,7 +60,20 @@ namespace LT.DigitalOffice.NewsService.Data
 
       IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
 
-      CreateFindPredicates(findNewsFilter, dbNewsList).FirstOrDefault();
+      if (findNewsFilter.AuthorId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
+      }
+
+      if (findNewsFilter.DepartmentId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
+      }
+
+      if (!findNewsFilter.IncludeDeactivated)
+      {
+        dbNewsList = dbNewsList.Where(x => x.IsActive);
+      }
 
       totalCount = dbNewsList.Count();
 
