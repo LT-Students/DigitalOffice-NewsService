@@ -50,7 +50,7 @@ namespace LT.DigitalOffice.NewsService.Business
       }
       catch (Exception exc)
       {
-        _logger.LogError("Exception on get department request. {errorsMessage}", exc.Message);
+        _logger.LogError("Exception on get author request. {errorsMessage}", exc.Message);
       }
 
       errors.Add($"Can not get author info for authorId '{userId}'. Please try again later.");
