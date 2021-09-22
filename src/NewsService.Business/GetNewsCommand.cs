@@ -48,9 +48,9 @@ namespace LT.DigitalOffice.NewsService.Business
         _logger.LogWarning(
           "Can not get author. Reason:{errors}", string.Join('\n', response.Errors));
       }
-      catch (Exception errorMessage)
+      catch (Exception exc)
       {
-        _logger.LogError(errorMessage, "Cannot get author now. Please try again later.");
+        _logger.LogError("Exception on get department request. {errorsMessage}", exc.Message);
       }
 
       errors.Add($"Can not get author info for authorId '{userId}'. Please try again later.");
@@ -80,9 +80,9 @@ namespace LT.DigitalOffice.NewsService.Business
         _logger.LogWarning(
           "Can not get department. Reason:{errors}", string.Join('\n', departmentResponse.Errors));
       }
-      catch (Exception errorMesssage)
+      catch (Exception exc)
       {
-        _logger.LogError(errorMesssage, "Exception on get department request.");
+        _logger.LogError("Exception on get department request. {errorsMessage}", exc.Message);
       }
 
       errors.Add($"Can not get department info for DepartmentId '{departmentId}'. Please try again later.");
