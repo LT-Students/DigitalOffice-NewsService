@@ -14,7 +14,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
     private readonly IUserInfoMapper _userInfoMapper;
     private readonly IDepartmentInfoMapper _departmentInfoMapper;
 
-    public NewsInfoMapper(IUserInfoMapper userInfoMapper, IDepartmentInfoMapper departmentInfoMapper)
+    public NewsInfoMapper(
+      IUserInfoMapper userInfoMapper,
+      IDepartmentInfoMapper departmentInfoMapper)
     {
       _userInfoMapper = userInfoMapper;
       _departmentInfoMapper = departmentInfoMapper;

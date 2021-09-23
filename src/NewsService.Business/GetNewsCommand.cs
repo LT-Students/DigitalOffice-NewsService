@@ -127,7 +127,9 @@ namespace LT.DigitalOffice.NewsService.Business
       UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
 
       response.Body = _mapper.Map(dbNews, department, author);
-      response.Status = OperationResultStatusType.FullSuccess;
+      response.Status = response.Errors.Any()
+        ? OperationResultStatusType.PartialSuccess
+        : OperationResultStatusType.FullSuccess;
 
       if (response.Body == null)
       {

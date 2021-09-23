@@ -102,7 +102,7 @@ namespace LT.DigitalOffice.NewsService.Validation
         x => x == OperationType.Replace,
         new()
         {
-          { x => Guid.TryParse(x.value.ToString(), out Guid result), "Department id has incorrect format" },
+          { x => Guid.TryParse(x.value.ToString(), out Guid result), "User id has incorrect format" },
           { x => CheckUserExistence(new List<Guid> { Guid.Parse(x.value.ToString()) }), "This user doesn't exist." }
         });
 
@@ -115,7 +115,7 @@ namespace LT.DigitalOffice.NewsService.Validation
         x => x == OperationType.Replace,
         new()
         {
-          { x => bool.TryParse(x.value?.ToString(), out _), "Incorrect IsActive format." },
+          { x => bool.TryParse(x.value?.ToString(), out _), "Incorrect is active format." },
         });
 
       #endregion
@@ -135,7 +135,7 @@ namespace LT.DigitalOffice.NewsService.Validation
 
     private bool CheckUserExistence(List<Guid> authorsIds)
     {
-      if (!authorsIds.Any())
+      if (!authorsIds.Any() || authorsIds == default)
       {
         return false;
       }
@@ -164,7 +164,7 @@ namespace LT.DigitalOffice.NewsService.Validation
 
     private bool CheckDepartmentExistence(List<Guid> departmentsIds)
     {
-      if (!departmentsIds.Any())
+      if (!departmentsIds.Any() ||  departmentsIds == default)
       {
         return false;
       }

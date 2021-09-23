@@ -140,9 +140,6 @@ namespace LT.DigitalOffice.NewsService.Business
 
       List<Guid> authorsIds = dbNewsList.Select(a => a.AuthorId).Distinct().ToList();
       List<UserData> authors = await GetAuthors(authorsIds, response.Errors);
-      List<Guid> imagesIds = new();
-
-      imagesIds.AddRange(authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList());
 
       response.Body = dbNewsList.Select(dbNews => _mapper.Map(dbNews, departments, authors)).ToList();
       response.TotalCount = totalCount;
