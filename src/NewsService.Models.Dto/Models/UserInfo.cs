@@ -1,4 +1,5 @@
 ﻿using System;
+using LT.DigitalOffice.Models.Broker.Models;
 
 namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {
@@ -8,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Models
     public string FirstName { get; set; }
     public string MiddleName { get; set; }
     public string LastName { get; set; }
-    public Guid? Avatar { get; set; }
+    public ImageData Avatar { get; set; }
   }
 }

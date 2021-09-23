@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
       _departmentInfoMapper = departmentInfoMapper;
     }
 
-    public NewsInfo Map(DbNews dbNews, List<DepartmentData> departments, List<UserData> authors)
+    public NewsInfo Map(DbNews dbNews, List<DepartmentData> departments, List<UserData> authors, List<ImageData> avatarImage)
     {
       if (dbNews == null)
       {
@@ -35,7 +35,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Preview = dbNews.Preview,
         Subject = dbNews.Subject,
         Departments = departments?.Select(_departmentInfoMapper.Map).ToList(),
-        Authors = authors?.Select(_userInfoMapper.Map).ToList(),
+        Authors = authors?.Select(u => _userInfoMapper.Map(u, avatarImage?.FirstOrDefault(i => i.ImageId == u.ImageId))).ToList(),
         IsActive = dbNews.IsActive,
         CreatedAtUtc = DateTime.UtcNow
       };

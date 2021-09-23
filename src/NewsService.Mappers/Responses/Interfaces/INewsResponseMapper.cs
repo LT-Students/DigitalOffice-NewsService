@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces
   [AutoInject]
   public interface INewsResponseMapper
   {
-    NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserData author);
+    NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserData author, ImageData avatarImage);
   }
 }

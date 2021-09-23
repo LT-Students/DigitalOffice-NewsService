@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.Models.Broker.Models;
+﻿using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
-using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
@@ -21,7 +16,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
       _userInfoMapper = userInfoMapper;
     }
 
-    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserData author)
+    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserData author, ImageData avatarImage)
     {
       if (dbNews == null)
       {
@@ -35,7 +30,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         Content = dbNews.Content,
         Subject = dbNews.Subject,
         Pseudonym = dbNews.Pseudonym,
-        Author = _userInfoMapper.Map(author),
+        Author = _userInfoMapper.Map(author, avatarImage),
         Department = department,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,

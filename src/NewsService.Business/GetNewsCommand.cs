@@ -5,10 +5,13 @@ using System.Net;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.Models.Broker.Enums;
 using LT.DigitalOffice.Models.Broker.Models;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 using LT.DigitalOffice.Models.Broker.Responses.Company;
+using LT.DigitalOffice.Models.Broker.Responses.Image;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
@@ -30,6 +33,7 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRequestClient<IGetUsersDataRequest> _rcGetUsers;
     private readonly IRequestClient<IGetDepartmentsRequest> _rcGetDepartments;
+    private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly IDepartmentInfoMapper _departmentInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
@@ -90,6 +94,31 @@ namespace LT.DigitalOffice.NewsService.Business
       return null;
     }
 
+    private ImageData GetAuthorAvatarImage(Guid? imageId, List<string> errors)
+    {
+      try
+      {
+        IOperationResult<IGetImagesResponse> response = _rcGetUsers.GetResponse<IOperationResult<IGetImagesResponse>>(
+          IGetImagesRequest.CreateObj(new List<Guid> { imageId.Value }, ImageSource.News)).Result.Message;
+
+        if (response.IsSuccess)
+        {
+          return response.Body.ImagesData.FirstOrDefault();
+        }
+
+        _logger.LogWarning(
+          "Can not get image. Reason:{errors}", string.Join('\n', response.Errors));
+      }
+      catch (Exception exc)
+      {
+        _logger.LogError("Exception on get image request. {errorsMessage}", exc.Message);
+      }
+
+      errors.Add($"Can not get image info for imageId '{imageId}'. Please try again later.");
+
+      return null;
+    }
+
     public GetNewsCommand(
       INewsRepository repository,
       INewsResponseMapper mapper,
@@ -125,8 +154,10 @@ namespace LT.DigitalOffice.NewsService.Business
       DepartmentInfo department = dbNews.DepartmentId.HasValue ? GetDepartment(dbNews.DepartmentId, response.Errors) : null;
 
       UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
+      Guid? imageId = author?.ImageId;
+      ImageData avatarImage = GetAuthorAvatarImage(imageId, response.Errors);
 
-      response.Body = _mapper.Map(dbNews, department, author);
+      response.Body = _mapper.Map(dbNews, department, author, avatarImage);
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess
         : OperationResultStatusType.FullSuccess;
