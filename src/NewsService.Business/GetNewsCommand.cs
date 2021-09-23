@@ -125,6 +125,7 @@ namespace LT.DigitalOffice.NewsService.Business
       IHttpContextAccessor httpContextAccessor,
       IRequestClient<IGetDepartmentsRequest> rcGetDepartments,
       IRequestClient<IGetUsersDataRequest> rcGetUsers,
+      IRequestClient<IGetImagesRequest> rcGetImages,
       IDepartmentInfoMapper departmentMapper,
       ILogger<GetNewsCommand> logger)
     {
@@ -133,6 +134,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _httpContextAccessor = httpContextAccessor;
       _rcGetDepartments = rcGetDepartments;
       _rcGetUsers = rcGetUsers;
+      _rcGetImages = rcGetImages;
       _departmentInfoMapper = departmentMapper;
       _logger = logger;
     }
