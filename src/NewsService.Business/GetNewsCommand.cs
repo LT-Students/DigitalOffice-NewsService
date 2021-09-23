@@ -98,7 +98,7 @@ namespace LT.DigitalOffice.NewsService.Business
     {
       try
       {
-        IOperationResult<IGetImagesResponse> response = _rcGetUsers.GetResponse<IOperationResult<IGetImagesResponse>>(
+        IOperationResult<IGetImagesResponse> response = _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
           IGetImagesRequest.CreateObj(new List<Guid> { imageId.Value }, ImageSource.News)).Result.Message;
 
         if (response.IsSuccess)
