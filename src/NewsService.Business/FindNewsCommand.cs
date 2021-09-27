@@ -39,6 +39,7 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly ILogger<GetNewsCommand> _logger;
     private readonly IBaseFindRequestValidator _baseFindValidator;
+    private readonly IDepartmentInfoMapper _departmentInfoMapper;
 
     private async Task<List<ImageData>> GetImages(List<Guid> imagesIds, List<string> errors)
     {
@@ -145,6 +146,7 @@ namespace LT.DigitalOffice.NewsService.Business
       IRequestClient<IGetDepartmentsRequest> rcGetDepartments,
       IRequestClient<IGetUsersDataRequest> rcGetUsers,
       IRequestClient<IGetImagesRequest> rcGetImages,
+      IDepartmentInfoMapper departmentInfoMapper,
       ILogger<GetNewsCommand> logger,
       IBaseFindRequestValidator baseFindValidator)
     {
@@ -156,6 +158,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _rcGetImages = rcGetImages;
       _logger = logger;
       _baseFindValidator = baseFindValidator;
+      _departmentInfoMapper = departmentInfoMapper;
     }
 
     public async Task<FindResultResponse<NewsInfo>> Execute(FindNewsFilter findNewsFilter)
@@ -172,18 +175,34 @@ namespace LT.DigitalOffice.NewsService.Business
       }
 
       List<DbNews> dbNewsList = _repository.Find(findNewsFilter, out int totalCount);
+      if (dbNewsList == null)
+      {
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-      List<Guid> departmentsIds = dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).Distinct().ToList();
-      List<DepartmentData> departments = await GetDepartments(departmentsIds, response.Errors);
+        response.Errors = new() { "News was not found." };
+        response.Status = OperationResultStatusType.Failed;
+      }
 
-      List<Guid> authorsIds = dbNewsList.Select(a => a.AuthorId).Distinct().ToList();
-      List<UserData> authors = await GetAuthors(authorsIds, response.Errors);
+      List<DepartmentData> departments = await GetDepartments(
+        dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).Distinct().ToList(),
+        response.Errors);
+      List<DepartmentInfo> departmentsInfo = departments.Select(_departmentInfoMapper.Map).ToList();
+
+      List<UserData> authors = await GetAuthors(
+        dbNewsList.Select(a => a.AuthorId).Distinct().ToList(),
+        response.Errors);
 
       List<Guid> imagesIds = new();
       imagesIds.AddRange(authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList());
       List<ImageData> avatarImages = await GetImages(imagesIds, response.Errors);
 
-      response.Body = dbNewsList.Select(dbNews => _mapper.Map(dbNews, departments, authors, avatarImages)).ToList();
+      response.Body = dbNewsList
+        .Select(dbNews => _mapper.Map(
+          dbNews,
+          departmentsInfo.FirstOrDefault(d => dbNews.DepartmentId == d.Id),
+          authors.FirstOrDefault(a => dbNews.AuthorId == a.Id),
+          avatarImages))
+        .ToList();
       response.TotalCount = totalCount;
       response.Status = OperationResultStatusType.FullSuccess;
 

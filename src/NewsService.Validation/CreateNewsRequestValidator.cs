@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Models.Broker.Common;
@@ -28,7 +29,7 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       RuleFor(news => news.AuthorId)
         .NotEmpty().WithMessage("AuthorId must not be empty.")
-        .Must(authorId => CheckUserExistence(new List<Guid>() { authorId }))
+        .MustAsync(async (authorId, cancellation) => await CheckUserExistence(new List<Guid>() { authorId }))
         .WithMessage("This author doesn't exist.");
 
       RuleFor(news => news.Pseudonym)
@@ -48,11 +49,11 @@ namespace LT.DigitalOffice.NewsService.Validation
         news => news.DepartmentId.HasValue,
         () =>
           RuleFor(news => news.DepartmentId)
-            .Must(departmentId => CheckDepartmentsExistence(new List<Guid>() { departmentId.Value }))
+            .MustAsync(async (departmentId, cancellation) => await CheckDepartmentsExistence(new List<Guid>() { departmentId.Value }))
             .WithMessage("This department doesn't exist."));
     }
 
-    private bool CheckUserExistence(List<Guid> authorsIds)
+    private async Task<bool> CheckUserExistence(List<Guid> authorsIds)
     {
       if (!authorsIds.Any())
       {
@@ -61,8 +62,10 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       try
       {
-        var response = _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
-          ICheckUsersExistence.CreateObj(authorsIds)).Result;
+        Response<IOperationResult<ICheckUsersExistence>> response =
+          await _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
+          ICheckUsersExistence.CreateObj(authorsIds));
+
         if (response.Message.IsSuccess)
         {
           return authorsIds.Count == response.Message.Body.UserIds.Count;
@@ -79,7 +82,7 @@ namespace LT.DigitalOffice.NewsService.Validation
       return false;
     }
 
-    private bool CheckDepartmentsExistence(List<Guid> departmentsIds)
+    private async Task<bool> CheckDepartmentsExistence(List<Guid> departmentsIds)
     {
       if (!departmentsIds.Any())
       {
@@ -88,8 +91,10 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       try
       {
-        var response = _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
-          ICheckDepartmentsExistence.CreateObj(departmentsIds)).Result;
+        Response<IOperationResult<ICheckDepartmentsExistence>> response =
+          await _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
+          ICheckDepartmentsExistence.CreateObj(departmentsIds));
+
         if (response.Message.IsSuccess)
         {
           return departmentsIds.Count == response.Message.Body.DepartmentIds.Count;
