@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
@@ -37,7 +38,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public OperationResultResponse<Guid?> Execute(CreateNewsRequest request)
+    public async Task<OperationResultResponse<Guid?>> Execute(CreateNewsRequest request)
     {
       if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
       {

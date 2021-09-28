@@ -33,11 +33,11 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpPost("create")]
-    public OperationResultResponse<Guid?> Create(
+    public async Task<OperationResultResponse<Guid?>> Create(
       [FromServices] ICreateNewsCommand command,
       [FromBody] CreateNewsRequest request)
     {
-      return command.Execute(request);
+      return await command.Execute(request);
     }
 
     [HttpGet("find")]
