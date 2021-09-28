@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.Models.Broker.Models;
-using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+﻿using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
@@ -9,14 +8,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
   public class NewsResponseMapper : INewsResponseMapper
   {
-    private readonly IUserInfoMapper _userInfoMapper;
-
-    public NewsResponseMapper(IUserInfoMapper userInfoMapper)
-    {
-      _userInfoMapper = userInfoMapper;
-    }
-
-    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserData author, ImageData avatarImage)
+    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserInfo author)
     {
       if (dbNews == null)
       {
@@ -30,7 +22,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         Content = dbNews.Content,
         Subject = dbNews.Subject,
         Pseudonym = dbNews.Pseudonym,
-        Author = _userInfoMapper.Map(author, avatarImage),
+        Author = author,
         Department = department,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,

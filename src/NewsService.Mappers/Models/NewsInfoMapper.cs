@@ -10,14 +10,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class NewsInfoMapper : INewsInfoMapper
   {
-    private readonly IUserInfoMapper _userInfoMapper;
-
-    public NewsInfoMapper(IUserInfoMapper userInfoMapper)
-    {
-      _userInfoMapper = userInfoMapper;
-    }
-
-    public NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserData author, List<ImageData> avatarImage)
+    public NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserInfo author)
     {
       if (dbNews == null)
       {
@@ -30,7 +23,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Preview = dbNews.Preview,
         Subject = dbNews.Subject,
         Department = department,
-        Author = _userInfoMapper.Map(author, avatarImage?.FirstOrDefault(i => i.ImageId == author.ImageId)),
+        Author = author,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = DateTime.UtcNow
       };

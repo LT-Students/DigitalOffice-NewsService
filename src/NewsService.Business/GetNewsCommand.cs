@@ -35,6 +35,7 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IRequestClient<IGetDepartmentsRequest> _rcGetDepartments;
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly IDepartmentInfoMapper _departmentInfoMapper;
+    private readonly IUserInfoMapper _userInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
     private UserData GetAuthor(Guid userId, List<string> errors)
@@ -127,6 +128,7 @@ namespace LT.DigitalOffice.NewsService.Business
       IRequestClient<IGetUsersDataRequest> rcGetUsers,
       IRequestClient<IGetImagesRequest> rcGetImages,
       IDepartmentInfoMapper departmentMapper,
+      IUserInfoMapper userInfoMapper,
       ILogger<GetNewsCommand> logger)
     {
       _repository = repository;
@@ -136,6 +138,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _rcGetUsers = rcGetUsers;
       _rcGetImages = rcGetImages;
       _departmentInfoMapper = departmentMapper;
+      _userInfoMapper = userInfoMapper;
       _logger = logger;
     }
 
@@ -158,19 +161,12 @@ namespace LT.DigitalOffice.NewsService.Business
       UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
       Guid? imageId = author?.ImageId;
       ImageData avatarImage = GetAuthorAvatarImage(imageId, response.Errors);
+      UserInfo authorInfo = _userInfoMapper.Map(author, avatarImage);
 
-      response.Body = _mapper.Map(dbNews, department, author, avatarImage);
+      response.Body = _mapper.Map(dbNews, department, authorInfo);
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess
         : OperationResultStatusType.FullSuccess;
-
-      if (response.Body == null)
-      {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-
-        response.Errors = new() { "News was not found." };
-        response.Status = OperationResultStatusType.Failed;
-      }
 
       return response;
     }

@@ -36,8 +36,7 @@ namespace LT.DigitalOffice.NewsService.Validation
         .MaximumLength(50).WithMessage("Pseudonym is too long.");
 
       RuleFor(news => news.Subject)
-        .NotEmpty().WithMessage("Subject must not be empty.")
-        .MaximumLength(120).WithMessage("News subject is too long.");
+        .NotEmpty().WithMessage("Subject must not be empty.");
 
       RuleFor(preview => preview.Preview)
         .NotEmpty().WithMessage("Preview must not be empty.");
@@ -49,6 +48,7 @@ namespace LT.DigitalOffice.NewsService.Validation
         news => news.DepartmentId.HasValue,
         () =>
           RuleFor(news => news.DepartmentId)
+            .Must(DepartmentId => DepartmentId != Guid.Empty).WithMessage("Wrong type of department Id.")
             .MustAsync(async (departmentId, cancellation) => await CheckDepartmentsExistence(new List<Guid>() { departmentId.Value }))
             .WithMessage("This department doesn't exist."));
     }

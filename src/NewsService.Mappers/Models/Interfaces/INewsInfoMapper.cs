@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models.Interfaces
   [AutoInject]
   public interface INewsInfoMapper
   {
-    NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserData authors, List<ImageData> avatarImage);
+    NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserInfo author);
   }
 }
