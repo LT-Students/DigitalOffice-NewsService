@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.NewsService.Models.Dto.Requests
 {

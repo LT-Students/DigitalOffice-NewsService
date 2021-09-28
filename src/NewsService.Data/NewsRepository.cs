@@ -16,9 +16,7 @@ namespace LT.DigitalOffice.NewsService.Data
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public NewsRepository(
-      IDataProvider provider,
-      IHttpContextAccessor httpContextAccessor)
+    public NewsRepository(IDataProvider provider, IHttpContextAccessor httpContextAccessor)
     {
       _provider = provider;
       _httpContextAccessor = httpContextAccessor;
@@ -28,7 +26,7 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       DbNews dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
 
-      if (dbNews == null)
+      if (dbNews == null || request == null)
       {
         return false;
       }
@@ -62,18 +60,6 @@ namespace LT.DigitalOffice.NewsService.Data
         return null;
       }
 
-      if (findNewsFilter.SkipCount < 0)
-      {
-        totalCount = 0;
-        return null;
-      }
-
-      if (findNewsFilter.TakeCount < 1)
-      {
-        totalCount = 0;
-        return null;
-      }
-
       IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
 
       if (findNewsFilter.AuthorId.HasValue)
@@ -93,7 +79,7 @@ namespace LT.DigitalOffice.NewsService.Data
 
       totalCount = dbNewsList.Count();
 
-      return dbNewsList.Skip(findNewsFilter.SkipCount).Take(findNewsFilter.TakeCount).ToList();
+      return dbNewsList.Skip(findNewsFilter.skipCount).Take(findNewsFilter.takeCount).ToList();
     }
 
     public DbNews Get(Guid newsId)
