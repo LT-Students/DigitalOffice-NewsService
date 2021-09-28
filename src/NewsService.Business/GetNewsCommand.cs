@@ -159,8 +159,7 @@ namespace LT.DigitalOffice.NewsService.Business
       DepartmentInfo department = dbNews.DepartmentId.HasValue ? GetDepartment(dbNews.DepartmentId, response.Errors) : null;
 
       UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
-      Guid? imageId = author?.ImageId;
-      ImageData avatarImage = GetAuthorAvatarImage(imageId, response.Errors);
+      ImageData avatarImage = GetAuthorAvatarImage(author?.ImageId, response.Errors);
       UserInfo authorInfo = _userInfoMapper.Map(author, avatarImage);
 
       response.Body = _mapper.Map(dbNews, department, authorInfo);

@@ -28,6 +28,7 @@ namespace LT.DigitalOffice.NewsService.Validation
       _logger = logger;
 
       RuleFor(news => news.AuthorId)
+        .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("AuthorId must not be empty.")
         .MustAsync(async (authorId, cancellation) => await CheckUserExistence(new List<Guid>() { authorId }))
         .WithMessage("This author doesn't exist.");
@@ -48,6 +49,7 @@ namespace LT.DigitalOffice.NewsService.Validation
         news => news.DepartmentId.HasValue,
         () =>
           RuleFor(news => news.DepartmentId)
+            .Cascade(CascadeMode.Stop)
             .Must(DepartmentId => DepartmentId != Guid.Empty).WithMessage("Wrong type of department Id.")
             .MustAsync(async (departmentId, cancellation) => await CheckDepartmentsExistence(new List<Guid>() { departmentId.Value }))
             .WithMessage("This department doesn't exist."));

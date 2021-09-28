@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
     private async Task<List<UserData>> GetAuthors(List<Guid> authorIds, List<string> errors)
     {
-      if (authorIds == null || authorIds.Count == 0)
+      if (authorIds == null || !authorIds.Any())
       {
         return null;
       }
@@ -191,10 +191,9 @@ namespace LT.DigitalOffice.NewsService.Business
       List<UserData> authors = await GetAuthors(
         dbNewsList.Select(a => a.AuthorId).Distinct().ToList(),
         response.Errors);
-      List<Guid> imagesIds = new();
-      imagesIds.AddRange(authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList());
+      List<Guid> imagesIds = authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList();
       List<ImageData> avatarImages = await GetImages(imagesIds, response.Errors);
-      List<UserInfo> authorsInfo = authors.Select(a => _userInfoMapper.Map(a, avatarImages.FirstOrDefault(i => a.ImageId == i.ImageId))).ToList();
+      List<UserInfo> authorsInfo = authors.Select(a => _userInfoMapper.Map(a, avatarImages?.FirstOrDefault(i => a.ImageId == i.ImageId))).ToList();
 
       response.Body = dbNewsList
         .Select(dbNews => _mapper.Map(
