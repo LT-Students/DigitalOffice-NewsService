@@ -1,37 +1,29 @@
-﻿using LT.DigitalOffice.Kernel.Exceptions.Models;
+﻿using System;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
-using System;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
-    public class PatchNewsMapper : IPatchNewsMapper
+  public class PatchNewsMapper : IPatchNewsMapper
+  {
+    public JsonPatchDocument<DbNews> Map(JsonPatchDocument<EditNewsRequest> request)
     {
-        public JsonPatchDocument<DbNews> Map(JsonPatchDocument<EditNewsRequest> request)
-        {
-            if (request == null)
-            {
-                throw new ArgumentNullException("Invalid request value");
-            }
+      if (request == null)
+      {
+        return null;
+      }
 
-            var patchDbNews = new JsonPatchDocument<DbNews>();
+      JsonPatchDocument<DbNews> patchDbNews = new JsonPatchDocument<DbNews>();
 
-            foreach (var item in request.Operations)
-            {
-                if (item.op == "replace")
-                {
-                    patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
-                }
-                else
-                {
-                    throw new ArgumentException("Invalid operation");
-                }
-            }
+      foreach (Operation<EditNewsRequest> item in request.Operations)
+      {
+          patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
+      }
 
-            return patchDbNews;
-        }
+      return patchDbNews;
     }
+  }
 }

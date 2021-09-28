@@ -21,14 +21,14 @@ namespace LT.DigitalOffice.NewsService.Business
   {
     private readonly INewsRepository _repository;
     private readonly IPatchNewsMapper _mapper;
-    private readonly IEditNewsValidator _validator;
+    private readonly IEditNewsRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public EditNewsCommand(
       INewsRepository repository,
       IPatchNewsMapper mapper,
-      IEditNewsValidator validator,
+      IEditNewsRequestValidator validator,
       IAccessValidator accessValidator,
       IHttpContextAccessor httpContextAccessor)
     {
@@ -65,20 +65,16 @@ namespace LT.DigitalOffice.NewsService.Business
 
       OperationResultResponse<bool> response = new();
 
-      JsonPatchDocument<DbNews> dbRequest = _mapper.Map(request);
-
-      response.Body = _repository.Edit(newsId, dbRequest);
+      response.Body = _repository.Edit(newsId, _mapper.Map(request));
+      response.Status = OperationResultStatusType.FullSuccess;
 
       if (!response.Body)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-        response.Errors.Add($"News with ID '{newsId}' was not found.");
         response.Status = OperationResultStatusType.Failed;
-        return response;
       }
 
-      response.Status = OperationResultStatusType.FullSuccess;
       return response;
     }
   }

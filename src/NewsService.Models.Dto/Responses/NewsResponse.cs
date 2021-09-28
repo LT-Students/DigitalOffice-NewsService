@@ -9,9 +9,11 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
     public string Preview { get; set; }
     public string Content { get; set; }
     public string Subject { get; set; }
-    public User Author { get; set; }
-    public Department Department { get; set; }
+    public string Pseudonym { get; set; }
+    public UserInfo Author { get; set; }
+    public DepartmentInfo Department { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAtUtc { get; set; }
+    public Guid CreatedBy { get; set; }
   }
 }

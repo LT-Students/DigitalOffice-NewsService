@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LT.DigitalOffice.NewsService.Data.Provider
 {
-    [AutoInject(InjectType.Scoped)]
-    public interface IDataProvider : IBaseDataProvider
-    {
-        public DbSet<DbNews> News { get; set; }
-    }
+  [AutoInject(InjectType.Scoped)]
+  public interface IDataProvider : IBaseDataProvider
+  {
+    DbSet<DbNews> News { get; set; }
+  }
 }

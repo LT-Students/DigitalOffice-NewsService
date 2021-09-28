@@ -9,6 +9,7 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public const string TableName = "News";
 
     public Guid Id { get; set; }
+    public string Preview { get; set; }
     public string Content { get; set; }
     public string Subject { get; set; }
     public string Pseudonym { get; set; }
@@ -19,7 +20,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public DateTime CreatedAtUtc { get; set; }
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
-    public string Preview { get; set; }
   }
 
   public class DbNewsConfiguration : IEntityTypeConfiguration<DbNews>

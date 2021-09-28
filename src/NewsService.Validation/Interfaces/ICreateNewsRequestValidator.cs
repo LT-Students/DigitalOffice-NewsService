@@ -5,7 +5,7 @@ using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 namespace LT.DigitalOffice.NewsService.Validation.Interfaces
 {
   [AutoInject]
-  public interface INewsValidator : IValidator<CreateNewsRequest>
+  public interface ICreateNewsRequestValidator : IValidator<CreateNewsRequest>
   {
   }
 }

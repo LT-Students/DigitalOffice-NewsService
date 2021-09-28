@@ -11,13 +11,20 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
   public class DbNewsMapper : IDbNewsMapper
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUserInfoMapper _userInfoMapper;
+    private readonly IDepartmentInfoMapper _departmentInfoMapper;
 
-    public DbNewsMapper(IHttpContextAccessor httpContextAccessor)
+    public DbNewsMapper(
+      IHttpContextAccessor httpContextAccessor,
+      IUserInfoMapper userInfoMapper,
+      IDepartmentInfoMapper departmentInfoMapper)
     {
       _httpContextAccessor = httpContextAccessor;
+      _userInfoMapper = userInfoMapper;
+      _departmentInfoMapper = departmentInfoMapper;
     }
 
-    public DbNews Map(CreateNewsRequest request, List<Guid> departmentId)
+    public DbNews Map(CreateNewsRequest request)
     {
       if (request == null)
       {
@@ -32,7 +39,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Subject = request.Subject,
         Pseudonym = !string.IsNullOrEmpty(request.Pseudonym?.Trim()) ? request.Pseudonym.Trim() : null,
         AuthorId = request.AuthorId,
-        DepartmentId = departmentId?[0],
+        DepartmentId = request.DepartmentId,
         IsActive = true,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         CreatedAtUtc = DateTime.UtcNow,
