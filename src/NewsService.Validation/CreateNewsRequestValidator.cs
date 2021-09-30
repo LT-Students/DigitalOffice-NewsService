@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.NewsService.Validation
       {
         Response<IOperationResult<ICheckUsersExistence>> response =
           await _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
-          ICheckUsersExistence.CreateObj(authorsIds));
+            ICheckUsersExistence.CreateObj(authorsIds));
 
         if (response.Message.IsSuccess)
         {
