@@ -1,19 +1,16 @@
 ﻿using System;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using System.Collections.Generic;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
+namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {
-  public record NewsResponse
+  public record NewsInfo
   {
     public Guid Id { get; set; }
     public string Preview { get; set; }
-    public string Content { get; set; }
     public string Subject { get; set; }
-    public string Pseudonym { get; set; }
     public UserInfo Author { get; set; }
     public DepartmentInfo Department { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAtUtc { get; set; }
-    public Guid CreatedBy { get; set; }
   }
 }

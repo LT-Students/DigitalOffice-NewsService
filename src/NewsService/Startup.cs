@@ -1,4 +1,4 @@
-using HealthChecks.UI.Client;
+﻿using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.NewsService
                 .GetSection(BaseServiceInfoConfig.SectionName)
                 .Get<BaseServiceInfoConfig>();
 
-            Version = "1.2.4";
+            Version = "1.2.5.2";
             Description = "NewsService, is intended to work with the news - create them, update info and etc.";
             StartTime = DateTime.UtcNow;
             ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
