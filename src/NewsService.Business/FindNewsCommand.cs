@@ -186,20 +186,20 @@ namespace LT.DigitalOffice.NewsService.Business
       List<DepartmentData> departments = await GetDepartments(
         dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).Distinct().ToList(),
         response.Errors);
-      List<DepartmentInfo> departmentsInfo = departments.Select(_departmentInfoMapper.Map).ToList();
+      List<DepartmentInfo> departmentsInfo = departments?.Select(_departmentInfoMapper.Map).ToList();
 
       List<UserData> authors = await GetAuthors(
         dbNewsList.Select(a => a.AuthorId).Distinct().ToList(),
         response.Errors);
       List<Guid> imagesIds = authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList();
       List<ImageData> avatarImages = await GetImages(imagesIds, response.Errors);
-      List<UserInfo> authorsInfo = authors.Select(a => _userInfoMapper.Map(a, avatarImages?.FirstOrDefault(i => a.ImageId == i.ImageId))).ToList();
+      List<UserInfo> authorsInfo = authors?.Select(a => _userInfoMapper.Map(a, avatarImages?.FirstOrDefault(i => a.ImageId == i.ImageId))).ToList();
 
       response.Body = dbNewsList
         .Select(dbNews => _mapper.Map(
           dbNews,
-          departmentsInfo.FirstOrDefault(d => dbNews.DepartmentId == d.Id),
-          authorsInfo.FirstOrDefault(a => dbNews.AuthorId == a.Id)))
+          departmentsInfo?.FirstOrDefault(d => dbNews.DepartmentId == d.Id),
+          authorsInfo?.FirstOrDefault(a => dbNews.AuthorId == a.Id)))
         .ToList();
       response.TotalCount = totalCount;
       response.Status = response.Errors.Any()
