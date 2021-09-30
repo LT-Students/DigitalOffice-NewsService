@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class NewsInfoMapper : INewsInfoMapper
   {
-    public NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserInfo author)
+    public NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserInfo author, UserInfo sender)
     {
       if (dbNews == null)
       {
@@ -22,10 +22,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Id = dbNews.Id,
         Preview = dbNews.Preview,
         Subject = dbNews.Subject,
+        Pseudonym = dbNews.Pseudonym,
         Department = department,
         Author = author,
         IsActive = dbNews.IsActive,
-        CreatedAtUtc = DateTime.UtcNow
+        CreatedAtUtc = dbNews.CreatedAtUtc,
+        Sender = sender
       };
     }
   }

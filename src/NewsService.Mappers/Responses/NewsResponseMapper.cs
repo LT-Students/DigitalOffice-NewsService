@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
+﻿using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
@@ -8,7 +7,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
   public class NewsResponseMapper : INewsResponseMapper
   {
-    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserInfo author)
+    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserInfo author, UserInfo sender)
     {
       if (dbNews == null)
       {
@@ -26,7 +25,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         Department = department,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,
-        CreatedBy = dbNews.CreatedBy
+        Sender = sender
       };
     }
   }

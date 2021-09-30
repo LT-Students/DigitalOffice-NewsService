@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Broker;
 using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Enums;
 using LT.DigitalOffice.Models.Broker.Models;
+using LT.DigitalOffice.Models.Broker.Models.Company;
 using LT.DigitalOffice.Models.Broker.Requests.Company;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.User;
@@ -38,32 +40,43 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IUserInfoMapper _userInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
-    private UserData GetAuthor(Guid userId, List<string> errors)
+    private async Task<List<UserData>> GetUsersData(List<Guid> usersIds, List<string> errors)
     {
+      if (usersIds == null || !usersIds.Any())
+      {
+        return null;
+      }
+
       try
       {
-        IOperationResult<IGetUsersDataResponse> response = _rcGetUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-          IGetUsersDataRequest.CreateObj(new List<Guid> { userId })).Result.Message;
+        Response<IOperationResult<IGetUsersDataResponse>> response =
+          await _rcGetUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+            IGetUsersDataRequest.CreateObj(usersIds.Distinct().ToList()));
 
-        if (response.IsSuccess)
+        if (response.Message.IsSuccess)
         {
-          return response.Body.UsersData.FirstOrDefault();
+          return response.Message.Body.UsersData;
         }
 
         _logger.LogWarning(
-          "Can not get author. Reason:{errors}", string.Join('\n', response.Errors));
+          "Error while geting users data by ids: {UsersIds}. Reason:{Errors}",
+          string.Join(", ", usersIds),
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError("Exception on get author request. {errorsMessage}", exc.Message);
+        _logger.LogError(
+          "Can not get users data by ids: {UsersIds}. {ErrorsMessage}",
+          string.Join(", ", usersIds),
+          exc.Message);
       }
 
-      errors.Add($"Can not get author info for authorId '{userId}'. Please try again later.");
+      errors.Add("Can not get users data. Please try again later.");
 
       return null;
     }
 
-    private DepartmentInfo GetDepartment(Guid? departmentId, List<string> errors)
+    private async Task<List<DepartmentData>> GetDepartment(Guid? departmentId, List<string> errors)
     {
       if (departmentId == null)
       {
@@ -72,50 +85,59 @@ namespace LT.DigitalOffice.NewsService.Business
 
       try
       {
-        IOperationResult<IGetDepartmentsResponse> departmentResponse =
-          _rcGetDepartments.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
-            IGetDepartmentsRequest.CreateObj(new List<Guid> { departmentId.Value }))
-          .Result.Message;
+        Response<IOperationResult<IGetDepartmentsResponse>> response =
+          await _rcGetDepartments.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
+            IGetDepartmentsRequest.CreateObj(new List<Guid> { departmentId.Value }));
 
-        if (departmentResponse.IsSuccess)
+        if (response.Message.IsSuccess)
         {
-          return _departmentInfoMapper.Map(departmentResponse.Body.Departments.FirstOrDefault());
+          return response.Message.Body.Departments;
         }
 
         _logger.LogWarning(
-          "Can not get department. Reason:{errors}", string.Join('\n', departmentResponse.Errors));
+          "Error while getting department id {DepartmentId}. Reason:{Errors}",
+          departmentId,
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError("Exception on get department request. {errorsMessage}", exc.Message);
+        _logger.LogError("Can not get department id {DepartmentId}. {ErrorsMessage}", exc.Message);
       }
 
-      errors.Add($"Can not get department info for DepartmentId '{departmentId}'. Please try again later.");
+      errors.Add("Can not get department info. Please try again later.");
 
       return null;
     }
 
-    private ImageData GetAuthorAvatarImage(Guid? imageId, List<string> errors)
+    private async Task<List<ImageData>> GetUsersAvatars(List<Guid> imagesIds, List<string> errors)
     {
+      if (imagesIds == null || !imagesIds.Any())
+      {
+        return null;
+      }
+
       try
       {
-        IOperationResult<IGetImagesResponse> response = _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-          IGetImagesRequest.CreateObj(new List<Guid> { imageId.Value }, ImageSource.News)).Result.Message;
+        Response<IOperationResult<IGetImagesResponse>> response =
+          await _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
+          IGetImagesRequest.CreateObj(imagesIds, ImageSource.News));
 
-        if (response.IsSuccess)
+        if (response.Message.IsSuccess)
         {
-          return response.Body.ImagesData.FirstOrDefault();
+          return response.Message.Body.ImagesData;
         }
 
         _logger.LogWarning(
-          "Can not get image. Reason:{errors}", string.Join('\n', response.Errors));
+          "Error while getting images by ids: {ImagesIds}. Reason:{Errors}",
+          string.Join(", ", imagesIds),
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError("Exception on get image request. {errorsMessage}", exc.Message);
+        _logger.LogError("Can not get images by ids: {ImagesIds}. {ErrorsMessage}", imagesIds, exc.Message);
       }
 
-      errors.Add($"Can not get image info for imageId '{imageId}'. Please try again later.");
+      errors.Add("Can not get images. Please try again later.");
 
       return null;
     }
@@ -142,7 +164,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _logger = logger;
     }
 
-    public OperationResultResponse<NewsResponse> Execute(Guid newsId)
+    public async Task<OperationResultResponse<NewsResponse>> Execute(Guid newsId)
     {
       OperationResultResponse<NewsResponse> response = new();
 
@@ -156,13 +178,29 @@ namespace LT.DigitalOffice.NewsService.Business
         return response;
       }
 
-      DepartmentInfo department = dbNews.DepartmentId.HasValue ? GetDepartment(dbNews.DepartmentId, response.Errors) : null;
+      List<DepartmentData> departmentsData = await GetDepartment(dbNews.DepartmentId, response.Errors);
 
-      UserData author = GetAuthor(dbNews.AuthorId, response.Errors);
-      ImageData avatarImage = GetAuthorAvatarImage(author?.ImageId, response.Errors);
-      UserInfo authorInfo = _userInfoMapper.Map(author, avatarImage);
+      List<UserData> usersData =
+        await GetUsersData(
+          new List<Guid>() { dbNews.AuthorId, dbNews.CreatedBy },
+          response.Errors);
 
-      response.Body = _mapper.Map(dbNews, department, authorInfo);
+      List<ImageData> avatarsImages =
+        await GetUsersAvatars(
+          usersData?.Where(ud => ud.ImageId.HasValue).Select(ud => ud.ImageId.Value).ToList(),
+          response.Errors);
+
+      List<UserInfo> usersInfo =
+        usersData?
+          .Select(ud => _userInfoMapper.Map(ud, avatarsImages?.FirstOrDefault(ai => ai.ImageId == ud.ImageId))).ToList();
+
+      response.Body = _mapper
+        .Map(
+          dbNews,
+          _departmentInfoMapper.Map(departmentsData?.FirstOrDefault()),
+          usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.AuthorId),
+          usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.CreatedBy));
+
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess
         : OperationResultStatusType.FullSuccess;

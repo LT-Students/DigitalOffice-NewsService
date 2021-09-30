@@ -79,7 +79,11 @@ namespace LT.DigitalOffice.NewsService.Data
 
       totalCount = dbNewsList.Count();
 
-      return dbNewsList.Skip(findNewsFilter.skipCount).Take(findNewsFilter.takeCount).ToList();
+      return dbNewsList
+        .OrderByDescending(n => n.CreatedAtUtc)
+        .Skip(findNewsFilter.skipCount)
+        .Take(findNewsFilter.takeCount)
+        .ToList();
     }
 
     public DbNews Get(Guid newsId)
