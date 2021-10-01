@@ -42,83 +42,90 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IDepartmentInfoMapper _departmentInfoMapper;
     private readonly IUserInfoMapper _userInfoMapper;
 
-    private async Task<List<ImageData>> GetImages(List<Guid> imagesIds, List<string> errors)
+    private async Task<List<ImageData>> GetImagesData(List<Guid> imagesIds, List<string> errors)
     {
-      if (imagesIds == null || imagesIds.Count == 0)
+      if (imagesIds == null || !imagesIds.Any())
       {
         return null;
       }
 
-      string errorMessage = "Cannot get avatar Images now. Please try again later.";
-      string logMessage = "Cannot get avatar images with ids: {imagesId}.";
-
       try
       {
-        Response<IOperationResult<IGetImagesResponse>> response = await _rcGetImages
-          .GetResponse<IOperationResult<IGetImagesResponse>>(IGetImagesRequest.CreateObj(imagesIds, ImageSource.News));
+        Response<IOperationResult<IGetImagesResponse>> response =
+          await _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
+            IGetImagesRequest.CreateObj(imagesIds.Distinct().ToList(), ImageSource.News));
 
         if (response.Message.IsSuccess)
         {
           return response.Message.Body.ImagesData;
         }
 
-        _logger.LogWarning(logMessage, string.Join(", ", imagesIds));
+        _logger.LogWarning(
+          "Error while getting images by ids: {ImagesIds}. Reason:{Errors}",
+          string.Join(", ", imagesIds),
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError(exc, logMessage, string.Join(", ", imagesIds));
+        _logger.LogError(
+          "Can not get images by ids: {ImagesIds}. {ErrorsMessage}",
+          string.Join(", ", imagesIds),
+          exc.Message);
       }
 
-      errors.Add(errorMessage);
+      errors.Add("Can not get images data.Please try again later.");
 
       return null;
     }
 
-    private async Task<List<UserData>> GetAuthors(List<Guid> authorIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersData(List<Guid> usersIds, List<string> errors)
     {
-      if (authorIds == null || !authorIds.Any())
+      if (usersIds == null || !usersIds.Any())
       {
         return null;
       }
 
-      string errorMessage = "Cannot get authors now. Please try again later.";
-      string logMessage = "Cannot get authors with ids: {authorIds}.";
-
       try
       {
-        Response<IOperationResult<IGetUsersDataResponse>> response = await _rcGetUsers
-          .GetResponse<IOperationResult<IGetUsersDataResponse>>(IGetUsersDataRequest.CreateObj(authorIds));
+        Response<IOperationResult<IGetUsersDataResponse>> response =
+          await _rcGetUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
+            IGetUsersDataRequest.CreateObj(usersIds.Distinct().ToList()));
 
         if (response.Message.IsSuccess)
         {
           return response.Message.Body.UsersData;
         }
 
-        _logger.LogWarning(logMessage, string.Join(", ", authorIds));
+        _logger.LogWarning(
+          "Error while getting users data by ids: {UsersIds}. Reason:{Errors}",
+          string.Join(", ", usersIds),
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError(exc, logMessage, string.Join(", ", authorIds));
+        _logger.LogError(
+          "Can not get users data by ids: {UsersIds}. {ErrorsMessage}",
+          string.Join(", ", usersIds),
+          exc.Message);
       }
 
-      errors.Add(errorMessage);
+      errors.Add("Can not get users data. Please try again later.");
 
       return null;
     }
 
-    private async Task<List<DepartmentData>> GetDepartments(List<Guid> departmentIds, List<string> errors)
+    private async Task<List<DepartmentData>> GetDepartments(List<Guid> departmentsIds, List<string> errors)
     {
-      if (departmentIds == null || departmentIds.Count == 0)
+      if (departmentsIds == null || !departmentsIds.Any())
       {
         return null;
       }
 
-      string errorMessage = "Can not get departments. Please try again later.";
-
       try
       {
-        Response<IOperationResult<IGetDepartmentsResponse>> response = await _rcGetDepartments
-          .GetResponse<IOperationResult<IGetDepartmentsResponse>>(IGetDepartmentsRequest.CreateObj(departmentIds));
+        Response<IOperationResult<IGetDepartmentsResponse>> response =
+          await _rcGetDepartments.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
+            IGetDepartmentsRequest.CreateObj(departmentsIds));
 
         if (response.Message.IsSuccess)
         {
@@ -126,16 +133,21 @@ namespace LT.DigitalOffice.NewsService.Business
         }
         else
         {
-          _logger.LogWarning("Errors while getting departments. Reason: {Errors}",
-            string.Join('\n', response.Message.Errors));
+          _logger.LogWarning(
+            "Error while getting departments by ids: {DepartmentsIds}. Reason:{errors}",
+          string.Join(", ", departmentsIds),
+          string.Join('\n', response.Message.Errors));
         }
       }
       catch (Exception exc)
       {
-        _logger.LogError(exc, errorMessage);
+        _logger.LogError(
+          "Can not get departments by ids: {DepartmentsIds}. {ErrorsMessage}",
+          string.Join(", ", departmentsIds),
+          exc.Message);
       }
 
-      errors.Add(errorMessage);
+      errors.Add("Can not get departments data. Please try again later.");
 
       return null;
     }
@@ -178,30 +190,39 @@ namespace LT.DigitalOffice.NewsService.Business
       }
 
       List<DbNews> dbNewsList = _repository.Find(findNewsFilter, out int totalCount);
+
       if (dbNewsList == null)
       {
         return response;
       }
 
-      List<DepartmentData> departments = await GetDepartments(
-        dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).Distinct().ToList(),
+      List<DepartmentData> departmentsData = await GetDepartments(
+        dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).ToList(),
         response.Errors);
-      List<DepartmentInfo> departmentsInfo = departments?.Select(_departmentInfoMapper.Map).ToList();
 
-      List<UserData> authors = await GetAuthors(
-        dbNewsList.Select(a => a.AuthorId).Distinct().ToList(),
+      List<DepartmentInfo> departmentsInfo = departmentsData?.Select(_departmentInfoMapper.Map).ToList();
+
+      List<UserData> usersData = await GetUsersData(
+        dbNewsList.Select(n => n.AuthorId).Concat(dbNewsList.Select(n => n.CreatedBy)).ToList(),
         response.Errors);
-      List<Guid> imagesIds = authors?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList();
-      List<ImageData> avatarImages = await GetImages(imagesIds, response.Errors);
-      List<UserInfo> authorsInfo = authors?.Select(a => _userInfoMapper.Map(a, avatarImages?.FirstOrDefault(i => a.ImageId == i.ImageId))).ToList();
+
+      List<ImageData> avatarImages = await GetImagesData(
+        usersData?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList(),
+        response.Errors);
+
+      List<UserInfo> usersInfo = usersData?
+        .Select(ud => _userInfoMapper.Map(ud, avatarImages?.FirstOrDefault(id => ud.ImageId == id.ImageId))).ToList();
 
       response.Body = dbNewsList
         .Select(dbNews => _mapper.Map(
           dbNews,
-          departmentsInfo?.FirstOrDefault(d => dbNews.DepartmentId == d.Id),
-          authorsInfo?.FirstOrDefault(a => dbNews.AuthorId == a.Id)))
+          departmentsInfo?.FirstOrDefault(di => dbNews.DepartmentId == di.Id),
+          usersInfo?.FirstOrDefault(ud => dbNews.AuthorId == ud.Id),
+          usersInfo?.FirstOrDefault(ud => dbNews.CreatedBy == ud.Id)))
         .ToList();
+
       response.TotalCount = totalCount;
+
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess
         : OperationResultStatusType.FullSuccess;
