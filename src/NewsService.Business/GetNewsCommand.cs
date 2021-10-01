@@ -120,7 +120,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         Response<IOperationResult<IGetImagesResponse>> response =
           await _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-          IGetImagesRequest.CreateObj(imagesIds, ImageSource.News));
+            IGetImagesRequest.CreateObj(imagesIds, ImageSource.News));
 
         if (response.Message.IsSuccess)
         {
