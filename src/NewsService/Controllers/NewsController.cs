@@ -16,11 +16,11 @@ namespace LT.DigitalOffice.NewsService.Controllers
   public class NewsController : ControllerBase
   {
     [HttpGet("get")]
-    public OperationResultResponse<NewsResponse> Get(
+    public async Task<OperationResultResponse<NewsResponse>> Get(
       [FromServices] IGetNewsCommand command,
       [FromQuery] Guid newsId)
     {
-      return command.Execute(newsId);
+      return await command.Execute(newsId);
     }
 
     [HttpPatch("edit")]

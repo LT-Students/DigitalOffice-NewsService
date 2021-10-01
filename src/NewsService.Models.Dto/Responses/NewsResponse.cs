@@ -14,6 +14,6 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
     public DepartmentInfo Department { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAtUtc { get; set; }
-    public Guid CreatedBy { get; set; }
+    public UserInfo Sender { get; set; }
   }
 }
