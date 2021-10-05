@@ -91,13 +91,7 @@ namespace LT.DigitalOffice.NewsService
                     builder =>
                     {
                         builder
-                            .WithOrigins(
-                                "https://*.ltdo.xyz",
-                                "http://*.ltdo.xyz",
-                                "http://ltdo.xyz",
-                                "http://ltdo.xyz:9808",
-                                "http://localhost:4200",
-                                "http://localhost:4500")
+                            .AllowAnyOrigin()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
