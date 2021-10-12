@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider;
@@ -8,6 +9,7 @@ using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 
 namespace LT.DigitalOffice.NewsService.Data
 {
@@ -22,73 +24,72 @@ namespace LT.DigitalOffice.NewsService.Data
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public bool Edit(Guid newsId, JsonPatchDocument<DbNews> request)
+    public async Task<bool> EditAsync(Guid newsId, JsonPatchDocument<DbNews> patch)
     {
-      DbNews dbNews = _provider.News.FirstOrDefault(x => x.Id == newsId);
+      DbNews dbNews = await _provider.News.FirstOrDefaultAsync(x => x.Id == newsId);
 
-      if (dbNews == null || request == null)
+      if (dbNews == null || patch == null)
       {
         return false;
       }
 
-      request.ApplyTo(dbNews);
+      patch.ApplyTo(dbNews);
       dbNews.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
       dbNews.ModifiedAtUtc = DateTime.UtcNow;
-      _provider.Save();
+      await _provider.SaveAsync();
 
       return true;
     }
 
-    public Guid? Create(DbNews news)
+    public async Task<Guid?> CreateAsync(DbNews dbNews)
     {
-      if (news == null)
+      if (dbNews == null)
       {
         return null;
       }
 
-      _provider.News.Add(news);
-      _provider.Save();
+      _provider.News.Add(dbNews);
+      await _provider.SaveAsync();
 
-      return news.Id;
+      return dbNews.Id;
     }
 
-    public List<DbNews> Find(FindNewsFilter findNewsFilter, out int totalCount)
+    public async Task<(List<DbNews> dbNewsList, int totalCount)> FindAsync(FindNewsFilter filter)
     {
-      if (findNewsFilter == null)
+      if (filter == null)
       {
-        totalCount = 0;
-        return null;
+        return (null, default);
       }
 
       IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
 
-      if (findNewsFilter.AuthorId.HasValue)
+      if (filter.AuthorId.HasValue)
       {
-        dbNewsList = dbNewsList.Where(x => x.AuthorId == findNewsFilter.AuthorId);
+        dbNewsList = dbNewsList.Where(x => x.AuthorId == filter.AuthorId);
       }
 
-      if (findNewsFilter.DepartmentId.HasValue)
+      if (filter.DepartmentId.HasValue)
       {
-        dbNewsList = dbNewsList.Where(x => x.DepartmentId == findNewsFilter.DepartmentId);
+        dbNewsList = dbNewsList.Where(x => x.DepartmentId == filter.DepartmentId);
       }
 
-      if (!findNewsFilter.IncludeDeactivated)
+      if (!filter.IncludeDeactivated)
       {
         dbNewsList = dbNewsList.Where(x => x.IsActive);
       }
 
-      totalCount = dbNewsList.Count();
-
-      return dbNewsList
-        .OrderByDescending(n => n.CreatedAtUtc)
-        .Skip(findNewsFilter.skipCount)
-        .Take(findNewsFilter.takeCount)
-        .ToList();
+      return (
+        await dbNewsList
+          .OrderByDescending(n => n.CreatedAtUtc)
+          .Skip(filter.SkipCount)
+          .Take(filter.TakeCount)
+          .ToListAsync(),
+        await dbNewsList.CountAsync());
     }
 
-    public DbNews Get(Guid newsId)
+    public async Task<DbNews> GetAsync(Guid newsId)
     {
-      return _provider.News.FirstOrDefault(dbNews => dbNews.Id == newsId);
+      return await _provider.News.FirstOrDefaultAsync(dbNews => dbNews.Id == newsId);
     }
   }
 }

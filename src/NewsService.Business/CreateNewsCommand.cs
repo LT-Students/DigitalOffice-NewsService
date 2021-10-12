@@ -38,9 +38,9 @@ namespace LT.DigitalOffice.NewsService.Business
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<OperationResultResponse<Guid?>> Execute(CreateNewsRequest request)
+    public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request)
     {
-      if (!_accessValidator.HasRights(Rights.AddEditRemoveNews))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
         _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 
@@ -66,7 +66,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
       OperationResultResponse<Guid?> response = new();
 
-      response.Body = _repository.Create(_mapper.Map(request));
+      response.Body = await _repository.CreateAsync(_mapper.Map(request));
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 

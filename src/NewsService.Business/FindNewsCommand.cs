@@ -38,11 +38,11 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IRequestClient<IGetDepartmentsRequest> _rcGetDepartments;
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly ILogger<GetNewsCommand> _logger;
-    private readonly IBaseFindRequestValidator _baseFindValidator;
+    private readonly IBaseFindFilterValidator _baseFindValidator;
     private readonly IDepartmentInfoMapper _departmentInfoMapper;
     private readonly IUserInfoMapper _userInfoMapper;
 
-    private async Task<List<ImageData>> GetImagesData(List<Guid> imagesIds, List<string> errors)
+    private async Task<List<ImageData>> GetImagesDataAsync(List<Guid> imagesIds, List<string> errors)
     {
       if (imagesIds == null || !imagesIds.Any())
       {
@@ -78,7 +78,7 @@ namespace LT.DigitalOffice.NewsService.Business
       return null;
     }
 
-    private async Task<List<UserData>> GetUsersData(List<Guid> usersIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersDataAsync(List<Guid> usersIds, List<string> errors)
     {
       if (usersIds == null || !usersIds.Any())
       {
@@ -114,7 +114,7 @@ namespace LT.DigitalOffice.NewsService.Business
       return null;
     }
 
-    private async Task<List<DepartmentData>> GetDepartments(List<Guid> departmentsIds, List<string> errors)
+    private async Task<List<DepartmentData>> GetDepartmentsAsync(List<Guid> departmentsIds, List<string> errors)
     {
       if (departmentsIds == null || !departmentsIds.Any())
       {
@@ -162,7 +162,7 @@ namespace LT.DigitalOffice.NewsService.Business
       IDepartmentInfoMapper departmentInfoMapper,
       IUserInfoMapper userInfoMapper,
       ILogger<GetNewsCommand> logger,
-      IBaseFindRequestValidator baseFindValidator)
+      IBaseFindFilterValidator baseFindValidator)
     {
       _repository = repository;
       _mapper = mapper;
@@ -176,7 +176,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _userInfoMapper = userInfoMapper;
     }
 
-    public async Task<FindResultResponse<NewsInfo>> Execute(FindNewsFilter findNewsFilter)
+    public async Task<FindResultResponse<NewsInfo>> ExecuteAsync(FindNewsFilter findNewsFilter)
     {
       FindResultResponse<NewsInfo> response = new();
 
@@ -189,29 +189,40 @@ namespace LT.DigitalOffice.NewsService.Business
         return response;
       }
 
-      List<DbNews> dbNewsList = _repository.Find(findNewsFilter, out int totalCount);
+      (List<DbNews> dbNewsList, int totalCount) =
+        await _repository.FindAsync(findNewsFilter);
 
       if (dbNewsList == null)
       {
         return response;
       }
 
-      List<DepartmentData> departmentsData = await GetDepartments(
-        dbNewsList.Where(d => d.DepartmentId.HasValue).Select(d => d.DepartmentId.Value).ToList(),
+      List<DepartmentData> departmentsData = await GetDepartmentsAsync(
+        dbNewsList
+          .Where(d => d.DepartmentId.HasValue)
+          .Select(d => d.DepartmentId.Value)
+          .ToList(),
         response.Errors);
 
       List<DepartmentInfo> departmentsInfo = departmentsData?.Select(_departmentInfoMapper.Map).ToList();
 
-      List<UserData> usersData = await GetUsersData(
-        dbNewsList.Select(n => n.AuthorId).Concat(dbNewsList.Select(n => n.CreatedBy)).ToList(),
+      List<UserData> usersData = await GetUsersDataAsync(
+        dbNewsList
+          .Select(n => n.AuthorId)
+          .Concat(dbNewsList.Select(n => n.CreatedBy))
+          .ToList(),
         response.Errors);
 
-      List<ImageData> avatarImages = await GetImagesData(
-        usersData?.Where(u => u.ImageId.HasValue).Select(u => u.ImageId.Value).ToList(),
+      List<ImageData> avatarImages = await GetImagesDataAsync(
+        usersData?
+          .Where(u => u.ImageId.HasValue)
+          .Select(u => u.ImageId.Value)
+          .ToList(),
         response.Errors);
 
       List<UserInfo> usersInfo = usersData?
-        .Select(ud => _userInfoMapper.Map(ud, avatarImages?.FirstOrDefault(id => ud.ImageId == id.ImageId))).ToList();
+        .Select(ud => _userInfoMapper.Map(ud, avatarImages?.FirstOrDefault(id => ud.ImageId == id.ImageId)))
+        .ToList();
 
       response.Body = dbNewsList
         .Select(dbNews => _mapper.Map(

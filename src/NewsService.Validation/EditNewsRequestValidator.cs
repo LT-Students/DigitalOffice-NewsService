@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
 using LT.DigitalOffice.Kernel.Broker;
@@ -20,7 +21,9 @@ namespace LT.DigitalOffice.NewsService.Validation
     private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
     private readonly ILogger<CreateNewsRequestValidator> _logger;
 
-    private void HandleInternalPropertyValidation(Operation<EditNewsRequest> requestedOperation, CustomContext context)
+    private async Task HandleInternalPropertyValidation(
+      Operation<EditNewsRequest> requestedOperation,
+      CustomContext context)
     {
       Context = context;
       RequestedOperation = requestedOperation;
@@ -88,22 +91,28 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       #region AuthorId, DepartmentId
 
-      AddFailureForPropertyIf(
+      await AddFailureForPropertyIfAsync(
           nameof(EditNewsRequest.DepartmentId),
           x => x == OperationType.Replace,
           new()
           {
-            { x => Guid.TryParse(x.value.ToString(), out Guid result), "Department id has incorrect format" },
-            { x => CheckDepartmentExistence(new List<Guid> { Guid.Parse(x.value.ToString()) }), "This department doesn't exist." }
+            { async x =>
+              Guid.TryParse(x.value.ToString(), out Guid id) &&
+              await CheckDepartmentExistenceAsync(new List<Guid> { id }),
+              "This department doesn't exist."
+            }
           });
 
-      AddFailureForPropertyIf(
+      await AddFailureForPropertyIfAsync(
         nameof(EditNewsRequest.AuthorId),
         x => x == OperationType.Replace,
         new()
         {
-          { x => Guid.TryParse(x.value.ToString(), out Guid result), "User id has incorrect format" },
-          { x => CheckUserExistence(new List<Guid> { Guid.Parse(x.value.ToString()) }), "This user doesn't exist." }
+          { async x =>
+            Guid.TryParse(x.value.ToString(), out Guid id) &&
+            await CheckUserExistenceAsync(new List<Guid> { id }),
+            "This user doesn't exist."
+          }
         });
 
       #endregion
@@ -130,12 +139,12 @@ namespace LT.DigitalOffice.NewsService.Validation
       _logger = logger;
 
       RuleForEach(x => x.Operations)
-        .Custom(HandleInternalPropertyValidation);
+        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
     }
 
-    private bool CheckUserExistence(List<Guid> authorsIds)
+    private async Task<bool> CheckUserExistenceAsync(List<Guid> usersIds)
     {
-      if (!authorsIds.Any() || authorsIds == default)
+      if (!usersIds.Any() || usersIds == default)
       {
         return false;
       }
@@ -143,26 +152,31 @@ namespace LT.DigitalOffice.NewsService.Validation
       try
       {
         Response<IOperationResult<ICheckUsersExistence>> response =
-          _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
-          ICheckUsersExistence.CreateObj(authorsIds)).Result;
+          await _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
+            ICheckUsersExistence.CreateObj(usersIds));
 
         if (response.Message.IsSuccess)
         {
-          return authorsIds.Count == response.Message.Body.UserIds.Count;
+          return usersIds.Count == response.Message.Body.UserIds.Count;
         }
 
-        _logger.LogWarning("Can not find author Ids: {authorsIds}: " +
-          $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
+        _logger.LogWarning(
+          "Errors while check users existence Ids: {UsersIds}. \n Errors: {Errors}",
+          string.Join(", ", usersIds),
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError(exc, "Cannot check existing authors withs this ids {authorsIds}");
+        _logger.LogError(
+          exc,
+          "Cannot check departments existence Ids: {UsersIds}",
+          string.Join(", ", usersIds));
       }
 
       return false;
     }
 
-    private bool CheckDepartmentExistence(List<Guid> departmentsIds)
+    private async Task<bool> CheckDepartmentExistenceAsync(List<Guid> departmentsIds)
     {
       if (!departmentsIds.Any() ||  departmentsIds == default)
       {
@@ -172,20 +186,25 @@ namespace LT.DigitalOffice.NewsService.Validation
       try
       {
         Response<IOperationResult<ICheckDepartmentsExistence>> response =
-          _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
-          ICheckDepartmentsExistence.CreateObj(departmentsIds)).Result;
+          await _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
+            ICheckDepartmentsExistence.CreateObj(departmentsIds));
 
         if (response.Message.IsSuccess)
         {
           return departmentsIds.Count == response.Message.Body.DepartmentIds.Count;
         }
 
-        _logger.LogWarning($"Can not find Department Ids: {departmentsIds}: " +
-          $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
+        _logger.LogWarning(
+          "Errors while check departments existence Ids: {DepartmentsIds}. \n Errors: {Errors}",
+          string.Join(", ", departmentsIds),
+          string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError(exc, $"Cannot check existing Departments withs this id {departmentsIds}");
+        _logger.LogError(
+          exc,
+          "Cannot check departments existence Ids: {DepartmentsIds}",
+          string.Join(", ", departmentsIds));
       }
 
       return false;
