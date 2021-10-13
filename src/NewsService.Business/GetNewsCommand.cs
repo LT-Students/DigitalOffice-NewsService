@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly IUserInfoMapper _userInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
-    private async Task<List<UserData>> GetUsersData(List<Guid> usersIds, List<string> errors)
+    private async Task<List<UserData>> GetUsersDataAsync(List<Guid> usersIds, List<string> errors)
     {
       if (usersIds == null || !usersIds.Any())
       {
@@ -76,7 +76,7 @@ namespace LT.DigitalOffice.NewsService.Business
       return null;
     }
 
-    private async Task<List<DepartmentData>> GetDepartment(Guid? departmentId, List<string> errors)
+    private async Task<List<DepartmentData>> GetDepartmentAsync(Guid? departmentId, List<string> errors)
     {
       if (departmentId == null)
       {
@@ -109,7 +109,7 @@ namespace LT.DigitalOffice.NewsService.Business
       return null;
     }
 
-    private async Task<List<ImageData>> GetUsersAvatars(List<Guid> imagesIds, List<string> errors)
+    private async Task<List<ImageData>> GetUsersAvatarsAsync(List<Guid> imagesIds, List<string> errors)
     {
       if (imagesIds == null || !imagesIds.Any())
       {
@@ -164,29 +164,28 @@ namespace LT.DigitalOffice.NewsService.Business
       _logger = logger;
     }
 
-    public async Task<OperationResultResponse<NewsResponse>> Execute(Guid newsId)
+    public async Task<OperationResultResponse<NewsResponse>> ExecuteAsync(Guid newsId)
     {
       OperationResultResponse<NewsResponse> response = new();
 
-      DbNews dbNews = _repository.Get(newsId);
+      DbNews dbNews = await _repository.GetAsync(newsId);
       if (dbNews == null)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-        response.Errors = new() { "News was not found." };
         response.Status = OperationResultStatusType.Failed;
         return response;
       }
 
-      List<DepartmentData> departmentsData = await GetDepartment(dbNews.DepartmentId, response.Errors);
+      List<DepartmentData> departmentsData = await GetDepartmentAsync(dbNews.DepartmentId, response.Errors);
 
       List<UserData> usersData =
-        await GetUsersData(
+        await GetUsersDataAsync(
           new List<Guid>() { dbNews.AuthorId, dbNews.CreatedBy },
           response.Errors);
 
       List<ImageData> avatarsImages =
-        await GetUsersAvatars(
+        await GetUsersAvatarsAsync(
           usersData?.Where(ud => ud.ImageId.HasValue).Select(ud => ud.ImageId.Value).ToList(),
           response.Errors);
 

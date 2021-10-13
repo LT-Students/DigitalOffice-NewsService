@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
   [AutoInject]
   public interface IFindNewsCommand
   {
-    Task<FindResultResponse<NewsInfo>> Execute(FindNewsFilter findNewsFilter);
+    Task<FindResultResponse<NewsInfo>> ExecuteAsync(FindNewsFilter findNewsFilter);
   }
 }

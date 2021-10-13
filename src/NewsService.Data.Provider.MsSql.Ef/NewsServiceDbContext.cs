@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Database;
 using LT.DigitalOffice.NewsService.Models.Db;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,11 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef
     void IBaseDataProvider.Save()
     {
       SaveChanges();
+    }
+
+    async Task IBaseDataProvider.SaveAsync()
+    {
+      await SaveChangesAsync();
     }
 
     public void EnsureDeleted()
