@@ -8,11 +8,11 @@ using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.Models.Broker.Enums;
 using LT.DigitalOffice.Models.Broker.Models;
-using LT.DigitalOffice.Models.Broker.Models.Company;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Models.Department;
+using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.User;
-using LT.DigitalOffice.Models.Broker.Responses.Company;
+using LT.DigitalOffice.Models.Broker.Responses.Department;
 using LT.DigitalOffice.Models.Broker.Responses.Image;
 using LT.DigitalOffice.Models.Broker.Responses.User;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
@@ -76,18 +76,13 @@ namespace LT.DigitalOffice.NewsService.Business
       return null;
     }
 
-    private async Task<List<DepartmentData>> GetDepartmentAsync(Guid? departmentId, List<string> errors)
+    private async Task<List<DepartmentData>> GetDepartmentAsync(Guid newsId, List<string> errors)
     {
-      if (departmentId == null)
-      {
-        return null;
-      }
-
       try
       {
         Response<IOperationResult<IGetDepartmentsResponse>> response =
           await _rcGetDepartments.GetResponse<IOperationResult<IGetDepartmentsResponse>>(
-            IGetDepartmentsRequest.CreateObj(new List<Guid> { departmentId.Value }));
+            IGetDepartmentsRequest.CreateObj(newsIds: new List<Guid> { newsId }));
 
         if (response.Message.IsSuccess)
         {
@@ -95,13 +90,13 @@ namespace LT.DigitalOffice.NewsService.Business
         }
 
         _logger.LogWarning(
-          "Error while getting department id {DepartmentId}. Reason:{Errors}",
-          departmentId,
+          "Error while getting department by news id {NewsId}. Reason:{Errors}",
+          newsId,
           string.Join('\n', response.Message.Errors));
       }
       catch (Exception exc)
       {
-        _logger.LogError("Can not get department id {DepartmentId}. {ErrorsMessage}", exc.Message);
+        _logger.LogError("Can not get department by news id {NewsId}. {ErrorsMessage}", exc.Message);
       }
 
       errors.Add("Can not get department info. Please try again later.");
@@ -177,7 +172,7 @@ namespace LT.DigitalOffice.NewsService.Business
         return response;
       }
 
-      List<DepartmentData> departmentsData = await GetDepartmentAsync(dbNews.DepartmentId, response.Errors);
+      List<DepartmentData> departmentsData = await GetDepartmentAsync(dbNews.Id, response.Errors);
 
       List<UserData> usersData =
         await GetUsersDataAsync(
