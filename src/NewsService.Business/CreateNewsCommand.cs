@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.NewsService.Business
     private readonly ICreateNewsRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IRequestClient<ICreateDepartmentEntityRequest> _rcEditDepartmentEntity;
+    private readonly IRequestClient<ICreateDepartmentEntityRequest> _rcCreateDepartmentEntity;
     private readonly ILogger<CreateNewsCommand> _logger;
 
     private async Task CreateDepartmentNews(Guid departmentId, Guid newsId, List<string> errors)
@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.NewsService.Business
       try
       {
         Response<IOperationResult<bool>> response =
-          await _rcEditDepartmentEntity.GetResponse<IOperationResult<bool>>(
+          await _rcCreateDepartmentEntity.GetResponse<IOperationResult<bool>>(
             ICreateDepartmentEntityRequest.CreateObj(
               departmentId,
               _httpContextAccessor.HttpContext.GetUserId(),
@@ -72,7 +72,7 @@ namespace LT.DigitalOffice.NewsService.Business
       ICreateNewsRequestValidator validator,
       IAccessValidator accessValidator,
       IHttpContextAccessor httpContextAccessor,
-      IRequestClient<ICreateDepartmentEntityRequest> rcEditDepartmentEntity,
+      IRequestClient<ICreateDepartmentEntityRequest> rcCreateDepartmentEntity,
       ILogger<CreateNewsCommand> logger)
     {
       _repository = repository;
@@ -80,7 +80,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _validator = validator;
       _accessValidator = accessValidator;
       _httpContextAccessor = httpContextAccessor;
-      _rcEditDepartmentEntity = rcEditDepartmentEntity;
+      _rcCreateDepartmentEntity = rcCreateDepartmentEntity;
       _logger = logger;
     }
 
