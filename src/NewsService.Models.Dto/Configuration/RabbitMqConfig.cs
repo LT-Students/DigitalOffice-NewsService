@@ -1,7 +1,7 @@
 ﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
-using LT.DigitalOffice.Models.Broker.Requests.Company;
+using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 
@@ -18,8 +18,8 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
     [AutoInjectRequest(typeof(IGetDepartmentsRequest))]
     public string GetDepartmentsEndpoint { get; set; }
 
-    [AutoInjectRequest(typeof(ICheckDepartmentsExistence))]
-    public string CheckDepartmentsExistenceEndpoint { get; set; }
+    [AutoInjectRequest(typeof(ICreateDepartmentEntityRequest))]
+    public string CreateDepartmentEntityEndpoint { get; set; }
 
     [AutoInjectRequest(typeof(ICheckUsersExistence))]
     public string CheckUsersExistenceEndpoint { get; set; }

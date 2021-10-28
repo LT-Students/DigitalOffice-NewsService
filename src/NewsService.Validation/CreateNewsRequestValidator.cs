@@ -15,16 +15,13 @@ namespace LT.DigitalOffice.NewsService.Validation
   public class CreateNewsRequestValidator : AbstractValidator<CreateNewsRequest>, ICreateNewsRequestValidator
   {
     private readonly IRequestClient<ICheckUsersExistence> _rcCheckUsersExistence;
-    private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
     private readonly ILogger<CreateNewsRequestValidator> _logger;
 
     public CreateNewsRequestValidator(
       IRequestClient<ICheckUsersExistence> rcCheckUsersExistence,
-      IRequestClient<ICheckDepartmentsExistence> rcCheckDepartmentsExistence,
       ILogger<CreateNewsRequestValidator> logger)
     {
       _rcCheckUsersExistence = rcCheckUsersExistence;
-      _rcCheckDepartmentsExistence = rcCheckDepartmentsExistence;
       _logger = logger;
 
       RuleFor(news => news.AuthorId)
@@ -49,10 +46,8 @@ namespace LT.DigitalOffice.NewsService.Validation
         news => news.DepartmentId.HasValue,
         () =>
           RuleFor(news => news.DepartmentId)
-            .Cascade(CascadeMode.Stop)
-            .Must(DepartmentId => DepartmentId != Guid.Empty).WithMessage("Wrong type of department Id.")
-            .MustAsync(async (departmentId, cancellation) => await CheckDepartmentsExistence(new List<Guid>() { departmentId.Value }))
-            .WithMessage("This department doesn't exist."));
+            .Must(DepartmentId => DepartmentId != Guid.Empty)
+            .WithMessage("Wrong type of department Id."));
     }
 
     private async Task<bool> CheckUserExistence(List<Guid> authorsIds)
@@ -79,35 +74,6 @@ namespace LT.DigitalOffice.NewsService.Validation
       catch (Exception exc)
       {
         _logger.LogError(exc, "Cannot check existing authors withs this ids {authorsIds}");
-      }
-
-      return false;
-    }
-
-    private async Task<bool> CheckDepartmentsExistence(List<Guid> departmentsIds)
-    {
-      if (!departmentsIds.Any())
-      {
-        return false;
-      }
-
-      try
-      {
-        Response<IOperationResult<ICheckDepartmentsExistence>> response =
-          await _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
-          ICheckDepartmentsExistence.CreateObj(departmentsIds));
-
-        if (response.Message.IsSuccess)
-        {
-          return departmentsIds.Count == response.Message.Body.DepartmentIds.Count;
-        }
-
-        _logger.LogWarning($"Can not find Department Ids: {departmentsIds}: " +
-          $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(exc, $"Cannot check existing Departments withs this id {departmentsIds}");
       }
 
       return false;

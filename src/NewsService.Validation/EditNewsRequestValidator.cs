@@ -18,7 +18,6 @@ namespace LT.DigitalOffice.NewsService.Validation
   public class EditNewsRequestValidator : BaseEditRequestValidator<EditNewsRequest>, IEditNewsRequestValidator
   {
     private readonly IRequestClient<ICheckUsersExistence> _rcCheckUsersExistence;
-    private readonly IRequestClient<ICheckDepartmentsExistence> _rcCheckDepartmentsExistence;
     private readonly ILogger<CreateNewsRequestValidator> _logger;
 
     private async Task HandleInternalPropertyValidation(
@@ -38,7 +37,6 @@ namespace LT.DigitalOffice.NewsService.Validation
           nameof(EditNewsRequest.Subject),
           nameof(EditNewsRequest.Pseudonym),
           nameof(EditNewsRequest.AuthorId),
-          nameof(EditNewsRequest.DepartmentId),
           nameof(EditNewsRequest.IsActive),
         });
 
@@ -47,7 +45,6 @@ namespace LT.DigitalOffice.NewsService.Validation
       AddСorrectOperations(nameof(EditNewsRequest.Subject), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditNewsRequest.Pseudonym), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditNewsRequest.AuthorId), new() { OperationType.Replace });
-      AddСorrectOperations(nameof(EditNewsRequest.DepartmentId), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditNewsRequest.IsActive), new() { OperationType.Replace });
 
       #endregion
@@ -89,19 +86,7 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       #endregion
 
-      #region AuthorId, DepartmentId
-
-      await AddFailureForPropertyIfAsync(
-          nameof(EditNewsRequest.DepartmentId),
-          x => x == OperationType.Replace,
-          new()
-          {
-            { async x =>
-              Guid.TryParse(x.value.ToString(), out Guid id) &&
-              await CheckDepartmentExistenceAsync(new List<Guid> { id }),
-              "This department doesn't exist."
-            }
-          });
+      #region AuthorId
 
       await AddFailureForPropertyIfAsync(
         nameof(EditNewsRequest.AuthorId),
@@ -131,11 +116,9 @@ namespace LT.DigitalOffice.NewsService.Validation
     }
     public EditNewsRequestValidator(
       IRequestClient<ICheckUsersExistence> rcCheckUsersExistence,
-      IRequestClient<ICheckDepartmentsExistence> rcCheckDepartmentsExistence,
       ILogger<CreateNewsRequestValidator> logger)
     {
       _rcCheckUsersExistence = rcCheckUsersExistence;
-      _rcCheckDepartmentsExistence = rcCheckDepartmentsExistence;
       _logger = logger;
 
       RuleForEach(x => x.Operations)
@@ -171,40 +154,6 @@ namespace LT.DigitalOffice.NewsService.Validation
           exc,
           "Cannot check departments existence Ids: {UsersIds}",
           string.Join(", ", usersIds));
-      }
-
-      return false;
-    }
-
-    private async Task<bool> CheckDepartmentExistenceAsync(List<Guid> departmentsIds)
-    {
-      if (!departmentsIds.Any() ||  departmentsIds == default)
-      {
-        return false;
-      }
-
-      try
-      {
-        Response<IOperationResult<ICheckDepartmentsExistence>> response =
-          await _rcCheckDepartmentsExistence.GetResponse<IOperationResult<ICheckDepartmentsExistence>>(
-            ICheckDepartmentsExistence.CreateObj(departmentsIds));
-
-        if (response.Message.IsSuccess)
-        {
-          return departmentsIds.Count == response.Message.Body.DepartmentIds.Count;
-        }
-
-        _logger.LogWarning(
-          "Errors while check departments existence Ids: {DepartmentsIds}. \n Errors: {Errors}",
-          string.Join(", ", departmentsIds),
-          string.Join('\n', response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(
-          exc,
-          "Cannot check departments existence Ids: {DepartmentsIds}",
-          string.Join(", ", departmentsIds));
       }
 
       return false;

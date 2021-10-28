@@ -68,11 +68,6 @@ namespace LT.DigitalOffice.NewsService.Data
         dbNewsList = dbNewsList.Where(x => x.AuthorId == filter.AuthorId);
       }
 
-      if (filter.DepartmentId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.DepartmentId == filter.DepartmentId);
-      }
-
       if (!filter.IncludeDeactivated)
       {
         dbNewsList = dbNewsList.Where(x => x.IsActive);
