@@ -1,4 +1,4 @@
-﻿using LT.DigitalOffice.Models.Broker.Models.Company;
+﻿using LT.DigitalOffice.Models.Broker.Models.Department;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 

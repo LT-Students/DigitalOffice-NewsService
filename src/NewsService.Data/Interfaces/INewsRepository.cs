@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
@@ -10,12 +11,12 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
   [AutoInject]
   public interface INewsRepository
   {
-    Guid? Create(DbNews news);
+    Task<Guid?> CreateAsync(DbNews dbNews);
 
-    bool Edit(Guid newsId, JsonPatchDocument<DbNews> news);
+    Task<bool> EditAsync(Guid newsId, JsonPatchDocument<DbNews> patch);
 
-    DbNews Get(Guid newsId);
+    Task<DbNews> GetAsync(Guid newsId);
 
-    List<DbNews> Find(FindNewsFilter findNewsFilter, out int totalCount);
+    Task<(List<DbNews> dbNewsList, int totalCount)> FindAsync(FindNewsFilter filter);
   }
 }

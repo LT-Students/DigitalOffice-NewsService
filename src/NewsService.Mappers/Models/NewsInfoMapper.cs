@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LT.DigitalOffice.Models.Broker.Models;
-using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+﻿using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 

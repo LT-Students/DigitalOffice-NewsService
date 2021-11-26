@@ -20,16 +20,16 @@ namespace LT.DigitalOffice.NewsService.Controllers
       [FromServices] IGetNewsCommand command,
       [FromQuery] Guid newsId)
     {
-      return await command.Execute(newsId);
+      return await command.ExecuteAsync(newsId);
     }
 
     [HttpPatch("edit")]
-    public OperationResultResponse<bool> Edit(
+    public async Task<OperationResultResponse<bool>> Edit(
       [FromServices] IEditNewsCommand command,
       [FromQuery] Guid newsId,
       [FromBody] JsonPatchDocument<EditNewsRequest> request)
     {
-      return command.Execute(newsId, request);
+      return await command.ExecuteAsync(newsId, request);
     }
 
     [HttpPost("create")]
@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
       [FromServices] ICreateNewsCommand command,
       [FromBody] CreateNewsRequest request)
     {
-      return await command.Execute(request);
+      return await command.ExecuteAsync(request);
     }
 
     [HttpGet("find")]
@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
       [FromServices] IFindNewsCommand command,
       [FromQuery] FindNewsFilter findNewsFilter)
     {
-      return await command.Execute(findNewsFilter);
+      return await command.ExecuteAsync(findNewsFilter);
     }
   }
 }

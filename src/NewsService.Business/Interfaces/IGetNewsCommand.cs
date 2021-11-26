@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
   [AutoInject]
   public interface IGetNewsCommand
   {
-    Task<OperationResultResponse<NewsResponse>> Execute(Guid newsId);
+    Task<OperationResultResponse<NewsResponse>> ExecuteAsync(Guid newsId);
   }
 }

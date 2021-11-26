@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
@@ -9,6 +10,8 @@ namespace LT.DigitalOffice.NewsService.Business.Interfaces
   [AutoInject]
   public interface IEditNewsCommand
   {
-    OperationResultResponse<bool> Execute(Guid newsId, JsonPatchDocument<EditNewsRequest> request);
+    Task<OperationResultResponse<bool>> ExecuteAsync(
+      Guid newsId,
+      JsonPatchDocument<EditNewsRequest> request);
   }
 }
