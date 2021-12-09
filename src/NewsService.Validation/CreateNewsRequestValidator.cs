@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
-using LT.DigitalOffice.Kernel.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
