@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewsService.Broker\NewsService.Broker.csproj" />
     <ProjectReference Include="..\NewsService.Business\NewsService.Business.csproj" />
     <ProjectReference Include="..\NewsService.Data.Provider.MsSql.Ef\NewsService.Data.Provider.MsSql.Ef.csproj" />
     <ProjectReference Include="..\NewsService.Data.Provider\NewsService.Data.Provider.csproj" />
