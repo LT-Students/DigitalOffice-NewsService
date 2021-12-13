@@ -23,14 +23,17 @@ namespace LT.DigitalOffice.NewsService.Broker
       _repository = repository;
       _mapper = mapper;
     }
+
     private async Task<object> GetNewsAsync(IGetNewsRequest request)
     {
       List<NewsData> News = new();
+
       foreach(var obj in request.NewsIds)
       {
         DbNews dbNews = await _repository.GetAsync(obj);
         News.Add(_mapper.Map(dbNews));      
       }     
+
       return IGetNewsResponse.CreateObj(News);
     }
     
