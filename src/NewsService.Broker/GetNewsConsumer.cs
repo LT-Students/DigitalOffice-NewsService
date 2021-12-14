@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Models.Broker.Models.News;
 using LT.DigitalOffice.Models.Broker.Requests.News;
 using LT.DigitalOffice.Models.Broker.Responses.News;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using MassTransit;
 
@@ -14,34 +14,36 @@ namespace LT.DigitalOffice.NewsService.Broker
   public class GetNewsConsumer : IConsumer<IGetNewsRequest>
   {
     private readonly INewsRepository _repository;
-    private readonly INewsDataMapper _mapper;
 
-    public GetNewsConsumer (
-      INewsRepository repository,
-      INewsDataMapper mapper)
+    public GetNewsConsumer(
+      INewsRepository repository)
     {
       _repository = repository;
-      _mapper = mapper;
     }
 
-    private async Task<object> GetNewsAsync(IGetNewsRequest request)
+    private async Task<List<NewsData>> GetNewsAsync(IGetNewsRequest request)
     {
-      List<NewsData> News = new();
+      List<DbNews> News = await _repository.GetAsync(request.NewsIds);
 
-      foreach(var obj in request.NewsIds)
-      {
-        DbNews dbNews = await _repository.GetAsync(obj);
-        News.Add(_mapper.Map(dbNews));      
-      }     
-
-      return IGetNewsResponse.CreateObj(News);
+      return News
+        .Select(
+        n => new NewsData(
+          n.Id,
+          n.Preview,
+          n.Subject,
+          n.Pseudonym,
+          n.AuthorId,
+          n.CreatedAtUtc,
+          n.CreatedBy))
+        .ToList();
     }
-    
+
     public async Task Consume(ConsumeContext<IGetNewsRequest> context)
     {
-      object response = OperationResultWrapper.CreateResponse(GetNewsAsync, context.Message);
+      List<NewsData> news = await GetNewsAsync(context.Message);
 
-      await context.RespondAsync<IOperationResult<IGetNewsResponse>>(response);
+      await context.RespondAsync<IOperationResult<IGetNewsResponse>>(
+        OperationResultWrapper.CreateResponse((_) => IGetNewsResponse.CreateObj(news), context));
     }
   }
 }

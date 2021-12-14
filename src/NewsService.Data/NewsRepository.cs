@@ -86,5 +86,19 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       return await _provider.News.FirstOrDefaultAsync(dbNews => dbNews.Id == newsId);
     }
+
+    public async Task<List<DbNews>> GetAsync(List<Guid> newsIds)
+    {
+      if (newsIds is null)
+      {
+        return null;
+      }
+
+      IQueryable<DbNews> dbNews = _provider.News.AsQueryable(); 
+
+      return await dbNews
+        .Where(x => newsIds.Contains(x.Id))
+        .ToListAsync();
+    }
   }
 }
