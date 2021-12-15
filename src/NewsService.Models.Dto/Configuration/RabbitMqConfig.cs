@@ -26,8 +26,5 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
 
     [AutoInjectRequest(typeof(ICheckUsersExistence))]
     public string CheckUsersExistenceEndpoint { get; set; }
-
-   // [AutoInjectRequest(typeof(IGetNewsRequest))]
-    //public string GetNewsDataEndpoint { get; set; }
   }
 }
