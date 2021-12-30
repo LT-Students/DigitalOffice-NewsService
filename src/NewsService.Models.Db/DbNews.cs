@@ -11,12 +11,14 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public Guid Id { get; set; }
     public string Preview { get; set; }
     public string Content { get; set; }
+    [KeyWord]
     public string Subject { get; set; }
     public string Pseudonym { get; set; }
     public Guid AuthorId { get; set; }
     public bool IsActive { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }
+    [KeyWord]
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
   }

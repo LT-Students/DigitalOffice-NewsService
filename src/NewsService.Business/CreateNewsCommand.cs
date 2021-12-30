@@ -14,6 +14,8 @@ using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.NewsService.Business.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Db;
+using LT.DigitalOffice.NewsService.Models.Dto;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using MassTransit;
@@ -84,6 +86,7 @@ namespace LT.DigitalOffice.NewsService.Business
       _logger = logger;
     }
 
+    [MyCustmAttribute(ServiceEndpoints.CreateNews, typeof(DbNews)]
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request)
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))

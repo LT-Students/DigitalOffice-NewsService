@@ -3,12 +3,16 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
+using LT.DigitalOffice.Models.Broker.Requests.TextTemplate;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 
 namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
 {
   public class RabbitMqConfig : BaseRabbitMqConfig
   {
+    [AutoInjectRequest(typeof(ICreateKeywordsRequest))]
+    public string CreateKeywordsEndpoint { get; set; }
+
     [AutoInjectRequest(typeof(IGetImagesRequest))]
     public string GetImagesEndpoint { get; set; }
 

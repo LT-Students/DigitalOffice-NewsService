@@ -1,15 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
+using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
 using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
+using LT.DigitalOffice.Models.Broker.Enums;
+using LT.DigitalOffice.Models.Broker.Models.TextTemplate;
+using LT.DigitalOffice.Models.Broker.Requests.TextTemplate;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
+using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
+using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -91,6 +100,40 @@ namespace LT.DigitalOffice.NewsService
       context.Database.Migrate();
     }
 
+    private void SendServiceKeyWords(IApplicationBuilder app)
+    {
+      var assemblyTargets = AppDomain.CurrentDomain.GetAssemblies()
+        .SingleOrDefault(assembly => assembly.GetName().Name.EndsWith("Models.Db"))
+        .ExportedTypes.Where(t => t.IsClass && t.GetProperties() != null);
+
+      List<KeywordsTable> serviceKeyWords = new();
+
+      foreach (var target in assemblyTargets)
+      {
+        var tableNam = target.GetFields().FirstOrDefault(fi => fi.Name == "TableName");
+
+        string tableName = "jjj";
+        List<string> properties = target
+          .GetProperties()
+          .Where(p => p.GetCustomAttributes().Select(a => a is KeyWordAttribute).Any())
+          ?.Select(pi => pi.Name)
+          .ToList();
+        
+        if (!string.IsNullOrEmpty(tableName) && properties is not null && properties.Any())
+        {
+          serviceKeyWords.Add(new(tableName, properties));
+        }
+      }
+
+      IServiceProvider serviceProvider = app.ApplicationServices.GetRequiredService<IServiceProvider>();
+
+      IRequestClient<ICreateKeywordsRequest> rcCreateKeywords = serviceProvider.CreateRequestClient<ICreateKeywordsRequest>(
+        new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.CreateKeywordsEndpoint}"), default);
+
+      var a = rcCreateKeywords.GetResponse<IOperationResult<bool>>(
+        ICreateKeywordsRequest.CreateObj(source: SourceKeywords.News, serviceKeyWords)).Result;
+    }
+
     #endregion
 
     #region public methods
@@ -163,6 +206,8 @@ namespace LT.DigitalOffice.NewsService
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
       UpdateDatabase(app);
+
+      SendServiceKeyWords(app);
 
       app.UseForwardedHeaders();
 
