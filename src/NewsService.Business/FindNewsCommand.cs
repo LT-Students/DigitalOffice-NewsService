@@ -202,7 +202,7 @@ namespace LT.DigitalOffice.NewsService.Business
           .Select(n => n.Id)
           .Distinct()
           .ToList(),
-        response.Errors) ;
+        response.Errors);
 
       List<UserData> usersData = await GetUsersDataAsync(
         dbNewsList
