@@ -44,7 +44,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
     private async Task<List<ImageData>> GetImagesDataAsync(List<Guid> imagesIds, List<string> errors)
     {
-      if (imagesIds == null || !imagesIds.Any())
+      if (imagesIds is null || !imagesIds.Any())
       {
         return null;
       }
@@ -53,7 +53,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         Response<IOperationResult<IGetImagesResponse>> response =
           await _rcGetImages.GetResponse<IOperationResult<IGetImagesResponse>>(
-            IGetImagesRequest.CreateObj(imagesIds.Distinct().ToList(), ImageSource.News));
+            IGetImagesRequest.CreateObj(imagesIds, ImageSource.User));
 
         if (response.Message.IsSuccess)
         {
@@ -80,7 +80,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
     private async Task<List<UserData>> GetUsersDataAsync(List<Guid> usersIds, List<string> errors)
     {
-      if (usersIds == null || !usersIds.Any())
+      if (usersIds is null || !usersIds.Any())
       {
         return null;
       }
@@ -89,7 +89,7 @@ namespace LT.DigitalOffice.NewsService.Business
       {
         Response<IOperationResult<IGetUsersDataResponse>> response =
           await _rcGetUsers.GetResponse<IOperationResult<IGetUsersDataResponse>>(
-            IGetUsersDataRequest.CreateObj(usersIds.Distinct().ToList()));
+            IGetUsersDataRequest.CreateObj(usersIds));
 
         if (response.Message.IsSuccess)
         {
@@ -116,7 +116,7 @@ namespace LT.DigitalOffice.NewsService.Business
 
     private async Task<List<DepartmentData>> GetDepartmentsAsync(List<Guid> newsIds, List<string> errors)
     {
-      if (newsIds == null || !newsIds.Any())
+      if (newsIds is null || !newsIds.Any())
       {
         return null;
       }
@@ -200,13 +200,15 @@ namespace LT.DigitalOffice.NewsService.Business
       List<DepartmentData> departmentsData = await GetDepartmentsAsync(
         dbNewsList
           .Select(n => n.Id)
+          .Distinct()
           .ToList(),
-        response.Errors);
+        response.Errors) ;
 
       List<UserData> usersData = await GetUsersDataAsync(
         dbNewsList
           .Select(n => n.AuthorId)
           .Concat(dbNewsList.Select(n => n.CreatedBy))
+          .Distinct()
           .ToList(),
         response.Errors);
 
