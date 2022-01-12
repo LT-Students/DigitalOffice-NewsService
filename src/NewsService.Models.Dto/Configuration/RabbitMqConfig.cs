@@ -4,6 +4,7 @@ using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.Models.Broker.Requests.Admin;
 using LT.DigitalOffice.Models.Broker.Requests.Department;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
+using LT.DigitalOffice.Models.Broker.Requests.News;
 using LT.DigitalOffice.Models.Broker.Requests.TextTemplate;
 using LT.DigitalOffice.Models.Broker.Requests.User;
 
@@ -16,6 +17,8 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
 
     [AutoInjectRequest(typeof(ICreateKeywordsRequest))]
     public string CreateKeywordsEndpoint { get; set; }
+
+    public string GetNewsDataEndpoint { get; set; }
 
     [AutoInjectRequest(typeof(IGetImagesRequest))]
     public string GetImagesEndpoint { get; set; }

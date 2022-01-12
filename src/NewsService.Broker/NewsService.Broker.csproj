@@ -4,6 +4,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NewsService.Data\NewsService.Data.csproj" />
+    <ProjectReference Include="..\NewsService.Mappers\NewsService.Mappers.csproj" />
   </ItemGroup>
 
 </Project>

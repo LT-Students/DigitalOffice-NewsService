@@ -17,6 +17,8 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
 
     Task<DbNews> GetAsync(Guid newsId);
 
+    Task<List<DbNews>> GetAsync(List<Guid> newsIds);
+
     Task<(List<DbNews> dbNewsList, int totalCount)> FindAsync(FindNewsFilter filter);
   }
 }
