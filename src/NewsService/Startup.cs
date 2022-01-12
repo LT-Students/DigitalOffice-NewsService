@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
@@ -12,13 +12,11 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
-using LT.DigitalOffice.Models.Broker.Enums;
 using LT.DigitalOffice.Models.Broker.Models.TextTemplate;
+using LT.DigitalOffice.Models.Broker.Requests.Admin;
 using LT.DigitalOffice.Models.Broker.Requests.TextTemplate;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
-using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
-using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -100,38 +98,61 @@ namespace LT.DigitalOffice.NewsService
       context.Database.Migrate();
     }
 
-    private void SendServiceKeyWords(IApplicationBuilder app)
+    private async void SendServiceEndpoints(IApplicationBuilder app)
     {
-      var assemblyTargets = AppDomain.CurrentDomain.GetAssemblies()
-        .SingleOrDefault(assembly => assembly.GetName().Name.EndsWith("Models.Db"))
-        .ExportedTypes.Where(t => t.IsClass && t.GetProperties() != null);
+      IServiceProvider serviceProvider = app.ApplicationServices.GetRequiredService<IServiceProvider>();
 
-      List<KeywordsTable> serviceKeyWords = new();
+      IRequestClient<ICreateServiceEndpointsRequest> rcCreateServiceEndpoints =
+        serviceProvider.CreateRequestClient<ICreateServiceEndpointsRequest>(
+          new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.CreateServiceEndpointsEndpoint}"),
+          default);
 
-      foreach (var target in assemblyTargets)
+      Response<IOperationResult<Dictionary<string, Guid>>> response =
+        await rcCreateServiceEndpoints.GetResponse<IOperationResult<Dictionary<string, Guid>>>(
+          ICreateServiceEndpointsRequest.CreateObj(
+            serviceName: _serviceInfoConfig.Name,
+            endpointsNames: Enum.GetValues(typeof(ServiceEndpoints)).Cast<ServiceEndpoints>().Select(v => v.ToString()).ToList()));
+
+      await SendServiceKeyWords(serviceProvider, response.Message.Body);
+    }
+
+    //TO DO move to kernel
+    private async Task SendServiceKeyWords(IServiceProvider serviceProvider, Dictionary<string, Guid> endpoints)
+    {
+      Dictionary<string, List<string>> endpointsKeywords = new();
+
+      foreach (var endpoint in endpoints)
       {
-        var tableNam = target.GetFields().FirstOrDefault(fi => fi.Name == "TableName");
-
-        string tableName = "jjj";
-        List<string> properties = target
-          .GetProperties()
-          .Where(p => p.GetCustomAttributes().Select(a => a is KeyWordAttribute).Any())
-          ?.Select(pi => pi.Name)
-          .ToList();
-        
-        if (!string.IsNullOrEmpty(tableName) && properties is not null && properties.Any())
-        {
-          serviceKeyWords.Add(new(tableName, properties));
-        }
+        endpointsKeywords.Add(endpoint.Key, new List<string>());
       }
 
-      IServiceProvider serviceProvider = app.ApplicationServices.GetRequiredService<IServiceProvider>();
+      IEnumerable<Type> assemblyTargets = AppDomain.CurrentDomain
+        .GetAssemblies()
+        .SingleOrDefault(assembly => assembly.GetName().Name.EndsWith("Models.Db"))
+        .ExportedTypes;
+
+      foreach (Type target in assemblyTargets)
+      {
+        IEnumerable<PropertyInfo> properties = target
+          .GetProperties()
+          .Where(p => p.GetCustomAttributes(typeof(KeyWordAttribute), true).Any());
+
+        foreach (PropertyInfo property in properties)
+        {
+          foreach (ServiceEndpoints endpoint in
+            (property.GetCustomAttributes(typeof(KeyWordAttribute), true).FirstOrDefault() as KeyWordAttribute).Endpoints)
+          {
+            endpointsKeywords[endpoint.ToString()].Add(property.Name);
+          }
+        }
+      }
 
       IRequestClient<ICreateKeywordsRequest> rcCreateKeywords = serviceProvider.CreateRequestClient<ICreateKeywordsRequest>(
         new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.CreateKeywordsEndpoint}"), default);
 
-      var a = rcCreateKeywords.GetResponse<IOperationResult<bool>>(
-        ICreateKeywordsRequest.CreateObj(source: SourceKeywords.News, serviceKeyWords)).Result;
+      await rcCreateKeywords.GetResponse<IOperationResult<bool>>(
+        ICreateKeywordsRequest.CreateObj(
+          endpointsKeywords.Select(x => new EndpointKeywords(endpoints[x.Key], x.Value)).ToList()));
     }
 
     #endregion
@@ -207,7 +228,7 @@ namespace LT.DigitalOffice.NewsService
     {
       UpdateDatabase(app);
 
-      SendServiceKeyWords(app);
+      SendServiceEndpoints(app);
 
       app.UseForwardedHeaders();
 
