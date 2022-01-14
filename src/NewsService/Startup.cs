@@ -120,8 +120,10 @@ namespace LT.DigitalOffice.NewsService
           ICreateServiceEndpointsRequest.CreateObj(
             serviceName: _serviceInfoConfig.Name,
             endpointsNames: Enum.GetValues(typeof(ServiceEndpoints)).Cast<ServiceEndpoints>().Select(v => v.ToString()).ToList()));
-
-      await SendServiceKeyWords(serviceProvider, response.Message.Body);
+      if (response is not null)
+      {
+        await SendServiceKeyWords(serviceProvider, response.Message.Body);
+      } 
     }
 
     //TO DO move to kernel
