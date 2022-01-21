@@ -1,4 +1,5 @@
 ﻿using System;
+using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
 
 namespace LT.DigitalOffice.NewsService.Models.Db
@@ -13,22 +14,22 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 
     public string Content { get; set; }
 
-    [KeyWord(ServiceEndpoints.CreateNews, ServiceEndpoints.EditNews)]
+    [Keyword((int)ServiceEndpoints.CreateNews, (int)ServiceEndpoints.EditNews)]
     public string Subject { get; set; }
 
     public string Pseudonym { get; set; }
 
     public Guid AuthorId { get; set; }
 
-    [KeyWord(ServiceEndpoints.EditNews)]
+    [Keyword((int)ServiceEndpoints.EditNews)]
     public bool IsActive { get; set; }
 
-    [KeyWord(ServiceEndpoints.CreateNews)]
+    [Keyword((int)ServiceEndpoints.CreateNews)]
     public Guid CreatedBy { get; set; }
 
     public DateTime CreatedAtUtc { get; set; }
 
-    [KeyWord(ServiceEndpoints.EditNews)]
+    [Keyword((int)ServiceEndpoints.EditNews)]
     public Guid? ModifiedBy { get; set; }
 
     public DateTime? ModifiedAtUtc { get; set; }

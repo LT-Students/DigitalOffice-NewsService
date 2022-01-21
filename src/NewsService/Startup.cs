@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
@@ -11,6 +9,7 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
 using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Helpers;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Models.Broker.Models.TextTemplate;
 using LT.DigitalOffice.Models.Broker.Requests.Admin;
@@ -115,54 +114,33 @@ namespace LT.DigitalOffice.NewsService
           new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.CreateServiceEndpointsEndpoint}"),
           default);
 
-      Response<IOperationResult<Dictionary<string, Guid>>> response =
-        await rcCreateServiceEndpoints.GetResponse<IOperationResult<Dictionary<string, Guid>>>(
+      Dictionary<string, Guid> endpointsIds =
+        (await rcCreateServiceEndpoints.GetResponse<IOperationResult<Dictionary<string, Guid>>>(
           ICreateServiceEndpointsRequest.CreateObj(
             serviceName: _serviceInfoConfig.Name,
-            endpointsNames: Enum.GetValues(typeof(ServiceEndpoints)).Cast<ServiceEndpoints>().Select(v => v.ToString()).ToList()));
-      if (response is not null)
+            endpointsNames: Enum.GetValues(typeof(ServiceEndpoints)).Cast<ServiceEndpoints>().Select(v => v.ToString()).ToList())))
+        .Message.Body;
+
+      Dictionary<int, List<string>> endpointsKeywords = KeywordCollector.GetEndpointKeywords();
+
+      if (endpointsIds is not null && endpointsKeywords is not null)
       {
-        await SendServiceKeyWords(serviceProvider, response.Message.Body);
-      } 
-    }
+        IRequestClient<ICreateKeywordsRequest> rcCreateKeywords = serviceProvider.CreateRequestClient<ICreateKeywordsRequest>(
+          new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.CreateKeywordsEndpoint}"), default);
 
-    //TO DO move to kernel
-    private async Task SendServiceKeyWords(IServiceProvider serviceProvider, Dictionary<string, Guid> endpoints)
-    {
-      Dictionary<string, List<string>> endpointsKeywords = new();
+        List<EndpointKeywords> keywordsRequest = new();
 
-      foreach (var endpoint in endpoints)
-      {
-        endpointsKeywords.Add(endpoint.Key, new List<string>());
-      }
-
-      IEnumerable<Type> assemblyTargets = AppDomain.CurrentDomain
-        .GetAssemblies()
-        .SingleOrDefault(assembly => assembly.GetName().Name.EndsWith("Models.Db"))
-        .ExportedTypes;
-
-      foreach (Type target in assemblyTargets)
-      {
-        IEnumerable<PropertyInfo> properties = target
-          .GetProperties()
-          .Where(p => p.GetCustomAttributes(typeof(KeyWordAttribute), true).Any());
-
-        foreach (PropertyInfo property in properties)
+        foreach (var endpointId in endpointsIds)
         {
-          foreach (ServiceEndpoints endpoint in
-            (property.GetCustomAttributes(typeof(KeyWordAttribute), true).FirstOrDefault() as KeyWordAttribute).Endpoints)
+          if (Enum.TryParse(endpointId.Key, out ServiceEndpoints serviceEndpoint))
           {
-            endpointsKeywords[endpoint.ToString()].Add(property.Name);
+            keywordsRequest.Add(new EndpointKeywords(endpointId.Value, endpointsKeywords[(int)serviceEndpoint]));
           }
         }
+
+        await rcCreateKeywords.GetResponse<IOperationResult<bool>>(
+          ICreateKeywordsRequest.CreateObj(keywordsRequest));
       }
-
-      IRequestClient<ICreateKeywordsRequest> rcCreateKeywords = serviceProvider.CreateRequestClient<ICreateKeywordsRequest>(
-        new Uri($"{_rabbitMqConfig.BaseUrl}/{_rabbitMqConfig.CreateKeywordsEndpoint}"), default);
-
-      await rcCreateKeywords.GetResponse<IOperationResult<bool>>(
-        ICreateKeywordsRequest.CreateObj(
-          endpointsKeywords.Select(x => new EndpointKeywords(endpoints[x.Key], x.Value)).ToList()));
     }
 
     #endregion
