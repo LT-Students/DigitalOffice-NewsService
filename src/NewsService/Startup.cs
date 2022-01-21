@@ -105,7 +105,7 @@ namespace LT.DigitalOffice.NewsService
       context.Database.Migrate();
     }
 
-    private async void SendServiceEndpoints(IApplicationBuilder app)
+    private async void SendServiceEndpointsData(IApplicationBuilder app)
     {
       IServiceProvider serviceProvider = app.ApplicationServices.GetRequiredService<IServiceProvider>();
 
@@ -216,7 +216,7 @@ namespace LT.DigitalOffice.NewsService
     {
       UpdateDatabase(app);
 
-      SendServiceEndpoints(app);
+      SendServiceEndpointsData(app);
 
       app.UseForwardedHeaders();
 
