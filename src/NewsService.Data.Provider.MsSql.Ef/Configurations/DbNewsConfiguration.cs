@@ -21,10 +21,6 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Configurations
       builder
         .Property(p => p.Subject)
         .IsRequired();
-
-      builder
-        .Property(p => p.IsActive)
-        .IsRequired();
     }
   }
 }
