@@ -81,6 +81,11 @@ namespace LT.DigitalOffice.NewsService
           {
             ep.ConfigureConsumer<GetNewsConsumer>(context);
           });
+
+          cfg.ReceiveEndpoint(_rabbitMqConfig.SearchNewsEndpoint, ep =>
+          {
+            ep.ConfigureConsumer<SearchNewsConsumer>(context);
+          });
         });
 
         x.AddRequestClients(_rabbitMqConfig);
