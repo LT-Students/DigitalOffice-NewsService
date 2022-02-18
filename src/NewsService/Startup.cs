@@ -67,6 +67,7 @@ namespace LT.DigitalOffice.NewsService
       services.AddMassTransit(x =>
       {
         x.AddConsumer<GetNewsConsumer>();
+        x.AddConsumer<SearchNewsConsumer>();
 
         x.UsingRabbitMq((context, cfg) =>
         {
