@@ -103,9 +103,14 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public async Task<List<DbNews>> SearchAsync(string text)
     {
-      return await _provider.News
-        .Where(n => n.Subject.Contains(text, StringComparison.OrdinalIgnoreCase))
-        .ToListAsync();
+      List<DbNews> dbNews = await _provider.News.ToListAsync();
+
+      return await Task.Run(() =>
+      {
+        return dbNews
+          .Where(n => n.Subject.Contains(text, StringComparison.OrdinalIgnoreCase))
+          .ToList();
+      });
     }
   }
 }
