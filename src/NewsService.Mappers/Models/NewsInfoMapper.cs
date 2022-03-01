@@ -1,4 +1,6 @@
-﻿using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+﻿using System.Collections.Generic;
+using System.Linq;
+using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 
@@ -6,25 +8,51 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class NewsInfoMapper : INewsInfoMapper
   {
-    public NewsInfo Map(DbNews dbNews, DepartmentInfo department, UserInfo author, UserInfo sender)
+    private readonly ITagsInfoMapper _tagsInfoMapper;
+    public NewsInfo Map(
+      DbNews dbNews,
+      UserInfo creator,
+      UserInfo publisher,
+      ChannelInfo channel)
     {
-      if (dbNews == null)
-      {
-        return null;
-      }
-
       return new NewsInfo
       {
         Id = dbNews.Id,
         Preview = dbNews.Preview,
         Subject = dbNews.Subject,
-        Pseudonym = dbNews.Pseudonym,
-        Department = department,
-        Author = author,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,
-        Sender = sender
+        PublishedAtUtc = dbNews.PublishedAtUtc,
+        Publisher = publisher,
+        Creator = creator,
+        Channel = channel,
+        //Tags = _tagsInfoMapper.Map(dbNews.Tags.ToList())
       };
+    }
+
+    public List<NewsInfo> Map(
+      List<DbNews> dbNews,
+      List<UserInfo> users,
+      ChannelInfo channel = null)
+    {
+      return dbNews.Select(n => new NewsInfo
+      {
+        Id = n.Id,
+        Preview = n.Preview,
+        Subject = n.Subject,
+        IsActive = n.IsActive,
+        CreatedAtUtc = n.CreatedAtUtc,
+        PublishedAtUtc = n.PublishedAtUtc,
+        Publisher = users.Where(u => n.PublishedBy == u.Id).FirstOrDefault(),
+        Creator = users.Where(u => n.CreatedBy == u.Id).FirstOrDefault(),
+        Channel = channel,
+        //Tags = _tagsInfoMapper.Map(n.Tags.ToList()) 
+      }).ToList();
+    }
+    public NewsInfoMapper(
+      ITagsInfoMapper tagsInfoMapper)
+    {
+      _tagsInfoMapper = tagsInfoMapper;
     }
   }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using LT.DigitalOffice.Kernel.Attributes;
+﻿using LT.DigitalOffice.Kernel.Attributes;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models.Interfaces
 {

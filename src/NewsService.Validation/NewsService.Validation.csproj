@@ -3,7 +3,12 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
+    <ProjectReference Include="..\NewsService.Data\NewsService.Data.csproj" />
     <ProjectReference Include="..\NewsService.Models.Dto\NewsService.Models.Dto.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tag\" />
   </ItemGroup>
 
 </Project>

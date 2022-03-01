@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using LT.DigitalOffice.Kernel.BrokerSupport.Attributes.ParseEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,13 +14,25 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public string Preview { get; set; }
     public string Content { get; set; }
     public string Subject { get; set; }
-    public string Pseudonym { get; set; }
-    public Guid AuthorId { get; set; }
+    public Guid? PublishedBy { get; set; }
     public bool IsActive { get; set; }
+    //public Guid? ChannelId { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }
+    public DateTime? PublishedAtUtc { get; set;}
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
+
+    /*[IgnoreParse]
+    public ICollection<DbTags> Tags { get; set; }*/
+    [IgnoreParse]
+    public DbChannel Channel { get; set; }
+
+    /*public DbNews()
+    {
+      Tags = new HashSet<DbTags>();
+      Channel = new DbChannel();
+    }*/
   }
 
   public class DbNewsConfiguration : IEntityTypeConfiguration<DbNews>
@@ -42,6 +56,14 @@ namespace LT.DigitalOffice.NewsService.Models.Db
       builder
         .Property(p => p.IsActive)
         .IsRequired();
+
+      /*builder
+        .HasOne(p => p.Channel)
+        .WithMany(c => c.News);*/
+
+     /* builder
+        .HasMany(p => p.Tags)
+        .WithMany(nt => nt.News);*/
     }
   }
 }

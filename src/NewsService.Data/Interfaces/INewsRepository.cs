@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
   [AutoInject]
   public interface INewsRepository
   {
-    Task<Guid?> CreateAsync(DbNews dbNews);
+    Task<Guid> CreateAsync(DbNews dbNews);
 
     Task<bool> EditAsync(Guid newsId, JsonPatchDocument<DbNews> patch);
 
@@ -19,6 +19,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
 
     Task<List<DbNews>> GetAsync(List<Guid> newsIds);
 
-    Task<(List<DbNews> dbNewsList, int totalCount)> FindAsync(FindNewsFilter filter);
+    Task<(List<DbNews>, int totalCount)> FindAsync(FindNewsFilter filter);
+
   }
 }

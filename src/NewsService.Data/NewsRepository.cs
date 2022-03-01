@@ -18,6 +18,28 @@ namespace LT.DigitalOffice.NewsService.Data
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    private IQueryable<DbNews> CreateFindPredicates(
+      FindNewsFilter filter,
+      IQueryable<DbNews> dbNewsList)
+    {
+      if (filter.Creator.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.CreatedBy == filter.Creator);
+      }
+
+      if (filter.Publisher.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.PublishedBy == filter.Publisher);
+      }
+
+      if (!filter.IncludeDeactivated)
+      {
+        dbNewsList = dbNewsList.Where(x => x.IsActive);
+      }
+
+      return dbNewsList;
+    }
+
     public NewsRepository(IDataProvider provider, IHttpContextAccessor httpContextAccessor)
     {
       _provider = provider;
@@ -28,7 +50,7 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       DbNews dbNews = await _provider.News.FirstOrDefaultAsync(x => x.Id == newsId);
 
-      if (dbNews == null || patch == null)
+      if (dbNews is null || patch is null)
       {
         return false;
       }
@@ -41,38 +63,31 @@ namespace LT.DigitalOffice.NewsService.Data
       return true;
     }
 
-    public async Task<Guid?> CreateAsync(DbNews dbNews)
+    public async Task<Guid> CreateAsync(DbNews dbNews)
     {
-      if (dbNews == null)
+      if (dbNews is null)
       {
-        return null;
+        return default;
       }
 
-      _provider.News.Add(dbNews);
+      var a = _provider.News.Add(dbNews);
       await _provider.SaveAsync();
 
       return dbNews.Id;
     }
 
-    public async Task<(List<DbNews> dbNewsList, int totalCount)> FindAsync(FindNewsFilter filter)
+    public async Task<(List<DbNews>, int totalCount)> FindAsync(FindNewsFilter filter)
     {
       if (filter == null)
       {
         return (null, default);
       }
 
-      IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
+      IQueryable<DbNews> dbNewsList = CreateFindPredicates(
+        filter,
+        _provider.News.AsQueryable());
 
-      if (filter.AuthorId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.AuthorId == filter.AuthorId);
-      }
-
-      if (!filter.IncludeDeactivated)
-      {
-        dbNewsList = dbNewsList.Where(x => x.IsActive);
-      }
-
+      //dbNewsList = dbNewsList.Include(nl => nl.Channel).Include(nl => nl.Tags);
       return (
         await dbNewsList
           .OrderByDescending(n => n.CreatedAtUtc)

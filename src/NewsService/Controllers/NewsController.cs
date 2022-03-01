@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.NewsService.Business.Interfaces;
+using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +33,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpPost("create")]
-    public async Task<OperationResultResponse<Guid?>> Create(
+    public async Task<OperationResultResponse<Guid>> Create(
       [FromServices] ICreateNewsCommand command,
       [FromBody] CreateNewsRequest request)
     {
