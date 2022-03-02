@@ -24,24 +24,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         return null;
       }
 
-      if (request.IsActive is false)
-      {
-        return new DbNews
-        {
-          Id = Guid.NewGuid(),
-          Preview = request.Preview,
-          Content = request.Content,
-          Subject = request.Subject,
-          PublishedBy = null,
-          IsActive = request.IsActive,
-          //ChannelId = request.ChannelId,
-          CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
-          CreatedAtUtc = DateTime.UtcNow,
-          PublishedAtUtc = null,
-          Channel = null
-        };
-      }
-
       return new DbNews
       {
         Id = Guid.NewGuid(),
@@ -50,11 +32,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Subject = request.Subject,
         PublishedBy = request.PublishedBy,
         IsActive = request.IsActive,
-        //ChannelId = request.ChannelId,
+        ChannelId = request.ChannelId,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         CreatedAtUtc = DateTime.UtcNow,
         PublishedAtUtc = DateTime.UtcNow,
-        Channel = null
       };
     }
   }

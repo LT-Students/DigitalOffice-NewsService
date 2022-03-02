@@ -70,7 +70,7 @@ namespace LT.DigitalOffice.NewsService.Data
         return default;
       }
 
-      var a = _provider.News.Add(dbNews);
+      _provider.News.Add(dbNews);
       await _provider.SaveAsync();
 
       return dbNews.Id;
@@ -87,7 +87,8 @@ namespace LT.DigitalOffice.NewsService.Data
         filter,
         _provider.News.AsQueryable());
 
-      //dbNewsList = dbNewsList.Include(nl => nl.Channel).Include(nl => nl.Tags);
+      dbNewsList = dbNewsList.Include(nl => nl.Channel);
+
       return (
         await dbNewsList
           .OrderByDescending(n => n.CreatedAtUtc)

@@ -27,6 +27,9 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     {
       builder
         .ToTable(DbNewsTags.TableName);
+
+      builder
+        .HasKey(p => p.Id);
     }
   }
 }

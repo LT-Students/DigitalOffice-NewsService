@@ -144,8 +144,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       response.Body = dbNewsList
         .Select(dbNews => _mapper.Map(
           dbNews,
-          usersInfo?.FirstOrDefault(ud => dbNews.PublishedBy == ud.Id),
-          usersInfo?.FirstOrDefault(ud => dbNews.CreatedBy == ud.Id),
+          usersInfo,
           _channelInfoMapper.Map(dbNews.Channel)))
         .ToList();
 

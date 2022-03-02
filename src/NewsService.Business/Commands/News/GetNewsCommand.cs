@@ -113,12 +113,14 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       List<ImageData> avatarsImages =
         await GetUsersAvatarsAsync(
-          usersData?.Where(ud => ud.ImageId.HasValue).Select(ud => ud.ImageId.Value).ToList(),
+          usersData?
+            .Where(ud => ud.ImageId.HasValue).Select(ud => ud.ImageId.Value).ToList(),
           response.Errors);
 
       List<UserInfo> usersInfo =
         usersData?
-          .Select(ud => _userInfoMapper.Map(ud, avatarsImages?.FirstOrDefault(ai => ai.ImageId == ud.ImageId))).ToList();
+          .Select(ud => _userInfoMapper.Map(ud, avatarsImages?.FirstOrDefault(ai => ai.ImageId == ud.ImageId)))
+          .ToList();
 
       response.Body = _mapper
         .Map(
@@ -126,7 +128,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
           usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.PublishedBy),
           usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.CreatedBy),
           _channelInfoMapper.Map(dbNews.Channel),
-          _tagsInfoMapper.Map(null));///////////
+          _tagsInfoMapper.Map(dbNews.Tags.ToList()));
 
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess

@@ -72,7 +72,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       response.Body = await _repository.CreateAsync(_mapper.Map(request));
 
-      if (request.TagsIds.Any())
+      if (request.TagsIds is not null)
       {
         _newsTagsRepository.CreateAsync(_newsTagsMapper.Map(request.TagsIds, response.Body));
       }

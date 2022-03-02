@@ -131,8 +131,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
           dbChannel,
           _newsInfoMapper.Map(
             dbChannel.News.ToList(),
-            usersInfo,
-           _channelInfoMapper.Map(dbChannel)));
+            usersInfo));
 
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess

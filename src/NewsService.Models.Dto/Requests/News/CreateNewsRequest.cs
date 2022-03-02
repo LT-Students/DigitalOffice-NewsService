@@ -11,6 +11,6 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.News
     public Guid?  PublishedBy { get; set; }
     public Guid? ChannelId { get; set; }
     public bool IsActive { get; set; }
-    public List<Guid> TagsIds { get; set; }
+    public List<Guid?> TagsIds { get; set; }
   }
 }

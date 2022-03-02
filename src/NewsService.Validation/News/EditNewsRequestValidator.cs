@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
 using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
+using LT.DigitalOffice.Kernel.BrokerSupport.Helpers;
 using LT.DigitalOffice.Kernel.Validators;
 using LT.DigitalOffice.Models.Broker.Common;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
@@ -88,7 +89,7 @@ namespace LT.DigitalOffice.NewsService.Validation
           {
             async x =>
             Guid.TryParse(x.value.ToString(), out Guid id) &&
-            await CheckUserExistenceAsync(new List<Guid> { id }),
+            await CheckUserExistenceAsync(new List<Guid> { id }, new List<string>()),
             "This user doesn't exist."
           }
         });
@@ -134,38 +135,19 @@ namespace LT.DigitalOffice.NewsService.Validation
         .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
     }
 
-    private async Task<bool> CheckUserExistenceAsync(List<Guid> usersIds)
+    private async Task<bool> CheckUserExistenceAsync(List<Guid> users, List<string> errors)
     {
-      if (!usersIds.Any() || usersIds == default)
+      if (!users.Any())
       {
         return false;
       }
+      ICheckUsersExistence response = await RequestHandler.ProcessRequest<ICheckUsersExistence, ICheckUsersExistence>(
+            _rcCheckUsersExistence,
+            ICheckUsersExistence.CreateObj(users),
+            errors,
+            _logger);
 
-      try
-      {
-        Response<IOperationResult<ICheckUsersExistence>> response =
-          await _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
-            ICheckUsersExistence.CreateObj(usersIds));
-
-        if (response.Message.IsSuccess)
-        {
-          return usersIds.Count == response.Message.Body.UserIds.Count;
-        }
-
-        _logger.LogWarning(
-          "Errors while check users existence Ids: {UsersIds}. \n Errors: {Errors}",
-          string.Join(", ", usersIds),
-          string.Join('\n', response.Message.Errors));
-      }
-      catch (Exception exc)
-      {
-        _logger.LogError(
-          exc,
-          "Cannot check departments existence Ids: {UsersIds}",
-          string.Join(", ", usersIds));
-      }
-
-      return false;
+      return users.Count == response.UserIds.Count;
     }
   }
 }

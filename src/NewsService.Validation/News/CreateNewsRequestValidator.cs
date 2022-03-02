@@ -29,7 +29,7 @@ namespace LT.DigitalOffice.NewsService.Validation
         RuleFor(news => news.PublishedBy)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Publisher Id can not be empty.")
-        .MustAsync(async (publisher, cancellation) => await CheckUserExistence(new List<Guid>() { publisher.Value }, new List<string>()))
+        .MustAsync(async (publisher, cancellation) => await CheckUserExistenceAsync(new List<Guid>() { publisher.Value }, new List<string>()))
         .WithMessage("This publisher doesn't exist.");
       });
 
@@ -43,40 +43,19 @@ namespace LT.DigitalOffice.NewsService.Validation
         .NotEmpty().WithMessage("Content must not be empty.");
     }
 
-    private async Task<bool> CheckUserExistence(List<Guid> publisherIds, List<string> errors)
+    private async Task<bool> CheckUserExistenceAsync(List<Guid> users, List<string> errors)
     {
-      if (!publisherIds.Any())
+      if (!users.Any())
       {
         return false;
       }
       ICheckUsersExistence response = await RequestHandler.ProcessRequest<ICheckUsersExistence, ICheckUsersExistence>(
             _rcCheckUsersExistence,
-            ICheckUsersExistence.CreateObj(publisherIds),
+            ICheckUsersExistence.CreateObj(users),
             errors,
             _logger);
 
-        return publisherIds.Count == response.UserIds.Count;
-
-      /* try
-       {
-         Response<IOperationResult<ICheckUsersExistence>> response =
-           await _rcCheckUsersExistence.GetResponse<IOperationResult<ICheckUsersExistence>>(
-             ICheckUsersExistence.CreateObj(publisherIds));
-
-         if (response.Message.IsSuccess)
-         {
-           return publisherIds.Count == response.Message.Body.UserIds.Count;
-         }
-
-         _logger.LogWarning("Can not find author Ids: {authorsIds}: " +
-           $"{Environment.NewLine}{string.Join('\n', response.Message.Errors)}");
-       }
-       catch (Exception exc)
-       {
-         _logger.LogError(exc, "Cannot check existing authors withs this ids {authorsIds}");
-       }
-
-       return false;*/
+      return users.Count == response.UserIds.Count;
     }
   }
 }

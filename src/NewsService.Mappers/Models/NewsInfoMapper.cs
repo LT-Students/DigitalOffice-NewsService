@@ -11,8 +11,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
     private readonly ITagsInfoMapper _tagsInfoMapper;
     public NewsInfo Map(
       DbNews dbNews,
-      UserInfo creator,
-      UserInfo publisher,
+      List<UserInfo> users,
       ChannelInfo channel)
     {
       return new NewsInfo
@@ -23,17 +22,16 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,
         PublishedAtUtc = dbNews.PublishedAtUtc,
-        Publisher = publisher,
-        Creator = creator,
+        Publisher = users.Where(u => u.Id == dbNews.PublishedBy).FirstOrDefault(),
+        Creator = users.Where(u => u.Id == dbNews.CreatedBy).FirstOrDefault(),
         Channel = channel,
-        //Tags = _tagsInfoMapper.Map(dbNews.Tags.ToList())
+        Tags = _tagsInfoMapper.Map(dbNews.Tags.ToList())
       };
     }
 
     public List<NewsInfo> Map(
       List<DbNews> dbNews,
-      List<UserInfo> users,
-      ChannelInfo channel = null)
+      List<UserInfo> users)
     {
       return dbNews.Select(n => new NewsInfo
       {
@@ -45,8 +43,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         PublishedAtUtc = n.PublishedAtUtc,
         Publisher = users.Where(u => n.PublishedBy == u.Id).FirstOrDefault(),
         Creator = users.Where(u => n.CreatedBy == u.Id).FirstOrDefault(),
-        Channel = channel,
-        //Tags = _tagsInfoMapper.Map(n.Tags.ToList()) 
+        Tags = _tagsInfoMapper.Map(n.Tags.ToList()) 
       }).ToList();
     }
     public NewsInfoMapper(

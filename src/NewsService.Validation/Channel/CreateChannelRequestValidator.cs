@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
     {
       _repository = repository;
 
-      RuleFor(chanel => chanel.Name)
+      RuleFor(c => c.Name)
         .NotEmpty().WithMessage("Name must not be empty.")
         .MustAsync(async (request, _) => !await _repository.IsNameExistAsync(request))
         .WithMessage("The channel name is already exists."); ;

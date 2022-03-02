@@ -18,32 +18,34 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 
     [IgnoreParse]
     public ICollection<DbNews> News { get; set; }
+
     public DbTags()
     { 
       News = new HashSet<DbNews>();
     }
-    public class DbNewsTagsConfiguration : IEntityTypeConfiguration<DbTags>
+  }
+
+  public class DbTagsConfiguration : IEntityTypeConfiguration<DbTags>
+  {
+    public void Configure(EntityTypeBuilder<DbTags> builder)
     {
-      public void Configure(EntityTypeBuilder<DbTags> builder)
-      {
-        builder
-          .ToTable(DbTags.TableName);
+      builder
+        .ToTable(DbTags.TableName);
 
-        builder
-          .HasKey(p => p.Id);
+      builder
+        .HasKey(p => p.Id);
 
-        builder
-          .Property(p => p.Name)
-          .IsRequired();
+      builder
+        .Property(p => p.Name)
+        .IsRequired();
 
-       /* builder
-          .HasMany(n => n.NewsTags)
-          .WithOne(nt => nt.Tags);*/
+      /* builder
+         .HasMany(n => n.NewsTags)
+         .WithOne(nt => nt.Tags);*/
 
-        /*builder
-          .HasMany(n => n.News)
-          .WithMany(nt => nt.Tags);*/
-      }
+      builder
+        .HasMany(n => n.News)
+        .WithMany(nt => nt.Tags);
     }
   }
 }
