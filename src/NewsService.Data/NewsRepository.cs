@@ -94,11 +94,23 @@ namespace LT.DigitalOffice.NewsService.Data
         return null;
       }
 
-      IQueryable<DbNews> dbNews = _provider.News.AsQueryable(); 
+      IQueryable<DbNews> dbNews = _provider.News.AsQueryable();
 
       return await dbNews
         .Where(x => newsIds.Contains(x.Id))
         .ToListAsync();
+    }
+
+    public async Task<List<DbNews>> SearchAsync(string text)
+    {
+      List<DbNews> dbNews = await _provider.News.ToListAsync();
+
+      return await Task.Run(() =>
+      {
+        return dbNews
+          .Where(n => n.Subject.Contains(text, StringComparison.OrdinalIgnoreCase))
+          .ToList();
+      });
     }
   }
 }
