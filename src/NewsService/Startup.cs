@@ -65,12 +65,25 @@ namespace LT.DigitalOffice.NewsService
 
       services.AddMassTransit(x =>
       {
+        x.AddConsumer<GetNewsConsumer>();
+        x.AddConsumer<SearchNewsConsumer>();
+
         x.UsingRabbitMq((context, cfg) =>
         {
           cfg.Host(_rabbitMqConfig.Host, "/", host =>
           {
             host.Username(username);
             host.Password(password);
+          });
+
+          cfg.ReceiveEndpoint(_rabbitMqConfig.GetNewsDataEndpoint, ep =>
+          {
+            ep.ConfigureConsumer<GetNewsConsumer>(context);
+          });
+
+          cfg.ReceiveEndpoint(_rabbitMqConfig.SearchNewsEndpoint, ep =>
+          {
+            ep.ConfigureConsumer<SearchNewsConsumer>(context);
           });
         });
 

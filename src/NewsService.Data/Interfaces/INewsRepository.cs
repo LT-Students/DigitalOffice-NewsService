@@ -21,5 +21,6 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
 
     Task<(List<DbNews>, int totalCount)> FindAsync(FindNewsFilter filter);
 
+    Task<List<DbNews>> SearchAsync(string text);
   }
 }
