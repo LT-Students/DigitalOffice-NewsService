@@ -8,6 +8,7 @@ using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
+using LT.DigitalOffice.NewsService.Broker;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
 using MassTransit;
@@ -65,7 +66,6 @@ namespace LT.DigitalOffice.NewsService
 
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<GetNewsConsumer>();
         x.AddConsumer<SearchNewsConsumer>();
 
         x.UsingRabbitMq((context, cfg) =>
@@ -74,11 +74,6 @@ namespace LT.DigitalOffice.NewsService
           {
             host.Username(username);
             host.Password(password);
-          });
-
-          cfg.ReceiveEndpoint(_rabbitMqConfig.GetNewsDataEndpoint, ep =>
-          {
-            ep.ConfigureConsumer<GetNewsConsumer>(context);
           });
 
           cfg.ReceiveEndpoint(_rabbitMqConfig.SearchNewsEndpoint, ep =>
