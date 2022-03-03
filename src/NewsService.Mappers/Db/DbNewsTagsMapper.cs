@@ -18,13 +18,13 @@ namespace LT.DigitalOffice.NewsService.Mappers.Db
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public List<DbNewsTags> Map(List<Guid?> tagsIds, Guid newsId)
+    public List<DbNewsTags> Map(List<Guid> tagsIds, Guid newsId)
     {
       return tagsIds.Select(tagId => new DbNewsTags
       {
         Id = Guid.NewGuid(),
         NewsId = newsId,
-        TagId = tagId.HasValue ? tagId.Value : tagId.GetValueOrDefault(),
+        TagId = tagId,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         CreatedAtUtc = DateTime.UtcNow,
       }).ToList();

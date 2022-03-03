@@ -39,13 +39,9 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         .Property(p => p.Name)
         .IsRequired();
 
-      /* builder
-         .HasMany(n => n.NewsTags)
-         .WithOne(nt => nt.Tags);*/
-
       builder
-        .HasMany(n => n.News)
-        .WithMany(nt => nt.Tags);
+        .HasMany(p => p.News)
+        .WithMany(n => n.Tags);
     }
   }
 }

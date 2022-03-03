@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Patch
 
       foreach (Operation<EditNewsRequest> item in request.Operations)
       {
-          patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
+        patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
       }
 
       return patchDbNews;

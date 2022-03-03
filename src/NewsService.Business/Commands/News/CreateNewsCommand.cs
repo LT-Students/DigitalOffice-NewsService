@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
-using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
@@ -16,7 +16,6 @@ using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Microsoft.AspNetCore.Http;
-using FluentValidation.Results;
 
 namespace LT.DigitalOffice.NewsService.Business.Commands.News
 {
@@ -72,9 +71,12 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       response.Body = await _repository.CreateAsync(_mapper.Map(request));
 
-      if (request.TagsIds is not null)
+      if (request.TagsIds.Any())
       {
-        _newsTagsRepository.CreateAsync(_newsTagsMapper.Map(request.TagsIds, response.Body));
+        _newsTagsRepository
+          .CreateAsync(_newsTagsMapper
+            .Map(request.TagsIds.Distinct().ToList(),
+            response.Body));
       }
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess

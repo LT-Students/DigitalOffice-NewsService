@@ -31,16 +31,13 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
   {
     private readonly INewsRepository _repository;
     private readonly INewsInfoMapper _mapper;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRequestClient<IGetUsersDataRequest> _rcGetUsers;
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly ILogger<GetNewsCommand> _logger;
     private readonly IBaseFindFilterValidator _baseFindValidator;
     private readonly IUserInfoMapper _userInfoMapper;
     private readonly IResponseCreator _responseCreator;
-    private readonly IChannelRepository _channelRepository;
     private readonly IChannelInfoMapper _channelInfoMapper;
-    private readonly ITagsInfoMapper _tagsInfoMapper;
 
     private async Task<List<ImageData>> GetImagesDataAsync(List<Guid> imagesIds, List<string> errors)
     {
@@ -75,31 +72,24 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     public FindNewsCommand(
       INewsRepository repository,
       INewsInfoMapper mapper,
-      IHttpContextAccessor httpContextAccessor,
       IRequestClient<IGetUsersDataRequest> rcGetUsers,
       IRequestClient<IGetImagesRequest> rcGetImages,
       IUserInfoMapper userInfoMapper,
       IResponseCreator responseCreator,
-      IChannelRepository channelRepository,
       IChannelInfoMapper channelInfoMapper,
-      ITagsInfoMapper tagsInfoMapper,
       ILogger<GetNewsCommand> logger,
       IBaseFindFilterValidator baseFindValidator)
     {
       _repository = repository;
       _mapper = mapper;
-      _httpContextAccessor = httpContextAccessor;
       _rcGetUsers = rcGetUsers;
       _rcGetImages = rcGetImages;
       _logger = logger;
-      _tagsInfoMapper = tagsInfoMapper;
       _baseFindValidator = baseFindValidator;
       _userInfoMapper = userInfoMapper;
       _responseCreator = responseCreator;
       _channelInfoMapper = channelInfoMapper;
-      _channelRepository = channelRepository;
     }
-
     public async Task<FindResultResponse<NewsInfo>> ExecuteAsync(FindNewsFilter findNewsFilter)
     {
       if (!_baseFindValidator.ValidateCustom(findNewsFilter, out List<string> errors))
@@ -138,9 +128,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
         .Select(ud => _userInfoMapper.Map(ud, avatarImages?.FirstOrDefault(id => ud.ImageId == id.ImageId)))
         .ToList();
 
-      /*List<Guid> a = await _tagsRepository.GetAsync(dbNewsList.Where(dbNews => dbNews.NewsTags.Select(nt => findNewsFilter.Tags.Contains(nt.TagId))));
-      List<TagsInfo> tags = _tagsInfoMapper.Map(await _tagsRepository.GetAsync(dbNewsList.
-        Where(dbNews => dbNews.NewsTags.Select(nt => findNewsFilter.Tags.Contains(nt.TagId)))));*/
       response.Body = dbNewsList
         .Select(dbNews => _mapper.Map(
           dbNews,

@@ -35,9 +35,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly IRequestClient<IGetUsersDataRequest> _rcGetUsers;
     private readonly IUserInfoMapper _userInfoMapper;
-    private readonly IChannelInfoMapper _channelInfoMapper;
-    private readonly ITagsRepository _tagsRepository;
-    private readonly ITagsInfoMapper _tagsInfoMapper;
 
     private async Task<List<ImageData>> GetImagesDataAsync(List<Guid> imagesIds, List<string> errors)
     {
@@ -77,9 +74,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       IRequestClient<IGetImagesRequest> rcGetImages,
       IRequestClient<IGetUsersDataRequest> rcGetUsers,
       IUserInfoMapper userInfoMapper,
-      ITagsRepository tagsRepository,
-      IChannelInfoMapper channelInfoMapper,
-      ITagsInfoMapper tagsInfoMapper,
       ILogger<GetChannelCommand> logger)
     {
       _responseCreator = responseCreator;
@@ -91,9 +85,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       _logger = logger;
       _userInfoMapper = userInfoMapper;
       _channelRepository = channelRepository;
-      _tagsRepository = tagsRepository;
-      _tagsInfoMapper = tagsInfoMapper;
-      _channelInfoMapper = channelInfoMapper;
     }
 
     public async Task<OperationResultResponse<ChannelResponse>> ExecuteAsync(Guid channelId)

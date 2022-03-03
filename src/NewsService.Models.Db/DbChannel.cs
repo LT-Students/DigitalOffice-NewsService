@@ -8,7 +8,7 @@ namespace LT.DigitalOffice.NewsService.Models.Db
 {
   public class DbChannel
   {
-    public const string TableName = "Chanels";
+    public const string TableName = "Channels";
 
     public Guid Id { get; set; }
     public string CastomMessage { get; set; }

@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Validation
       _rcCheckUsersExistence = rcCheckUsersExistence;
       _logger = logger;
 
-      When(request => request.PublishedBy != null, () =>
+      When(news => news.PublishedBy != null, () =>
       {
         RuleFor(news => news.PublishedBy)
         .Cascade(CascadeMode.Stop)
@@ -32,6 +32,9 @@ namespace LT.DigitalOffice.NewsService.Validation
         .MustAsync(async (publisher, cancellation) => await CheckUserExistenceAsync(new List<Guid>() { publisher.Value }, new List<string>()))
         .WithMessage("This publisher doesn't exist.");
       });
+
+      RuleFor(news => news.TagsIds)
+        .NotNull().WithMessage("Tags list must not be empty.");
 
       RuleFor(news => news.Subject)
         .NotEmpty().WithMessage("Subject must not be empty.");

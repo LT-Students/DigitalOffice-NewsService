@@ -1,5 +1,4 @@
 ﻿using System;
-using LT.DigitalOffice.Kernel.BrokerSupport.Attributes.ParseEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,11 +13,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public Guid TagId { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }
-
-    [IgnoreParse]
-    public DbNews News { get; set; }
-    [IgnoreParse]
-    public DbTags Tags { get; set; }
   }
 
   public class DbNewsTagsConfiguration : IEntityTypeConfiguration<DbNewsTags>
