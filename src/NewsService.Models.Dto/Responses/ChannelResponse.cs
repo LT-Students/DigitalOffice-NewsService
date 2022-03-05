@@ -8,7 +8,10 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
   {
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public string PinnedMessage { get; set; }
+    public Guid? PinnedNewsId { get; set; }
     public ImageConsist Image { get; set; }
     public List<NewsInfo> News { get; set; }
+
   }
 }

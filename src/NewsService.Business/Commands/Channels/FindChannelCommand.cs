@@ -42,22 +42,13 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
         return _responseCreator.CreateFailureFindResponse<ChannelInfo>(HttpStatusCode.BadRequest, errors);
       }
 
-      (List<DbChannel> dbChannelList, int totalCount) = await _channelRepository.FindAsync(filter);
-
-      if (dbChannelList is null)
-      {
-        return _responseCreator.CreateFailureFindResponse<ChannelInfo>(HttpStatusCode.NotFound);
-      }
+      (List<DbChannel> dbChannels, int totalCount) = await _channelRepository.FindAsync(filter);
 
       FindResultResponse<ChannelInfo> response = new();
 
-      response.Body = dbChannelList.Select(dbChannel => _channelInfoMapper.Map(dbChannel)).ToList();
+      response.Body = dbChannels.Select(dbChannel => _channelInfoMapper.Map(dbChannel)).ToList();
 
       response.TotalCount = totalCount;
-
-      response.Status = response.Errors.Any()
-        ? OperationResultStatusType.PartialSuccess
-        : OperationResultStatusType.FullSuccess;
 
       return response;
     }

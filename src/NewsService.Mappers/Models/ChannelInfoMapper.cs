@@ -13,15 +13,15 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         return null;
       }
 
-      ImageConsist image = dbChannel.ImageContent is null
-        ? null
-        : new() { Content = dbChannel.ImageContent, Extension = dbChannel.ImageExtension };
-
       return new ChannelInfo
       {
         Id = dbChannel.Id,
         Name = dbChannel.Name,
-        Image = image
+        Image = dbChannel.ImageContent is null
+          ? null
+          : new() { Content = dbChannel.ImageContent, Extension = dbChannel.ImageExtension },
+        PinnedMessage = dbChannel.PinnedMessage,
+        PinnedNewsId = dbChannel.PinnedNewsId
       };
     }
   }

@@ -142,10 +142,10 @@ namespace LT.DigitalOffice.NewsService.Validation
         return false;
       }
       ICheckUsersExistence response = await RequestHandler.ProcessRequest<ICheckUsersExistence, ICheckUsersExistence>(
-            _rcCheckUsersExistence,
-            ICheckUsersExistence.CreateObj(users),
-            errors,
-            _logger);
+        _rcCheckUsersExistence,
+        ICheckUsersExistence.CreateObj(users),
+        errors,
+        _logger);
 
       return users.Count == response.UserIds.Count;
     }

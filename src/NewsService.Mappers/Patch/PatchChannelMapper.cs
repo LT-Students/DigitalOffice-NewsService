@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Patch
     }
     public async Task<JsonPatchDocument<DbChannel>> MapAsync(JsonPatchDocument<EditChannelRequest> request)
     {
-      if (request == null)
+      if (request is null)
       {
         return null;
       }

@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces
   [AutoInject]
   public interface ICreateNewsCommand
   {
-    Task<OperationResultResponse<Guid>> ExecuteAsync(CreateNewsRequest request);
+    Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request);
   }
 }

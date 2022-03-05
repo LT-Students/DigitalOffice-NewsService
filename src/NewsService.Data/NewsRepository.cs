@@ -22,11 +22,6 @@ namespace LT.DigitalOffice.NewsService.Data
       FindNewsFilter filter,
       IQueryable<DbNews> dbNewsList)
     {
-      if (filter.Creator.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.CreatedBy == filter.Creator);
-      }
-
       if (filter.Publisher.HasValue)
       {
         dbNewsList = dbNewsList.Where(x => x.PublishedBy == filter.Publisher);
@@ -36,6 +31,8 @@ namespace LT.DigitalOffice.NewsService.Data
       {
         dbNewsList = dbNewsList.Where(x => x.IsActive);
       }
+
+      dbNewsList = dbNewsList.Include(nl => nl.Channel);
 
       return dbNewsList;
     }
@@ -63,11 +60,11 @@ namespace LT.DigitalOffice.NewsService.Data
       return true;
     }
 
-    public async Task<Guid> CreateAsync(DbNews dbNews)
+    public async Task<Guid?> CreateAsync(DbNews dbNews)
     {
       if (dbNews is null)
       {
-        return default;
+        return null;
       }
 
       _provider.News.Add(dbNews);
@@ -76,9 +73,9 @@ namespace LT.DigitalOffice.NewsService.Data
       return dbNews.Id;
     }
 
-    public async Task<(List<DbNews>, int totalCount)> FindAsync(FindNewsFilter filter)
+    public async Task<(List<DbNews> dbNews, int totalCount)> FindAsync(FindNewsFilter filter)
     {
-      if (filter == null)
+      if (filter is null)
       {
         return (null, default);
       }
@@ -86,8 +83,6 @@ namespace LT.DigitalOffice.NewsService.Data
       IQueryable<DbNews> dbNewsList = CreateFindPredicates(
         filter,
         _provider.News.AsQueryable());
-
-      dbNewsList = dbNewsList.Include(nl => nl.Channel);
 
       return (
         await dbNewsList
@@ -127,6 +122,11 @@ namespace LT.DigitalOffice.NewsService.Data
           .Where(n => n.Subject.Contains(text, StringComparison.OrdinalIgnoreCase))
           .ToList();
       });
+    }
+
+    public async Task<bool> DoesNewsExistAsync(Guid newsId)
+    {
+      return await _provider.News.AnyAsync(c => c.Id == newsId);
     }
   }
 }

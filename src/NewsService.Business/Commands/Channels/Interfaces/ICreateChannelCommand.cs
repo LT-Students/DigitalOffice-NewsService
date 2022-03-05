@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels.Interfaces
   [AutoInject]
   public interface ICreateChannelCommand
   {
-    Task<OperationResultResponse<Guid>> ExecuteAsync(CreateChannelRequest request);
+    Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateChannelRequest request);
   }
 }

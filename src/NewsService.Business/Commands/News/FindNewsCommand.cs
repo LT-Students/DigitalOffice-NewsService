@@ -41,7 +41,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
     private async Task<List<ImageData>> GetImagesDataAsync(List<Guid> imagesIds, List<string> errors)
     {
-      if (imagesIds == null || !imagesIds.Any())
+      if (imagesIds is null || !imagesIds.Any())
       {
         return null;
       }
@@ -62,11 +62,11 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       return (await RequestHandler.ProcessRequest<IGetUsersDataRequest, IGetUsersDataResponse>(
-            _rcGetUsers,
-            IGetUsersDataRequest.CreateObj(usersIds),
-            errors,
-            _logger))
-          .UsersData;
+          _rcGetUsers,
+          IGetUsersDataRequest.CreateObj(usersIds),
+          errors,
+          _logger))
+        .UsersData;
     }
 
     public FindNewsCommand(
@@ -99,12 +99,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       (List<DbNews> dbNewsList, int totalCount) = await _repository.FindAsync(findNewsFilter);
-
-      if (dbNewsList is null)
-      {
-        return _responseCreator.CreateFailureFindResponse<NewsInfo>(
-          HttpStatusCode.NotFound);
-      }
 
       FindResultResponse<NewsInfo> response = new();
 

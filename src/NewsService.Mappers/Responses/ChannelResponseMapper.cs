@@ -17,15 +17,13 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
         return null;
       }
 
-      ImageConsist image = dbChannel.ImageContent is null
-        ? null
-        : new() { Content = dbChannel.ImageContent, Extension = dbChannel.ImageExtension };
-
       return new ChannelResponse
       {
         Id = dbChannel.Id,
         Name = dbChannel.Name,
-        Image = image,
+        Image = dbChannel.ImageContent is null
+          ? null
+          : new() { Content = dbChannel.ImageContent, Extension = dbChannel.ImageExtension },
         News = News
       };
     }

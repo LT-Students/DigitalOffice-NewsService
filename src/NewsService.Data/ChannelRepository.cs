@@ -18,7 +18,6 @@ namespace LT.DigitalOffice.NewsService.Data
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-
     public ChannelRepository(
       IDataProvider provider,
       IHttpContextAccessor httpContextAccessor)
@@ -27,10 +26,16 @@ namespace LT.DigitalOffice.NewsService.Data
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<DbChannel> GetAsync(Guid channelId)
+    public async Task<DbChannel> GetAsync(Guid channelId, GetChannelFilter filter)
     {
       IQueryable<DbChannel> dbChannel = _provider.Channels.AsQueryable();
-      dbChannel = dbChannel.Include(x => x.News);
+      if (!filter.IncludeNews)
+      {
+        dbChannel = dbChannel.Include(x => x.News);
+        dbChannel.Select(c => c.News)
+          .OrderByDescending(n => n.FirstOrDefault()).Skip(filter.SkipCount = 0).Take(filter.TakeCount = 1);
+      }
+
       return await dbChannel.FirstOrDefaultAsync(c => c.Id == channelId);
     }
 
@@ -51,7 +56,7 @@ namespace LT.DigitalOffice.NewsService.Data
       return true;
     }
 
-    public async Task<Guid> CreateAsync(DbChannel dbChannel)
+    public async Task<Guid?> CreateAsync(DbChannel dbChannel)
     {
       if (dbChannel is null)
       {
@@ -64,35 +69,35 @@ namespace LT.DigitalOffice.NewsService.Data
       return dbChannel.Id;
     }
 
-    public async Task<(List<DbChannel>, int totalCount)> FindAsync(FindChannelFilter filter)
+    public async Task<(List<DbChannel> dbChannels, int totalCount)> FindAsync(FindChannelFilter filter)
     {
       if (filter is null)
       {
         return (null, default);
       }
 
-      IQueryable<DbChannel> dbChannelsList = _provider.Channels.AsQueryable();
+      IQueryable<DbChannel> dbChannels = _provider.Channels.AsQueryable();
 
       if (filter.Name is not null)
       {
-        dbChannelsList = dbChannelsList.Where(c => c.Name == filter.Name);
+        dbChannels = dbChannels.Where(c => c.Name == filter.Name);
       }
 
       if (!filter.IncludeDeactivated)
       {
-        dbChannelsList = dbChannelsList.Where(c => c.IsActive);
+        dbChannels = dbChannels.Where(c => c.IsActive);
       }
-      dbChannelsList = dbChannelsList.Include(c => c.News);
+      dbChannels = dbChannels.Include(c => c.News);
       return(
-        await dbChannelsList
+        await dbChannels
           .OrderByDescending(n => n.Name)
           .Skip(filter.SkipCount)
           .Take(filter.TakeCount)
           .ToListAsync(),
-        await dbChannelsList.CountAsync());
+        await dbChannels.CountAsync());
     }
 
-    public async Task<bool> IsNameExistAsync(string name)
+    public async Task<bool> DoesNameExistAsync(string name)
     {
       return await _provider.Channels.AnyAsync(c => c.Name == name);
     }

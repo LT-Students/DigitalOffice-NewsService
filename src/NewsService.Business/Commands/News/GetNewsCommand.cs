@@ -47,11 +47,11 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       return (await RequestHandler.ProcessRequest<IGetUsersDataRequest, IGetUsersDataResponse>(
-            _rcGetUsers,
-            IGetUsersDataRequest.CreateObj(usersIds),
-            errors,
-            _logger))
-          .UsersData;
+          _rcGetUsers,
+          IGetUsersDataRequest.CreateObj(usersIds),
+          errors,
+          _logger))
+        .UsersData;
     }
 
     private async Task<List<ImageData>> GetUsersAvatarsAsync(List<Guid> imagesIds, List<string> errors)
@@ -62,11 +62,11 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       return (await RequestHandler.ProcessRequest<IGetImagesRequest, IGetImagesResponse>(
-           _rcGetImages,
-           IGetImagesRequest.CreateObj(imagesIds, ImageSource.User),
-           errors,
-           _logger))
-         .ImagesData;
+          _rcGetImages,
+          IGetImagesRequest.CreateObj(imagesIds, ImageSource.User),
+          errors,
+          _logger))
+        .ImagesData;
     }
 
     public GetNewsCommand(
@@ -108,7 +108,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       List<UserData> usersData =
         await GetUsersDataAsync(
-          new List<Guid>() {dbNews.PublishedBy.Value, dbNews.CreatedBy},
+          new List<Guid>() { dbNews.PublishedBy.Value, dbNews.CreatedBy },///
           response.Errors);
 
       List<ImageData> avatarsImages =

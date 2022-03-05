@@ -50,38 +50,39 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       _newsTagsRepository = newsTagsRepository;
     }
 
-    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateNewsRequest request)
+    public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request)
     {
-      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveUsers))
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
-        return _responseCreator.CreateFailureResponse<Guid>(HttpStatusCode.Forbidden);
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
       if (!validationResult.IsValid)
       {
-        return _responseCreator.CreateFailureResponse<Guid>(
+        return _responseCreator.CreateFailureResponse<Guid?>(
           HttpStatusCode.BadRequest,
           validationResult.Errors.Select(vf => vf.ErrorMessage).ToList());
       }
 
-      OperationResultResponse<Guid> response = new();
+      OperationResultResponse<Guid?> response = new();
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       response.Body = await _repository.CreateAsync(_mapper.Map(request));
 
+      if (response.Body is null)
+      {
+        _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
+        response.Status = OperationResultStatusType.Failed;
+        return response;
+      }
       if (request.TagsIds.Any())
       {
-        _newsTagsRepository
-          .CreateAsync(_newsTagsMapper
-            .Map(request.TagsIds.Distinct().ToList(),
-            response.Body));
+        _newsTagsRepository.CreateAsync(
+          _newsTagsMapper.Map(request.TagsIds.Distinct().ToList(),
+          response.Body));
       }
-      response.Status = response.Errors.Any()
-        ? OperationResultStatusType.PartialSuccess
-        : OperationResultStatusType.FullSuccess;
-
       return response;
     }
   }

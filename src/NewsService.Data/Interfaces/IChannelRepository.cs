@@ -11,10 +11,14 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
   [AutoInject]
   public interface IChannelRepository
   {
-    Task<DbChannel> GetAsync(Guid channelId);
-    Task<Guid> CreateAsync(DbChannel dbChannel);
-    Task<(List<DbChannel>, int totalCount)> FindAsync(FindChannelFilter filter);
+    Task<DbChannel> GetAsync(Guid channelId, GetChannelFilter filter);
+
+    Task<Guid?> CreateAsync(DbChannel dbChannel);
+
+    Task<(List<DbChannel> dbChannels, int totalCount)> FindAsync(FindChannelFilter filter);
+
     Task<bool> EditAsync(Guid channelId, JsonPatchDocument<DbChannel> patch);
-    Task<bool> IsNameExistAsync(string name);
+
+    Task<bool> DoesNameExistAsync(string name);
   }
 }

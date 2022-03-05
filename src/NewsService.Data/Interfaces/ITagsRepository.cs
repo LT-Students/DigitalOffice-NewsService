@@ -9,6 +9,6 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
   [AutoInject]
   public interface ITagsRepository
   {
-    Task<List<DbTags>> GetAsync(List<Guid> tagId);
+    Task<List<DbTag>> GetAsync(List<Guid> tagId);
   }
 }

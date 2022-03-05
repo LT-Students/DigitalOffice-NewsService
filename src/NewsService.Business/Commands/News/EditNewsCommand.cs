@@ -6,6 +6,7 @@ using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Enums;
+using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
@@ -24,19 +25,22 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IEditNewsRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IResponseCreator _responseCreator;
 
     public EditNewsCommand(
       INewsRepository repository,
       IPatchNewsMapper mapper,
       IEditNewsRequestValidator validator,
       IAccessValidator accessValidator,
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      IResponseCreator responseCreator)
     {
       _repository = repository;
       _mapper = mapper;
       _validator = validator;
       _accessValidator = accessValidator;
       _httpContextAccessor = httpContextAccessor;
+      _responseCreator = responseCreator;
     }
 
     public async Task<OperationResultResponse<bool>> ExecuteAsync(
@@ -45,32 +49,20 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-
-        return new OperationResultResponse<bool>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = new() { "Not enough rights." }
-        };
+        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.NotFound);
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
 
       if (!validationResult.IsValid)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        return new OperationResultResponse<bool>
-        {
-          Status = OperationResultStatusType.Failed,
-          Errors = validationResult.Errors.Select(vf => vf.ErrorMessage).ToList()
-        };
+        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.BadRequest,
+          validationResult.Errors.Select(vf => vf.ErrorMessage).ToList());
       }
 
       OperationResultResponse<bool> response = new();
 
       response.Body = await _repository.EditAsync(newsId, _mapper.Map(request));
-      response.Status = OperationResultStatusType.FullSuccess;
 
       if (!response.Body)
       {

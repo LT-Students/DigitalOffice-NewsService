@@ -10,7 +10,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider
   public interface IDataProvider : IBaseDataProvider
   {
     DbSet<DbNews> News { get; set; }
-    DbSet<DbTags> Tags { get; set; }
+    DbSet<DbTag> Tags { get; set; }
     DbSet<DbChannel> Channels { get; set; }
     DbSet<DbNewsTags> NewsTags { get; set; }
   }

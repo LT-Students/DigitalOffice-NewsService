@@ -8,19 +8,25 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
 {
   public class CreateChannelRequestValidator : AbstractValidator<CreateChannelRequest>, ICreateChannelRequestValidator
   {
-    private readonly IChannelRepository _repository;
 
     public CreateChannelRequestValidator(
       IImageContentValidator imageContentValidator,
       IImageExtensionValidator imageExtensionValidator,
-      IChannelRepository repository)
+      IChannelRepository channelRepository,
+      INewsRepository newsRepository)
     {
-      _repository = repository;
-
       RuleFor(c => c.Name)
         .NotEmpty().WithMessage("Name must not be empty.")
-        .MustAsync(async (request, _) => !await _repository.IsNameExistAsync(request))
-        .WithMessage("The channel name is already exists."); ;
+        .MustAsync(async (request, _) => !await channelRepository.DoesNameExistAsync(request))
+        .WithMessage("The channel name is already exists.");
+
+      When(c => c.PinnedNewsId != null, () =>
+      {
+        RuleFor(c => c.PinnedNewsId)
+        .NotEmpty().WithMessage("News must not be empty.")
+        .MustAsync(async (request, _) => !await newsRepository.DoesNewsExistAsync(request.Value))
+        .WithMessage("The channel name is already exists.");
+      });
 
       When(c => c.Image != null, () =>
       {

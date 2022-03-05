@@ -44,28 +44,28 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       _validator = validator;
     }
 
-    public async Task<OperationResultResponse<Guid>> ExecuteAsync(CreateChannelRequest request)
+    public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateChannelRequest request)
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
-        return _responseCreator.CreateFailureResponse<Guid>(HttpStatusCode.Forbidden);
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }
 
       if (!_validator.ValidateCustom(request, out List<string> errors))
       {
-        return _responseCreator.CreateFailureResponse<Guid>(HttpStatusCode.BadRequest, errors);
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest, errors);
       }
 
-      OperationResultResponse<Guid> response = new();
+      OperationResultResponse<Guid?> response = new();
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       response.Body = await _channelRepository.CreateAsync(await _mapper.MapAsync(request));
-
-      response.Status = response.Errors.Any()
-        ? OperationResultStatusType.PartialSuccess
-        : OperationResultStatusType.FullSuccess;
-
+      if (response.Body is null)
+      {
+        _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
+        response.Status = OperationResultStatusType.Failed;
+      }
       return response;
     }
   }

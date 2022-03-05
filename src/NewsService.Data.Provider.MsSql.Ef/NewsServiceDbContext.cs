@@ -14,7 +14,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef
     }
 
     public DbSet<DbNews> News { get; set; }
-    public DbSet<DbTags> Tags { get; set; }
+    public DbSet<DbTag> Tags { get; set; }
     public DbSet<DbChannel> Channels { get; set; }
     public DbSet<DbNewsTags> NewsTags { get; set; }
 

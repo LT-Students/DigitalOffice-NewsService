@@ -24,15 +24,6 @@ namespace LT.DigitalOffice.NewsService.Validation
       _rcCheckUsersExistence = rcCheckUsersExistence;
       _logger = logger;
 
-      When(news => news.PublishedBy != null, () =>
-      {
-        RuleFor(news => news.PublishedBy)
-        .Cascade(CascadeMode.Stop)
-        .NotEmpty().WithMessage("Publisher Id can not be empty.")
-        .MustAsync(async (publisher, cancellation) => await CheckUserExistenceAsync(new List<Guid>() { publisher.Value }, new List<string>()))
-        .WithMessage("This publisher doesn't exist.");
-      });
-
       RuleFor(news => news.TagsIds)
         .NotNull().WithMessage("Tags list must not be empty.");
 
@@ -53,10 +44,10 @@ namespace LT.DigitalOffice.NewsService.Validation
         return false;
       }
       ICheckUsersExistence response = await RequestHandler.ProcessRequest<ICheckUsersExistence, ICheckUsersExistence>(
-            _rcCheckUsersExistence,
-            ICheckUsersExistence.CreateObj(users),
-            errors,
-            _logger);
+        _rcCheckUsersExistence,
+        ICheckUsersExistence.CreateObj(users),
+        errors,
+        _logger);
 
       return users.Count == response.UserIds.Count;
     }

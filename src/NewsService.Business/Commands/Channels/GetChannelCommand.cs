@@ -19,6 +19,7 @@ using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Responses.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
     private async Task<List<ImageData>> GetImagesDataAsync(List<Guid> imagesIds, List<string> errors)
     {
-      if (imagesIds == null || !imagesIds.Any())
+      if (imagesIds is null || !imagesIds.Any())
       {
         return null;
       }
@@ -87,11 +88,11 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       _channelRepository = channelRepository;
     }
 
-    public async Task<OperationResultResponse<ChannelResponse>> ExecuteAsync(Guid channelId)
+    public async Task<OperationResultResponse<ChannelResponse>> ExecuteAsync(Guid channelId, GetChannelFilter filter)
     {
       OperationResultResponse<ChannelResponse> response = new();
 
-      DbChannel dbChannel = await _channelRepository.GetAsync(channelId);
+      DbChannel dbChannel = await _channelRepository.GetAsync(channelId, filter);
       if (dbChannel is null)
       {
         return _responseCreator.CreateFailureResponse<ChannelResponse>(
@@ -120,9 +121,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       response.Body = _channelResponseMapper
         .Map(
           dbChannel,
-          _newsInfoMapper.Map(
-            dbChannel.News.ToList(),
-            usersInfo));
+          dbChannel.News.Select(n => _newsInfoMapper.Map(n, usersInfo)).ToList());
 
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess

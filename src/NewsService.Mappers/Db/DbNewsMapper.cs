@@ -30,12 +30,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Preview = request.Preview,
         Content = request.Content,
         Subject = request.Subject,
-        PublishedBy = request.PublishedBy,
         IsActive = request.IsActive,
         ChannelId = request.ChannelId,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         CreatedAtUtc = DateTime.UtcNow,
         PublishedAtUtc = DateTime.UtcNow,
+        PublishedBy = request.IsActive ? _httpContextAccessor.HttpContext.GetUserId() : null,
       };
     }
   }

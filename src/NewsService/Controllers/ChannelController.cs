@@ -16,7 +16,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
   public class ChannelController : ControllerBase
   {
     [HttpPost("create")]
-    public async Task<OperationResultResponse<Guid>> Create(
+    public async Task<OperationResultResponse<Guid?>> CreateAsync(
       [FromServices] ICreateChannelCommand command,
       [FromBody] CreateChannelRequest request)
     {
@@ -24,15 +24,16 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpGet("get")]
-    public async Task<OperationResultResponse<ChannelResponse>> Get(
+    public async Task<OperationResultResponse<ChannelResponse>> GetAsync(
       [FromServices] IGetChannelCommand command,
-      [FromQuery] Guid channelId)
+      [FromQuery] Guid channelId,
+      [FromQuery]  GetChannelFilter filter)
     {
-      return await command.ExecuteAsync(channelId);
+      return await command.ExecuteAsync(channelId, filter);
     }
 
     [HttpGet("find")]
-    public async Task<FindResultResponse<ChannelInfo>> Find(
+    public async Task<FindResultResponse<ChannelInfo>> FindAsync(
       [FromServices] IFindChannelCommand command,
       [FromQuery] FindChannelFilter findNewsFilter)
     {
@@ -40,7 +41,7 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpPatch("edit")]
-    public async Task<OperationResultResponse<bool>> Edit(
+    public async Task<OperationResultResponse<bool>> EditAsync(
       [FromServices] IEditChannelCommand command,
       [FromQuery] Guid channelId,
       [FromBody] JsonPatchDocument<EditChannelRequest> request)

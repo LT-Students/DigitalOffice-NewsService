@@ -11,12 +11,13 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public const string TableName = "Channels";
 
     public Guid Id { get; set; }
-    public string CastomMessage { get; set; }
     public string Name { get; set; }
+    public string PinnedMessage { get; set; }
+    public Guid? PinnedNewsId { get; set; }
     public string ImageContent { get; set; }
     public string ImageExtension { get; set; }
-    public Guid CreatedBy { get; set; }
     public bool IsActive { get; set; }
+    public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }

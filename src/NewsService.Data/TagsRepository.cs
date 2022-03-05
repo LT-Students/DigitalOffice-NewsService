@@ -18,9 +18,9 @@ namespace LT.DigitalOffice.NewsService.Data
       _provider = provider;
     }
 
-    public async Task<List<DbTags>> GetAsync(List<Guid> tagId)
+    public async Task<List<DbTag>> GetAsync(List<Guid> tagsIds)
     {
-      return await _provider.Tags.Where(t => tagId.Contains(t.Id)).ToListAsync();
+      return await _provider.Tags.Where(t => tagsIds.Contains(t.Id)).ToListAsync();
     }
   }
 }

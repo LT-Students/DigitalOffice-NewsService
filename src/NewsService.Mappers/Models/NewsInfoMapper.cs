@@ -9,11 +9,23 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
   public class NewsInfoMapper : INewsInfoMapper
   {
     private readonly ITagsInfoMapper _tagsInfoMapper;
+
+    public NewsInfoMapper(
+      ITagsInfoMapper tagsInfoMapper)
+    {
+      _tagsInfoMapper = tagsInfoMapper;
+    }
+
     public NewsInfo Map(
       DbNews dbNews,
       List<UserInfo> users,
-      ChannelInfo channel)
+      ChannelInfo channel = null)
     {
+      if (dbNews is null)
+      {
+        return null;
+      }
+
       return new NewsInfo
       {
         Id = dbNews.Id,
@@ -27,29 +39,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Channel = channel,
         Tags = _tagsInfoMapper.Map(dbNews.Tags.ToList())
       };
-    }
-
-    public List<NewsInfo> Map(
-      List<DbNews> dbNews,
-      List<UserInfo> users)
-    {
-      return dbNews.Select(n => new NewsInfo
-      {
-        Id = n.Id,
-        Preview = n.Preview,
-        Subject = n.Subject,
-        IsActive = n.IsActive,
-        CreatedAtUtc = n.CreatedAtUtc,
-        PublishedAtUtc = n.PublishedAtUtc,
-        Publisher = users.Where(u => n.PublishedBy == u.Id).FirstOrDefault(),
-        Creator = users.Where(u => n.CreatedBy == u.Id).FirstOrDefault(),
-        Tags = _tagsInfoMapper.Map(n.Tags.ToList()) 
-      }).ToList();
-    }
-    public NewsInfoMapper(
-      ITagsInfoMapper tagsInfoMapper)
-    {
-      _tagsInfoMapper = tagsInfoMapper;
     }
   }
 }

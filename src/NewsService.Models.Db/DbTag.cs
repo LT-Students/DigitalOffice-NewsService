@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LT.DigitalOffice.NewsService.Models.Db
 {
-  public class DbTags
+  public class DbTag
   {
     public const string TableName = "Tags";
 
@@ -19,18 +19,18 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     [IgnoreParse]
     public ICollection<DbNews> News { get; set; }
 
-    public DbTags()
+    public DbTag()
     { 
       News = new HashSet<DbNews>();
     }
   }
 
-  public class DbTagsConfiguration : IEntityTypeConfiguration<DbTags>
+  public class DbTagsConfiguration : IEntityTypeConfiguration<DbTag>
   {
-    public void Configure(EntityTypeBuilder<DbTags> builder)
+    public void Configure(EntityTypeBuilder<DbTag> builder)
     {
       builder
-        .ToTable(DbTags.TableName);
+        .ToTable(DbTag.TableName);
 
       builder
         .HasKey(p => p.Id);

@@ -8,7 +8,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
   {
     public UserInfo Map(UserData user, ImageData avatarImage)
     {
-      if (user == null)
+      if (user is null)
       {
         return null;
       }

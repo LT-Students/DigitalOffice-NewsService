@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Validators;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Channel;
 using LT.DigitalOffice.NewsService.Validation.Channel.Interfaces;
@@ -13,10 +16,9 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
 {
   public class EditChannelRequestValidator : BaseEditRequestValidator<EditChannelRequest>, IEditChannelRequestValidator
   {
-    private List<string> AllowedExtensions = new()
-    { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tga" };
-
-    private void HandleInternalPropertyValidation(
+    private readonly IChannelRepository _channelRepository;
+    private readonly INewsRepository _newsRepository;
+    private async Task HandleInternalPropertyValidation(
       Operation<EditChannelRequest> requestedOperation,
       CustomContext context)
     {
@@ -29,13 +31,15 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
         new()
         {
           nameof(EditChannelRequest.Name),
-          nameof(EditChannelRequest.CastomMessage),
+          nameof(EditChannelRequest.PinnedMessage),
+          nameof(EditChannelRequest.PinnedNewsId),
           nameof(EditChannelRequest.Image),
           nameof(EditChannelRequest.IsActive)
         });
 
       AddСorrectOperations(nameof(EditChannelRequest.Name), new() { OperationType.Replace });
-      AddСorrectOperations(nameof(EditChannelRequest.CastomMessage), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditChannelRequest.PinnedMessage), new() { OperationType.Replace });
+      AddСorrectOperations(nameof(EditChannelRequest.PinnedNewsId), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditChannelRequest.IsActive), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditChannelRequest.Image), new() { OperationType.Replace });
 
@@ -48,7 +52,18 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
         x => x == OperationType.Replace,
         new()
         {
-          { x => !string.IsNullOrEmpty(x.value.ToString()), "Name cannot be empty." },
+          { x => string.IsNullOrEmpty(x.value.ToString()), "Name value must not be empty." }
+        });
+
+      await AddFailureForPropertyIfAsync(
+        nameof(EditChannelRequest.Name),
+        x => x == OperationType.Replace,
+        new()
+        {
+          { async x =>
+            !await _channelRepository.DoesNameExistAsync(x.value.ToString()),
+            "This channel name already exist."
+          }
         });
 
       #endregion
@@ -71,7 +86,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
 
                 if (!String.IsNullOrEmpty(image.Content) &&
                   Convert.TryFromBase64String(image.Content, byteString, out _) &&
-                  AllowedExtensions.Contains(image.Extension))
+                  ImageFormats.formats.Contains(image.Extension))
                 {
                   return true;
                 }
@@ -90,11 +105,35 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
       #region CastomMessage
 
       AddFailureForPropertyIf(
-        nameof(EditChannelRequest.CastomMessage),
+        nameof(EditChannelRequest.PinnedMessage),
         x => x == OperationType.Replace,
         new()
         {
-          { x => x.value.ToString().Length < 120, "Subject is too long." },
+          { x => x.value.ToString().Length < 120, "PinnedMessage is too long." },
+        });
+
+      #endregion
+
+      #region PinnedNewsId
+
+      AddFailureForPropertyIf(
+        nameof(EditChannelRequest.PinnedNewsId),
+        x => x == OperationType.Replace,
+        new()
+        {
+          { x => Guid.TryParse(x.value.ToString(), out Guid _), "Incorrect format of NewsId." },
+        });
+
+      await AddFailureForPropertyIfAsync(
+        nameof(EditChannelRequest.PinnedNewsId),
+        x => x == OperationType.Replace,
+        new()
+        {
+          {
+            async x =>
+            !await _newsRepository.DoesNewsExistAsync(Guid.Parse(x.value.ToString())),
+            "This news doesn't exist."
+          }
         });
 
       #endregion
@@ -112,10 +151,15 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
       #endregion
     }
 
-    public EditChannelRequestValidator()
+    public EditChannelRequestValidator(
+      IChannelRepository channelRepository,
+      INewsRepository newsRepository)
     {
+      _channelRepository = channelRepository;
+      _newsRepository = newsRepository;
+
       RuleForEach(x => x.Operations)
-        .Custom(HandleInternalPropertyValidation);
+        .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));
     }
   }
 }

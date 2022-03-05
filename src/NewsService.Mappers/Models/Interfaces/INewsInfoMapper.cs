@@ -11,10 +11,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models.Interfaces
     NewsInfo Map(
       DbNews dbNews,
       List<UserInfo> users,
-      ChannelInfo channel);
-
-    List<NewsInfo> Map(
-      List<DbNews> dbNews,
-      List<UserInfo> users);
+      ChannelInfo channel = null);
   }
 }
