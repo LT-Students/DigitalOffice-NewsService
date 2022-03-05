@@ -108,7 +108,8 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       List<UserData> usersData =
         await GetUsersDataAsync(
-          new List<Guid>() { dbNews.PublishedBy.Value, dbNews.CreatedBy },///
+          new List<Guid>() 
+          { dbNews.PublishedBy.GetValueOrDefault(), dbNews.CreatedBy },
           response.Errors);
 
       List<ImageData> avatarsImages =
@@ -125,8 +126,8 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       response.Body = _mapper
         .Map(
           dbNews,
-          usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.PublishedBy),
           usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.CreatedBy),
+          usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.PublishedBy),
           _channelInfoMapper.Map(dbNews.Channel),
           _tagsInfoMapper.Map(dbNews.Tags.ToList()));
 
