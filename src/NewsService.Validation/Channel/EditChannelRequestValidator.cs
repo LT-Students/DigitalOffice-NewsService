@@ -131,7 +131,9 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
         {
           {
             async x =>
-            !await _newsRepository.DoesNewsExistAsync(Guid.Parse(x.value.ToString())),
+            Guid.TryParse(x.value.ToString(), out Guid id) 
+            ? await _newsRepository.DoesNewsExistAsync(Guid.Parse(x.value.ToString()))
+            : true,
             "This news doesn't exist."
           }
         });

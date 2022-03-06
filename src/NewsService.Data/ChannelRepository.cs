@@ -101,5 +101,10 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       return await _provider.Channels.AnyAsync(c => c.Name == name);
     }
+
+    public async Task<bool> DoesChannelExistAsync(Guid channelId)
+    {
+      return await _provider.Channels.AnyAsync(c => c.Id == channelId);
+    }
   }
 }

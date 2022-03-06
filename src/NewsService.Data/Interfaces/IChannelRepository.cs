@@ -20,5 +20,7 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
     Task<bool> EditAsync(Guid channelId, JsonPatchDocument<DbChannel> patch);
 
     Task<bool> DoesNameExistAsync(string name);
+
+    Task<bool> DoesChannelExistAsync(Guid channelId);
   }
 }

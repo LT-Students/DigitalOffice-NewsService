@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
-using LT.DigitalOffice.Kernel.BrokerSupport.Broker;
 using LT.DigitalOffice.Kernel.BrokerSupport.Helpers;
 using LT.DigitalOffice.Kernel.Validators;
 using LT.DigitalOffice.Models.Broker.Common;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using MassTransit;
@@ -20,7 +20,7 @@ namespace LT.DigitalOffice.NewsService.Validation
   {
     private readonly IRequestClient<ICheckUsersExistence> _rcCheckUsersExistence;
     private readonly ILogger<CreateNewsRequestValidator> _logger;
-
+    private readonly IChannelRepository _channelRepository;
     private async Task HandleInternalPropertyValidation(
       Operation<EditNewsRequest> requestedOperation,
       CustomContext context)
@@ -81,6 +81,14 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       #region PublishedBy
 
+      AddFailureForPropertyIf(
+        nameof(EditNewsRequest.PublishedBy),
+        x => x == OperationType.Replace,
+        new()
+        {
+          { x => Guid.TryParse(x.value.ToString(), out Guid _), "Incorrect format of UserId." },
+        });
+
       await AddFailureForPropertyIfAsync(
         nameof(EditNewsRequest.PublishedBy),
         x => x == OperationType.Replace,
@@ -88,8 +96,9 @@ namespace LT.DigitalOffice.NewsService.Validation
         {
           {
             async x =>
-            Guid.TryParse(x.value.ToString(), out Guid id) &&
-            await CheckUserExistenceAsync(new List<Guid> { id }, new List<string>()),
+            Guid.TryParse(x.value.ToString(), out Guid id)
+            ? await CheckUserExistenceAsync(new List<Guid> { id }, new List<string>())
+            : true,
             "This user doesn't exist."
           }
         });
@@ -110,6 +119,20 @@ namespace LT.DigitalOffice.NewsService.Validation
           }
         });
 
+      await AddFailureForPropertyIfAsync(
+        nameof(EditNewsRequest.ChannelId),
+        x => x == OperationType.Replace,
+        new()
+        {
+          {
+            async x =>
+            Guid.TryParse(x.value.ToString(), out Guid id)
+            ? await _channelRepository.DoesChannelExistAsync(Guid.Parse(x.value.ToString()))
+            : true,
+            "This channel doesn't exist."
+          }
+        });
+
       #endregion
 
       #region IsActive
@@ -126,10 +149,12 @@ namespace LT.DigitalOffice.NewsService.Validation
     }
     public EditNewsRequestValidator(
       IRequestClient<ICheckUsersExistence> rcCheckUsersExistence,
-      ILogger<CreateNewsRequestValidator> logger)
+      ILogger<CreateNewsRequestValidator> logger,
+      IChannelRepository channelRepository)
     {
       _rcCheckUsersExistence = rcCheckUsersExistence;
       _logger = logger;
+      _channelRepository = channelRepository;
 
       RuleForEach(x => x.Operations)
         .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));

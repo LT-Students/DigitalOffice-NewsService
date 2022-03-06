@@ -126,7 +126,7 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public async Task<bool> DoesNewsExistAsync(Guid newsId)
     {
-      return await _provider.News.AnyAsync(c => c.Id == newsId);
+      return await _provider.News.AnyAsync(n => n.Id == newsId);
     }
   }
 }
