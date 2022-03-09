@@ -49,15 +49,15 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
-        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.NotFound);
+        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
 
       if (!validationResult.IsValid)
       {
-        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.BadRequest,
-          validationResult.Errors.Select(vf => vf.ErrorMessage).ToList());
+        return _responseCreator.CreateFailureResponse<bool>(
+          HttpStatusCode.BadRequest, validationResult.Errors.Select(vf => vf.ErrorMessage).ToList());
       }
 
       OperationResultResponse<bool> response = new();
@@ -66,9 +66,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       if (!response.Body)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        response.Status = OperationResultStatusType.Failed;
+        response = _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.BadRequest);
       }
 
       return response;

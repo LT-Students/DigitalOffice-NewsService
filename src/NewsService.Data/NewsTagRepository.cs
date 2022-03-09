@@ -5,17 +5,17 @@ using LT.DigitalOffice.NewsService.Models.Db;
 
 namespace LT.DigitalOffice.NewsService.Data
 {
-  public class NewsTagsRepository : INewsTagsRepository
+  public class NewsTagRepository : INewsTagRepository
   {
     private readonly IDataProvider _provider;
 
-    public NewsTagsRepository(
+    public NewsTagRepository(
       IDataProvider provider)
     {
       _provider = provider;
     }
 
-    public async void CreateAsync(List<DbNewsTags> dbNewsTags)
+    public async void CreateAsync(List<DbNewsTag> dbNewsTags)
     {
       _provider.NewsTags.AddRange(dbNewsTags);
       await _provider.SaveAsync();

@@ -95,7 +95,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       if (!_baseFindValidator.ValidateCustom(findNewsFilter, out List<string> errors))
       {
         return _responseCreator.CreateFailureFindResponse<NewsInfo>(
-          HttpStatusCode.BadRequest);
+          HttpStatusCode.BadRequest, errors);
       }
 
       (List<DbNews> dbNewsList, int totalCount) = await _repository.FindAsync(findNewsFilter);

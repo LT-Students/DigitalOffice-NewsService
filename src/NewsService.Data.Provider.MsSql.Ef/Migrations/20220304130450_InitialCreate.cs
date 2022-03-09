@@ -71,7 +71,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
         });
 
       migrationBuilder.CreateTable(
-       name: DbNewsTags.TableName,
+       name: DbNewsTag.TableName,
        columns: table => new
        {
          Id = table.Column<Guid>(nullable: false),
@@ -82,7 +82,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
        },
        constraints: table =>
        {
-         table.PrimaryKey($"PK_{DbNewsTags.TableName}", x => x.Id);
+         table.PrimaryKey($"PK_{DbNewsTag.TableName}", x => x.Id);
        });
     }
 
@@ -98,7 +98,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
         name: nameof(DbTag));
 
       migrationBuilder.DropTable(
-        name: nameof(DbNewsTags));
+        name: nameof(DbNewsTag));
     }
   }
 }

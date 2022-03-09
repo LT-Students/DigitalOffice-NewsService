@@ -8,7 +8,6 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
 {
   public class CreateChannelRequestValidator : AbstractValidator<CreateChannelRequest>, ICreateChannelRequestValidator
   {
-
     public CreateChannelRequestValidator(
       IImageContentValidator imageContentValidator,
       IImageExtensionValidator imageExtensionValidator,

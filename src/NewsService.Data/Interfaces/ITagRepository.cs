@@ -7,8 +7,8 @@ using LT.DigitalOffice.NewsService.Models.Db;
 namespace LT.DigitalOffice.NewsService.Data.Interfaces
 {
   [AutoInject]
-  public interface INewsTagsRepository
+  public interface ITagRepository
   {
-    void CreateAsync(List<DbNewsTags> dbNewsTags);
+    Task<List<DbTag>> GetAsync(List<Guid> tagId);
   }
 }

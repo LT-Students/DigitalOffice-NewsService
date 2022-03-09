@@ -12,6 +12,6 @@ namespace LT.DigitalOffice.NewsService.Data.Provider
     DbSet<DbNews> News { get; set; }
     DbSet<DbTag> Tags { get; set; }
     DbSet<DbChannel> Channels { get; set; }
-    DbSet<DbNewsTags> NewsTags { get; set; }
+    DbSet<DbNewsTag> NewsTags { get; set; }
   }
 }

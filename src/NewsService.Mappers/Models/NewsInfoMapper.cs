@@ -8,10 +8,10 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class NewsInfoMapper : INewsInfoMapper
   {
-    private readonly ITagsInfoMapper _tagsInfoMapper;
+    private readonly ITagInfoMapper _tagsInfoMapper;
 
     public NewsInfoMapper(
-      ITagsInfoMapper tagsInfoMapper)
+      ITagInfoMapper tagsInfoMapper)
     {
       _tagsInfoMapper = tagsInfoMapper;
     }

@@ -20,12 +20,12 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public ICollection<DbNews> News { get; set; }
 
     public DbTag()
-    { 
+    {
       News = new HashSet<DbNews>();
     }
   }
 
-  public class DbTagsConfiguration : IEntityTypeConfiguration<DbTag>
+  public class DbTagConfiguration : IEntityTypeConfiguration<DbTag>
   {
     public void Configure(EntityTypeBuilder<DbTag> builder)
     {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LT.DigitalOffice.NewsService.Models.Db
 {
-  public class DbNewsTags
+  public class DbNewsTag
   {
     public const string TableName = "NewsTags";
 
@@ -15,12 +15,12 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public DateTime CreatedAtUtc { get; set; }
   }
 
-  public class DbNewsTagsConfiguration : IEntityTypeConfiguration<DbNewsTags>
+  public class DbNewsTagConfiguration : IEntityTypeConfiguration<DbNewsTag>
   {
-    public void Configure(EntityTypeBuilder<DbNewsTags> builder)
+    public void Configure(EntityTypeBuilder<DbNewsTag> builder)
     {
       builder
-        .ToTable(DbNewsTags.TableName);
+        .ToTable(DbNewsTag.TableName);
 
       builder
         .HasKey(p => p.Id);

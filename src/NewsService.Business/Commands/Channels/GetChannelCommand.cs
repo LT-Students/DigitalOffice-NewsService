@@ -90,20 +90,22 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
     public async Task<OperationResultResponse<ChannelResponse>> ExecuteAsync(Guid channelId, GetChannelFilter filter)
     {
-      OperationResultResponse<ChannelResponse> response = new();
-
       DbChannel dbChannel = await _channelRepository.GetAsync(channelId, filter);
+
       if (dbChannel is null)
       {
         return _responseCreator.CreateFailureResponse<ChannelResponse>(
           HttpStatusCode.NotFound);
       }
 
+      OperationResultResponse<ChannelResponse> response = new();
+
       List<UserData> usersData = await GetUsersDataAsync(
         dbChannel.News
           .Where(c => c.PublishedBy.HasValue)
           .Select(c => c.PublishedBy.Value)
           .Concat(dbChannel.News.Select(c => c.CreatedBy))
+          .Distinct()
           .ToList(),
         response.Errors);
 

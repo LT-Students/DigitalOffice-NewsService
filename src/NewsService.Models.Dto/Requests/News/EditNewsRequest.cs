@@ -7,7 +7,6 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.News
     public string Preview { get; set; }
     public string Content { get; set; }
     public string Subject { get; set; }
-    public Guid? PublishedBy { get; set; }
     public Guid? ChannelId { get; set; }
     public bool IsActive { get; set; }
   }

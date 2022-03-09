@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LT.DigitalOffice.NewsService.Data
 {
-  public class TagsRepository : ITagsRepository
+  public class TagRepository : ITagRepository
   {
     private readonly IDataProvider _provider;
 
-    public TagsRepository(IDataProvider provider)
+    public TagRepository(IDataProvider provider)
     {
       _provider = provider;
     }

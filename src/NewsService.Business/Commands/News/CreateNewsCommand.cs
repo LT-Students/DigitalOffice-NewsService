@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
@@ -27,8 +26,8 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
-    private readonly IDbNewsTagsMapper _newsTagsMapper;
-    private readonly INewsTagsRepository _newsTagsRepository;
+    private readonly IDbNewsTagMapper _newsTagsMapper;
+    private readonly INewsTagRepository _newsTagsRepository;
 
     public CreateNewsCommand(
       INewsRepository repository,
@@ -37,8 +36,8 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IAccessValidator accessValidator,
       IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator,
-      IDbNewsTagsMapper newsTagsMapper,
-      INewsTagsRepository newsTagsRepository)
+      IDbNewsTagMapper newsTagsMapper,
+      INewsTagRepository newsTagsRepository)
     {
       _repository = repository;
       _mapper = mapper;
@@ -73,9 +72,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       if (response.Body is null)
       {
-        _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
-        response.Status = OperationResultStatusType.Failed;
-        return response;
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
       }
       if (request.TagsIds.Any())
       {
@@ -83,6 +80,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
           _newsTagsMapper.Map(request.TagsIds.Distinct().ToList(),
           response.Body));
       }
+
       return response;
     }
   }

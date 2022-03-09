@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Commands.Channels.Interfaces;
@@ -26,7 +25,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
     private readonly IChannelRepository _repository;
     private readonly IPatchChannelMapper _mapper;
     private readonly IResponseCreator _responseCreator;
-
 
     public EditChannelCommand(
       IAccessValidator accessValidator,
@@ -50,7 +48,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
-        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.NotFound);
+        return _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.Forbidden);
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
@@ -67,9 +65,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
       if (!response.Body)
       {
-        _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-        response.Status = OperationResultStatusType.Failed;
+        response = _responseCreator.CreateFailureResponse<bool>(HttpStatusCode.BadRequest);
       }
 
       return response;

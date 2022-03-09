@@ -87,7 +87,9 @@ namespace LT.DigitalOffice.NewsService.Data
       {
         dbChannels = dbChannels.Where(c => c.IsActive);
       }
+
       dbChannels = dbChannels.Include(c => c.News);
+
       return(
         await dbChannels
           .OrderByDescending(n => n.Name)

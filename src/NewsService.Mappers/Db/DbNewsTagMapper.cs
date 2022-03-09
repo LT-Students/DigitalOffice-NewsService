@@ -8,19 +8,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Db
 {
-  public class DbNewsTagsMapper : IDbNewsTagsMapper
+  public class DbNewsTagMapper : IDbNewsTagMapper
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public DbNewsTagsMapper(
+    public DbNewsTagMapper(
       IHttpContextAccessor httpContextAccessor)
     {
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public List<DbNewsTags> Map(List<Guid> tagsIds, Guid? newsId)
+    public List<DbNewsTag> Map(List<Guid> tagsIds, Guid? newsId)
     {
-      return tagsIds.Select(tagId => new DbNewsTags
+      return tagsIds.Select(tagId => new DbNewsTag
       {
         Id = Guid.NewGuid(),
         NewsId = newsId.Value,

@@ -33,8 +33,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       IHttpContextAccessor httpContextAccessor,
       IChannelRepository channelRepository,
       IDbChannelMapper mapper,
-      ICreateChannelRequestValidator validator
-    )
+      ICreateChannelRequestValidator validator)
     {
       _accessValidator = accessValidator;
       _responseCreator = responseCreator;
@@ -63,9 +62,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       response.Body = await _channelRepository.CreateAsync(await _mapper.MapAsync(request));
       if (response.Body is null)
       {
-        _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
-        response.Status = OperationResultStatusType.Failed;
+        response = _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
       }
+
       return response;
     }
   }

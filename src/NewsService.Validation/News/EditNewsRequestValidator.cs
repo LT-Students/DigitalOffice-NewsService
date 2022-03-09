@@ -37,7 +37,6 @@ namespace LT.DigitalOffice.NewsService.Validation
           nameof(EditNewsRequest.Content),
           nameof(EditNewsRequest.Subject),
           nameof(EditNewsRequest.ChannelId),
-          nameof(EditNewsRequest.PublishedBy),
           nameof(EditNewsRequest.IsActive),
         });
 
@@ -45,7 +44,6 @@ namespace LT.DigitalOffice.NewsService.Validation
       AddСorrectOperations(nameof(EditNewsRequest.Content), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditNewsRequest.Subject), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditNewsRequest.ChannelId), new() { OperationType.Replace });
-      AddСorrectOperations(nameof(EditNewsRequest.PublishedBy), new() { OperationType.Replace });
       AddСorrectOperations(nameof(EditNewsRequest.IsActive), new() { OperationType.Replace });
 
       #endregion
@@ -75,32 +73,6 @@ namespace LT.DigitalOffice.NewsService.Validation
         {
           { x => !string.IsNullOrEmpty(x.value.ToString()), "Subject cannot be empty." },
           { x => x.value.ToString().Length < 120, "Subject is too long." },
-        });
-
-      #endregion
-
-      #region PublishedBy
-
-      AddFailureForPropertyIf(
-        nameof(EditNewsRequest.PublishedBy),
-        x => x == OperationType.Replace,
-        new()
-        {
-          { x => Guid.TryParse(x.value.ToString(), out Guid _), "Incorrect format of UserId." },
-        });
-
-      await AddFailureForPropertyIfAsync(
-        nameof(EditNewsRequest.PublishedBy),
-        x => x == OperationType.Replace,
-        new()
-        {
-          {
-            async x =>
-            Guid.TryParse(x.value.ToString(), out Guid id)
-            ? await CheckUserExistenceAsync(new List<Guid> { id }, new List<string>())
-            : true,
-            "This user doesn't exist."
-          }
         });
 
       #endregion

@@ -33,9 +33,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IRequestClient<IGetImagesRequest> _rcGetImages;
     private readonly IUserInfoMapper _userInfoMapper;
     private readonly IResponseCreator _responseCreator;
-    private readonly ITagsInfoMapper _tagsInfoMapper;
+    private readonly ITagInfoMapper _tagsInfoMapper;
     private readonly IChannelRepository _channelRepository;
-    private readonly ITagsRepository _tagsRepository;
+    private readonly ITagRepository _tagsRepository;
     private readonly IChannelInfoMapper _channelInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
@@ -76,9 +76,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IRequestClient<IGetImagesRequest> rcGetImages,
       IUserInfoMapper userInfoMapper,
       IResponseCreator responseCreator,
-      ITagsInfoMapper tagsInfoMapper,
+      ITagInfoMapper tagsInfoMapper,
       IChannelRepository channelRepository,
-      ITagsRepository tagsRepository,
+      ITagRepository tagsRepository,
       IChannelInfoMapper channelInfoMapper,
       ILogger<GetNewsCommand> logger)
     {
@@ -106,11 +106,17 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
           HttpStatusCode.NotFound);
       }
 
-      List<UserData> usersData =
+      List<UserData> usersData = new();
+
+      if (dbNews.PublishedBy.HasValue)
+      {
+        usersData =
         await GetUsersDataAsync(
-          new List<Guid>() 
-          { dbNews.PublishedBy.GetValueOrDefault(), dbNews.CreatedBy },
+          new List<Guid> { dbNews.PublishedBy.Value, dbNews.CreatedBy },
           response.Errors);
+      }
+
+      usersData = await GetUsersDataAsync( new List<Guid> { dbNews.CreatedBy }, response.Errors);
 
       List<ImageData> avatarsImages =
         await GetUsersAvatarsAsync(

@@ -12,6 +12,5 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
     public Guid? PinnedNewsId { get; set; }
     public ImageConsist Image { get; set; }
     public List<NewsInfo> News { get; set; }
-
   }
 }

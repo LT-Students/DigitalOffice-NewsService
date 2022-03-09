@@ -6,8 +6,8 @@ using LT.DigitalOffice.NewsService.Models.Db;
 namespace LT.DigitalOffice.NewsService.Mappers.Db.Interfaces
 {
   [AutoInject]
-  public interface IDbNewsTagsMapper
+  public interface IDbNewsTagMapper
   {
-    List<DbNewsTags> Map(List<Guid> tagsIds, Guid? newsId);
+    List<DbNewsTag> Map(List<Guid> tagsIds, Guid? newsId);
   }
 }

@@ -6,7 +6,7 @@ using LT.DigitalOffice.NewsService.Models.Dto.Models;
 namespace LT.DigitalOffice.NewsService.Mappers.Models.Interfaces
 {
   [AutoInject]
-  public interface ITagsInfoMapper
+  public interface ITagInfoMapper
   {
     public List<TagsInfo> Map(List<DbTag> dbTags);
   }

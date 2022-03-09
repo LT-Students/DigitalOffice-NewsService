@@ -6,7 +6,7 @@ using LT.DigitalOffice.NewsService.Models.Dto.Models;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
-  public class TagsInfoMapper : ITagsInfoMapper
+  public class TagInfoMapper : ITagInfoMapper
   {
     public List<TagsInfo> Map(List<DbTag> dbTags)
     {
