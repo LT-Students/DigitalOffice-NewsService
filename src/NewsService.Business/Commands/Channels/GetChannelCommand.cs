@@ -46,10 +46,10 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
       return (await RequestHandler.ProcessRequest<IGetImagesRequest, IGetImagesResponse>(
         _rcGetImages,
-        IGetImagesRequest.CreateObj(imagesIds, ImageSource.User),
-        errors,
-        _logger))
-      .ImagesData;
+          IGetImagesRequest.CreateObj(imagesIds, ImageSource.User),
+          errors,
+          _logger))
+        .ImagesData;
     }
 
     private async Task<List<UserData>> GetUsersDataAsync(List<Guid> usersIds, List<string> errors)
@@ -60,11 +60,11 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       }
 
       return (await RequestHandler.ProcessRequest<IGetUsersDataRequest, IGetUsersDataResponse>(
-        _rcGetUsers,
-        IGetUsersDataRequest.CreateObj(usersIds),
-        errors,
-        _logger))
-      .UsersData;
+         _rcGetUsers,
+          IGetUsersDataRequest.CreateObj(usersIds),
+          errors,
+          _logger))
+        .UsersData;
     }
 
     public GetChannelCommand(

@@ -34,7 +34,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         ChannelId = request.ChannelId,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         CreatedAtUtc = DateTime.UtcNow,
-        PublishedAtUtc = DateTime.UtcNow,
+        PublishedAtUtc = request.IsActive ? DateTime.UtcNow : null,
         PublishedBy = request.IsActive ? _httpContextAccessor.HttpContext.GetUserId() : null,
       };
     }

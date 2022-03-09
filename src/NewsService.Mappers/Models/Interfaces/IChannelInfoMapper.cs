@@ -7,6 +7,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models.Interfaces
   [AutoInject]
   public interface IChannelInfoMapper
   {
-    public ChannelInfo Map(DbChannel dbChannel);
+    ChannelInfo Map(DbChannel dbChannel);
   }
 }

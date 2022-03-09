@@ -33,7 +33,7 @@ namespace LT.DigitalOffice.NewsService.Data
       {
         dbChannel = dbChannel.Include(x => x.News);
         dbChannel.Select(c => c.News)
-          .OrderByDescending(n => n.FirstOrDefault()).Skip(filter.SkipCount = 0).Take(filter.TakeCount = 1);
+          .OrderByDescending(n => n.FirstOrDefault()).Skip(filter.SkipCount).Take(filter.TakeCount);
       }
 
       return await dbChannel.FirstOrDefaultAsync(c => c.Id == channelId);

@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models.Interfaces
   [AutoInject]
   public interface ITagInfoMapper
   {
-    public List<TagsInfo> Map(List<DbTag> dbTags);
+    List<TagsInfo> Map(List<DbTag> dbTags);
   }
 }

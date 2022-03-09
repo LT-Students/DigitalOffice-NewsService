@@ -97,14 +97,14 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
     public async Task<OperationResultResponse<NewsResponse>> ExecuteAsync(Guid newsId)
     {
-      OperationResultResponse<NewsResponse> response = new();
-
       DbNews dbNews = await _newsRepository.GetAsync(newsId);
       if (dbNews is null)
       {
         return _responseCreator.CreateFailureResponse<NewsResponse>(
           HttpStatusCode.NotFound);
       }
+
+      OperationResultResponse<NewsResponse> response = new();
 
       List<UserData> usersData = new();
 
@@ -115,7 +115,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
           new List<Guid> { dbNews.PublishedBy.Value, dbNews.CreatedBy },
           response.Errors);
       }
-
       usersData = await GetUsersDataAsync( new List<Guid> { dbNews.CreatedBy }, response.Errors);
 
       List<ImageData> avatarsImages =

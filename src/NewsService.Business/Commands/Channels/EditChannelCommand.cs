@@ -43,7 +43,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
     }
 
     public async Task<OperationResultResponse<bool>> ExecuteAsync(
-      Guid chanelId,
+      Guid channelId,
       JsonPatchDocument<EditChannelRequest> request)
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
@@ -61,7 +61,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
       OperationResultResponse<bool> response = new();
 
-      response.Body = await _repository.EditAsync(chanelId, await _mapper.MapAsync(request));
+      response.Body = await _repository.EditAsync(channelId, await _mapper.MapAsync(request));
 
       if (!response.Body)
       {

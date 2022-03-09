@@ -10,6 +10,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels.Interfaces
   [AutoInject]
   public interface IEditChannelCommand
   {
-    Task<OperationResultResponse<bool>> ExecuteAsync(Guid chanelId, JsonPatchDocument<EditChannelRequest> request);
+    Task<OperationResultResponse<bool>> ExecuteAsync(Guid channelId, JsonPatchDocument<EditChannelRequest> request);
   }
 }

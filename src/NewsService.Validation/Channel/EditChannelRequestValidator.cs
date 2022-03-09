@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
@@ -60,7 +59,8 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
         x => x == OperationType.Replace,
         new()
         {
-          { async x =>
+          {
+            async x =>
             !await _channelRepository.DoesNameExistAsync(x.value.ToString()),
             "This channel name already exist."
           }
@@ -131,7 +131,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
         {
           {
             async x =>
-            Guid.TryParse(x.value.ToString(), out Guid id) 
+            Guid.TryParse(x.value.ToString(), out Guid id)
             ? await _newsRepository.DoesNewsExistAsync(Guid.Parse(x.value.ToString()))
             : true,
             "This news doesn't exist."

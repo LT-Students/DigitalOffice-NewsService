@@ -14,18 +14,10 @@ namespace LT.DigitalOffice.NewsService.Validation
 {
   public class CreateNewsRequestValidator : AbstractValidator<CreateNewsRequest>, ICreateNewsRequestValidator
   {
-    private readonly IRequestClient<ICheckUsersExistence> _rcCheckUsersExistence;
-    private readonly ILogger<CreateNewsRequestValidator> _logger;
-
-    public CreateNewsRequestValidator(
-      IRequestClient<ICheckUsersExistence> rcCheckUsersExistence,
-      ILogger<CreateNewsRequestValidator> logger)
+    public CreateNewsRequestValidator()
     {
-      _rcCheckUsersExistence = rcCheckUsersExistence;
-      _logger = logger;
-
       RuleFor(news => news.TagsIds)
-        .NotNull().WithMessage("Tags list must not be empty.");
+        .NotNull().WithMessage("Tags list must not be null.");
 
       RuleFor(news => news.Subject)
         .NotEmpty().WithMessage("Subject must not be empty.");
@@ -35,21 +27,6 @@ namespace LT.DigitalOffice.NewsService.Validation
 
       RuleFor(news => news.Content)
         .NotEmpty().WithMessage("Content must not be empty.");
-    }
-
-    private async Task<bool> CheckUserExistenceAsync(List<Guid> users, List<string> errors)
-    {
-      if (!users.Any())
-      {
-        return false;
-      }
-      ICheckUsersExistence response = await RequestHandler.ProcessRequest<ICheckUsersExistence, ICheckUsersExistence>(
-        _rcCheckUsersExistence,
-        ICheckUsersExistence.CreateObj(users),
-        errors,
-        _logger);
-
-      return users.Count == response.UserIds.Count;
     }
   }
 }

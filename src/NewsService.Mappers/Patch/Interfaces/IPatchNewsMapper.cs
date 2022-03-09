@@ -8,6 +8,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Patch.Interfaces
   [AutoInject]
   public interface IPatchNewsMapper
   {
-      JsonPatchDocument<DbNews> Map(JsonPatchDocument<EditNewsRequest> request);
+    JsonPatchDocument<DbNews> Map(JsonPatchDocument<EditNewsRequest> request);
   }
 }

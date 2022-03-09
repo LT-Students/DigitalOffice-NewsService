@@ -78,7 +78,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       {
         _newsTagsRepository.CreateAsync(
           _newsTagsMapper.Map(request.TagsIds.Distinct().ToList(),
-          response.Body));
+          response.Body.Value));
       }
 
       return response;

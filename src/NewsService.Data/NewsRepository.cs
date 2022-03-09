@@ -32,6 +32,15 @@ namespace LT.DigitalOffice.NewsService.Data
         dbNewsList = dbNewsList.Where(x => x.IsActive);
       }
 
+      if (filter.IncludeChannel)
+      {
+        dbNewsList = dbNewsList.Where(x => x.ChannelId.HasValue);
+      }
+
+      if (filter.ChannelId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.ChannelId == filter.ChannelId);
+      }
       dbNewsList = dbNewsList.Include(nl => nl.Channel);
 
       return dbNewsList;
@@ -53,7 +62,6 @@ namespace LT.DigitalOffice.NewsService.Data
       }
 
       patch.ApplyTo(dbNews);
-      dbNews.PublishedBy = dbNews.IsActive ? _httpContextAccessor.HttpContext.GetUserId() : null;
       dbNews.ModifiedBy = _httpContextAccessor.HttpContext.GetUserId();
       dbNews.ModifiedAtUtc = DateTime.UtcNow;
       await _provider.SaveAsync();
