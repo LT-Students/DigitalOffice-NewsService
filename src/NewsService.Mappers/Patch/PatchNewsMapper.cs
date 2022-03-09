@@ -30,23 +30,20 @@ namespace LT.DigitalOffice.NewsService.Mappers.Patch
 
       foreach (Operation<EditNewsRequest> item in request.Operations)
       {
-        if (item.path.Contains("/IsActive") && item.value.Equals(true))
+        if (item.path.EndsWith(nameof(EditNewsRequest.IsActive), StringComparison.OrdinalIgnoreCase) && item.value.Equals(true))
         {
           patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
-          
-          patchDbNews.Operations.Add(
-            new Operation<DbNews>(
-              item.op = "replace",
-              item.path = "/PublishedBy",
-              item.from,
-              item.value = _httpContextAccessor.HttpContext.GetUserId()));
 
-          patchDbNews.Operations.Add(
-            new Operation<DbNews>(
-              item.op = "replace",
-              item.path = "/PublishedAtUtc",
-              item.from,
-              item.value = DateTime.UtcNow));
+          patchDbNews.Operations.Add(new Operation<DbNews>(
+            item.op, nameof(DbNews.PublishedBy),
+            item.from, 
+            _httpContextAccessor.HttpContext.GetUserId()));
+
+          patchDbNews.Operations.Add(new Operation<DbNews>(
+            item.op,
+            nameof(DbNews.PublishedAtUtc),
+            item.from,
+            DateTime.UtcNow));
         }
 
         patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
