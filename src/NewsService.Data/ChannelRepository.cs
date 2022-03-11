@@ -29,11 +29,14 @@ namespace LT.DigitalOffice.NewsService.Data
     public async Task<DbChannel> GetAsync(Guid channelId, GetChannelFilter filter)
     {
       IQueryable<DbChannel> dbChannel = _provider.Channels.AsQueryable();
-      if (!filter.IncludeNews)
+
+      if (filter.IncludeNews)
       {
-        dbChannel = dbChannel.Include(x => x.News);
-        dbChannel.Select(c => c.News)
-          .OrderByDescending(n => n.FirstOrDefault()).Skip(filter.SkipCount).Take(filter.TakeCount);
+        dbChannel = dbChannel
+          .Include(c => c.News.Where(n => n.IsActive)
+          .OrderByDescending(n => n.PublishedAtUtc)
+          .Skip(filter.SkipCount)
+          .Take(filter.TakeCount));
       }
 
       return await dbChannel.FirstOrDefaultAsync(c => c.Id == channelId);
@@ -87,8 +90,6 @@ namespace LT.DigitalOffice.NewsService.Data
       {
         dbChannels = dbChannels.Where(c => c.IsActive);
       }
-
-      dbChannels = dbChannels.Include(c => c.News);
 
       return(
         await dbChannels

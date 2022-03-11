@@ -22,9 +22,9 @@ namespace LT.DigitalOffice.NewsService.Data
       FindNewsFilter filter,
       IQueryable<DbNews> dbNewsList)
     {
-      if (filter.Publisher.HasValue)
+      if (filter.PublisherId.HasValue)
       {
-        dbNewsList = dbNewsList.Where(x => x.PublishedBy == filter.Publisher);
+        dbNewsList = dbNewsList.Where(x => x.PublishedBy == filter.PublisherId);
       }
 
       if (!filter.IncludeDeactivated)

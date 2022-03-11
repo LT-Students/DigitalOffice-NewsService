@@ -111,11 +111,11 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       if (dbNews.PublishedBy.HasValue)
       {
         usersData =
-        await GetUsersDataAsync(
-          new List<Guid> { dbNews.PublishedBy.Value, dbNews.CreatedBy },
-          response.Errors);
+          await GetUsersDataAsync(
+            new List<Guid> { dbNews.PublishedBy.Value, dbNews.CreatedBy },
+            response.Errors);
       }
-      usersData = await GetUsersDataAsync( new List<Guid> { dbNews.CreatedBy }, response.Errors);
+      usersData = await GetUsersDataAsync(new List<Guid> { dbNews.CreatedBy }, response.Errors);
 
       List<ImageData> avatarsImages =
         await GetUsersAvatarsAsync(

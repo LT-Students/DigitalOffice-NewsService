@@ -7,7 +7,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
   public record FindNewsFilter : BaseFindFilter
   {
     [FromQuery(Name = "publisherId")]
-    public Guid? Publisher { get; set; }
+    public Guid? PublisherId { get; set; }
 
     [FromQuery(Name = "includeDeactivated")]
     public bool IncludeDeactivated { get; set; } = false;

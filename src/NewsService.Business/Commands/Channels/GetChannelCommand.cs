@@ -45,7 +45,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       }
 
       return (await RequestHandler.ProcessRequest<IGetImagesRequest, IGetImagesResponse>(
-        _rcGetImages,
+          _rcGetImages,
           IGetImagesRequest.CreateObj(imagesIds, ImageSource.User),
           errors,
           _logger))
@@ -60,7 +60,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       }
 
       return (await RequestHandler.ProcessRequest<IGetUsersDataRequest, IGetUsersDataResponse>(
-         _rcGetUsers,
+          _rcGetUsers,
           IGetUsersDataRequest.CreateObj(usersIds),
           errors,
           _logger))

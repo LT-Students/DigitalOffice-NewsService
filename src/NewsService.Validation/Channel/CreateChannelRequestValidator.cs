@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
       When(c => c.PinnedNewsId != null, () =>
       {
         RuleFor(c => c.PinnedNewsId)
-        .NotEmpty().WithMessage("News must not be empty.");
+          .NotEmpty().WithMessage("News must not be empty.");
       });
 
       When(c => c.Image != null, () =>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Mappers.Patch.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
@@ -30,13 +29,15 @@ namespace LT.DigitalOffice.NewsService.Mappers.Patch
 
       foreach (Operation<EditNewsRequest> item in request.Operations)
       {
+        //ToDo add condition "Check if news was already published"
         if (item.path.EndsWith(nameof(EditNewsRequest.IsActive), StringComparison.OrdinalIgnoreCase) && item.value.Equals(true))
         {
           patchDbNews.Operations.Add(new Operation<DbNews>(item.op, item.path, item.from, item.value));
 
           patchDbNews.Operations.Add(new Operation<DbNews>(
-            item.op, nameof(DbNews.PublishedBy),
-            item.from, 
+            item.op,
+            nameof(DbNews.PublishedBy),
+            item.from,
             _httpContextAccessor.HttpContext.GetUserId()));
 
           patchDbNews.Operations.Add(new Operation<DbNews>(
