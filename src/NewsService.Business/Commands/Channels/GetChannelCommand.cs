@@ -85,7 +85,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
       _rcGetUsers = rcGetUsers;
       _logger = logger;
       _userInfoMapper = userInfoMapper;
-      _channelRepository = channelRepository;
     }
 
     public async Task<OperationResultResponse<ChannelResponse>> ExecuteAsync(Guid channelId, GetChannelFilter filter)

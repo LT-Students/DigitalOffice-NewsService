@@ -57,13 +57,13 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
       OperationResultResponse<Guid?> response = new();
 
-      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
-
       response.Body = await _channelRepository.CreateAsync(await _mapper.MapAsync(request));
       if (response.Body is null)
       {
         response = _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
       }
+
+      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       return response;
     }

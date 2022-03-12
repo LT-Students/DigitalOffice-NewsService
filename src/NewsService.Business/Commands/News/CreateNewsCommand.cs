@@ -74,6 +74,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       {
         return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
       }
+
       if (request.TagsIds.Any())
       {
         _newsTagsRepository.CreateAsync(
