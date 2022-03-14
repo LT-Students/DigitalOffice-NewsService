@@ -1,4 +1,5 @@
-﻿using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
+﻿using System.Collections.Generic;
+using LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
@@ -7,9 +8,14 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
 {
   public class NewsResponseMapper : INewsResponseMapper
   {
-    public NewsResponse Map(DbNews dbNews, DepartmentInfo department, UserInfo author, UserInfo sender)
+    public NewsResponse Map(
+      DbNews dbNews,
+      UserInfo creator,
+      UserInfo publisher,
+      ChannelInfo channel,
+      List<TagsInfo> tags)
     {
-      if (dbNews == null)
+      if (dbNews is null)
       {
         return null;
       }
@@ -17,15 +23,16 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
       return new NewsResponse
       {
         Id = dbNews.Id,
+        Subject = dbNews.Subject,
         Preview = dbNews.Preview,
         Content = dbNews.Content,
-        Subject = dbNews.Subject,
-        Pseudonym = dbNews.Pseudonym,
-        Author = author,
-        Department = department,
         IsActive = dbNews.IsActive,
         CreatedAtUtc = dbNews.CreatedAtUtc,
-        Sender = sender
+        PublishedAtUtc = dbNews.PublishedAtUtc,
+        Creator = creator,
+        Publisher = publisher,
+        Channel = channel,
+        Tags = tags
       };
     }
   }

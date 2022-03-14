@@ -14,4 +14,8 @@
     <ProjectReference Include="..\NewsService.Validation\NewsService.Validation.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\Tags\Interfaces\" />
+  </ItemGroup>
+
 </Project>

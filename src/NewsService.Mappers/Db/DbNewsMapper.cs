@@ -2,7 +2,7 @@
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using Microsoft.AspNetCore.Http;
 
 namespace LT.DigitalOffice.NewsService.Mappers.Models
@@ -19,7 +19,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 
     public DbNews Map(CreateNewsRequest request)
     {
-      if (request == null)
+      if (request is null)
       {
         return null;
       }
@@ -30,11 +30,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Preview = request.Preview,
         Content = request.Content,
         Subject = request.Subject,
-        Pseudonym = !string.IsNullOrEmpty(request.Pseudonym?.Trim()) ? request.Pseudonym.Trim() : null,
-        AuthorId = request.AuthorId,
-        IsActive = true,
+        IsActive = request.IsActive,
+        ChannelId = request.ChannelId,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
         CreatedAtUtc = DateTime.UtcNow,
+        PublishedAtUtc = request.IsActive ? DateTime.UtcNow : null,
+        PublishedBy = request.IsActive ? _httpContextAccessor.HttpContext.GetUserId() : null,
       };
     }
   }

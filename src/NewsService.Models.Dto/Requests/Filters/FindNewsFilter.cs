@@ -6,10 +6,16 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
 {
   public record FindNewsFilter : BaseFindFilter
   {
-    [FromQuery(Name = "authorId")]
-    public Guid? AuthorId { get; set; }
+    [FromQuery(Name = "publisherId")]
+    public Guid? PublisherId { get; set; }
 
     [FromQuery(Name = "includeDeactivated")]
     public bool IncludeDeactivated { get; set; } = false;
+
+    [FromQuery(Name = "includeChannel")]
+    public bool IncludeChannel { get; set; } = false;
+
+    [FromQuery(Name = "channelId")]
+    public Guid? ChannelId { get; set; }
   }
 }

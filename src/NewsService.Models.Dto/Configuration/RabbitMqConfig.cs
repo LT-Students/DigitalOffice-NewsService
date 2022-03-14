@@ -10,19 +10,11 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Configuration
 {
   public class RabbitMqConfig : BaseRabbitMqConfig
   {
-    public string GetNewsDataEndpoint { get; set; }
-
     [AutoInjectRequest(typeof(IGetImagesRequest))]
     public string GetImagesEndpoint { get; set; }
 
     [AutoInjectRequest(typeof(IGetUsersDataRequest))]
     public string GetUsersDataEndpoint { get; set; }
-
-    [AutoInjectRequest(typeof(IGetDepartmentsRequest))]
-    public string GetDepartmentsEndpoint { get; set; }
-
-    [AutoInjectRequest(typeof(ICreateDepartmentEntityRequest))]
-    public string CreateDepartmentEntityEndpoint { get; set; }
 
     [AutoInjectRequest(typeof(ICheckUsersExistence))]
     public string CheckUsersExistenceEndpoint { get; set; }

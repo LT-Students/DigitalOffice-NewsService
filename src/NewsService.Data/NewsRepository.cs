@@ -18,6 +18,34 @@ namespace LT.DigitalOffice.NewsService.Data
     private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    private IQueryable<DbNews> CreateFindPredicates(
+      FindNewsFilter filter,
+      IQueryable<DbNews> dbNewsList)
+    {
+      if (filter.PublisherId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.PublishedBy == filter.PublisherId);
+      }
+
+      if (!filter.IncludeDeactivated)
+      {
+        dbNewsList = dbNewsList.Where(x => x.IsActive);
+      }
+
+      if (filter.IncludeChannel)
+      {
+        dbNewsList = dbNewsList.Where(x => x.ChannelId.HasValue);
+      }
+
+      if (filter.ChannelId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(x => x.ChannelId == filter.ChannelId);
+      }
+      dbNewsList = dbNewsList.Include(nl => nl.Channel);
+
+      return dbNewsList;
+    }
+
     public NewsRepository(IDataProvider provider, IHttpContextAccessor httpContextAccessor)
     {
       _provider = provider;
@@ -28,7 +56,7 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       DbNews dbNews = await _provider.News.FirstOrDefaultAsync(x => x.Id == newsId);
 
-      if (dbNews == null || patch == null)
+      if (dbNews is null || patch is null)
       {
         return false;
       }
@@ -43,7 +71,7 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public async Task<Guid?> CreateAsync(DbNews dbNews)
     {
-      if (dbNews == null)
+      if (dbNews is null)
       {
         return null;
       }
@@ -54,24 +82,16 @@ namespace LT.DigitalOffice.NewsService.Data
       return dbNews.Id;
     }
 
-    public async Task<(List<DbNews> dbNewsList, int totalCount)> FindAsync(FindNewsFilter filter)
+    public async Task<(List<DbNews> dbNews, int totalCount)> FindAsync(FindNewsFilter filter)
     {
-      if (filter == null)
+      if (filter is null)
       {
         return (null, default);
       }
 
-      IQueryable<DbNews> dbNewsList = _provider.News.AsQueryable();
-
-      if (filter.AuthorId.HasValue)
-      {
-        dbNewsList = dbNewsList.Where(x => x.AuthorId == filter.AuthorId);
-      }
-
-      if (!filter.IncludeDeactivated)
-      {
-        dbNewsList = dbNewsList.Where(x => x.IsActive);
-      }
+      IQueryable<DbNews> dbNewsList = CreateFindPredicates(
+        filter,
+        _provider.News.AsQueryable());
 
       return (
         await dbNewsList
@@ -111,6 +131,11 @@ namespace LT.DigitalOffice.NewsService.Data
           .Where(n => n.Subject.Contains(text, StringComparison.OrdinalIgnoreCase))
           .ToList();
       });
+    }
+
+    public async Task<bool> DoesNewsExistAsync(Guid newsId)
+    {
+      return await _provider.News.AnyAsync(n => n.Id == newsId);
     }
   }
 }

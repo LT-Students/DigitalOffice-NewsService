@@ -66,7 +66,6 @@ namespace LT.DigitalOffice.NewsService
 
       services.AddMassTransit(x =>
       {
-        x.AddConsumer<GetNewsConsumer>();
         x.AddConsumer<SearchNewsConsumer>();
 
         x.UsingRabbitMq((context, cfg) =>
@@ -75,11 +74,6 @@ namespace LT.DigitalOffice.NewsService
           {
             host.Username(username);
             host.Password(password);
-          });
-
-          cfg.ReceiveEndpoint(_rabbitMqConfig.GetNewsDataEndpoint, ep =>
-          {
-            ep.ConfigureConsumer<GetNewsConsumer>(context);
           });
 
           cfg.ReceiveEndpoint(_rabbitMqConfig.SearchNewsEndpoint, ep =>
@@ -121,7 +115,7 @@ namespace LT.DigitalOffice.NewsService
         .GetSection(BaseServiceInfoConfig.SectionName)
         .Get<BaseServiceInfoConfig>();
 
-      Version = "1.2.5.2";
+      Version = "1.2.6.0";
       Description = "NewsService, is intended to work with the news - create them, update info and etc.";
       StartTime = DateTime.UtcNow;
       ApiName = $"LT Digital Office - {_serviceInfoConfig.Name}";
