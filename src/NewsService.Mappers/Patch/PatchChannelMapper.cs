@@ -33,9 +33,12 @@ namespace LT.DigitalOffice.NewsService.Mappers.Patch
         if (item.path.EndsWith(nameof(EditChannelRequest.Image), StringComparison.OrdinalIgnoreCase))
         {
           ImageConsist image = JsonConvert.DeserializeObject<ImageConsist>(item.value.ToString());
+
           (bool _, string resizedContent, string extension) = await _resizeHelper.ResizeAsync(
             image.Content, image.Extension);
+
           patchDbNews.Operations.Add(new Operation<DbChannel>(item.op, nameof(DbChannel.ImageContent), item.from, resizedContent));
+
           patchDbNews.Operations.Add(new Operation<DbChannel>(item.op, nameof(DbChannel.ImageExtension), item.from, extension));
 
           continue;

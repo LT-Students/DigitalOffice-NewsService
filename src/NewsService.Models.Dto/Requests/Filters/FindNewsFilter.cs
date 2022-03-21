@@ -17,5 +17,8 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
 
     [FromQuery(Name = "channelId")]
     public Guid? ChannelId { get; set; }
+
+    [FromQuery(Name = "tagId")]
+    public Guid? TagId { get; set; }
   }
 }

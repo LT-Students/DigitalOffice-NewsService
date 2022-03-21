@@ -7,8 +7,4 @@
     <ProjectReference Include="..\NewsService.Models.Dto\NewsService.Models.Dto.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tag\" />
-  </ItemGroup>
-
 </Project>

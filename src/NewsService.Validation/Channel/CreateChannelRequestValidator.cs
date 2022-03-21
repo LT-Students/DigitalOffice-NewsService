@@ -11,8 +11,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
     public CreateChannelRequestValidator(
       IImageContentValidator imageContentValidator,
       IImageExtensionValidator imageExtensionValidator,
-      IChannelRepository channelRepository,
-      INewsRepository newsRepository)
+      IChannelRepository channelRepository)
     {
       RuleFor(c => c.Name)
         .NotEmpty().WithMessage("Name must not be empty.")

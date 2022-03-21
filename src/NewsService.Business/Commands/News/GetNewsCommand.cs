@@ -34,8 +34,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IUserInfoMapper _userInfoMapper;
     private readonly IResponseCreator _responseCreator;
     private readonly ITagInfoMapper _tagsInfoMapper;
-    private readonly IChannelRepository _channelRepository;
-    private readonly ITagRepository _tagsRepository;
     private readonly IChannelInfoMapper _channelInfoMapper;
     private readonly ILogger<GetNewsCommand> _logger;
 
@@ -77,8 +75,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IUserInfoMapper userInfoMapper,
       IResponseCreator responseCreator,
       ITagInfoMapper tagsInfoMapper,
-      IChannelRepository channelRepository,
-      ITagRepository tagsRepository,
       IChannelInfoMapper channelInfoMapper,
       ILogger<GetNewsCommand> logger)
     {
@@ -89,8 +85,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       _userInfoMapper = userInfoMapper;
       _responseCreator = responseCreator;
       _tagsInfoMapper = tagsInfoMapper;
-      _channelRepository = channelRepository;
-      _tagsRepository = tagsRepository;
       _channelInfoMapper = channelInfoMapper;
       _logger = logger;
     }
@@ -134,7 +128,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
           usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.CreatedBy),
           usersInfo?.FirstOrDefault(ui => ui.Id == dbNews.PublishedBy),
           _channelInfoMapper.Map(dbNews.Channel),
-          _tagsInfoMapper.Map(dbNews.Tags.ToList()));
+          _tagsInfoMapper.Map(dbNews.NewsTags.Select(x => x.Tag).ToList()));
 
       response.Status = response.Errors.Any()
         ? OperationResultStatusType.PartialSuccess

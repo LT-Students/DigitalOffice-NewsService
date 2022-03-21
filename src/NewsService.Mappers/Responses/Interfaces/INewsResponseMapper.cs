@@ -14,6 +14,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.ResponsesMappers.Interfaces
       UserInfo creator,
       UserInfo publisher,
       ChannelInfo channel,
-      List<TagsInfo> tags);
+      List<TagInfo> tags);
   }
 }

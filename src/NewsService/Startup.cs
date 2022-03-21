@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
@@ -9,6 +10,7 @@ using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.NewsService.Broker;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
 using MassTransit;
@@ -202,6 +204,33 @@ namespace LT.DigitalOffice.NewsService
       });
     }
 
+    private async Task DeleteUnusedTagsAsync(IApplicationBuilder app)
+    {
+      var scope = app.ApplicationServices.CreateScope();
+
+      //создать в репозитории тэгов метод который выдает или удаляет список тех тегов count == 0
+
+      var newsTagRepository = scope.ServiceProvider.GetRequiredService<INewsTagRepository>();
+      var tagRepository = scope.ServiceProvider.GetRequiredService<ITagRepository>();
+
+      if (DateTime.UtcNow.Hour == 00 
+          && DateTime.UtcNow.Minute == 00 
+          && DateTime.UtcNow.Second == 00)
+      {
+        await tagRepository.RemoveAsync();
+      }
+      /*DbWorkTime lastWorkTime = await workTimeRepository.GetLastAsync();
+
+      workTimeCreater.Start(
+        _timeConfig.MinutesToRestart,
+        lastWorkTime != null
+          ? new DateTime(year: lastWorkTime.Year, month: lastWorkTime.Month, day: 1)
+          : default);
+
+      workTimeLimitCreater.Start(
+        _timeConfig.MinutesToRestart,
+        _timeConfig.CountNeededNextMonth);*/
+    }
     #endregion
   }
 }

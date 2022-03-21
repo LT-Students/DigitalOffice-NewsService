@@ -12,6 +12,7 @@ using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,8 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IResponseCreator _responseCreator;
     private readonly IDbNewsTagMapper _newsTagsMapper;
     private readonly INewsTagRepository _newsTagsRepository;
-
+    private readonly ITagRepository _tagRepository;
+    private readonly IDbNewsTagMapper _dbNewsTagMapper;
     public CreateNewsCommand(
       INewsRepository repository,
       IDbNewsMapper mapper,
@@ -37,7 +39,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator,
       IDbNewsTagMapper newsTagsMapper,
-      INewsTagRepository newsTagsRepository)
+      INewsTagRepository newsTagsRepository,
+      ITagRepository tagRepository,
+      IDbNewsTagMapper dbNewsTagMapper)
     {
       _repository = repository;
       _mapper = mapper;
@@ -47,6 +51,8 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       _responseCreator = responseCreator;
       _newsTagsMapper = newsTagsMapper;
       _newsTagsRepository = newsTagsRepository;
+      _tagRepository = tagRepository;
+      _dbNewsTagMapper = dbNewsTagMapper;
     }
 
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request)
@@ -57,6 +63,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
+
       if (!validationResult.IsValid)
       {
         return _responseCreator.CreateFailureResponse<Guid?>(
@@ -66,9 +73,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       OperationResultResponse<Guid?> response = new();
 
-      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+      DbNews news = _mapper.Map(request);
 
-      response.Body = await _repository.CreateAsync(_mapper.Map(request));
+      response.Body = await _repository.CreateAsync(news);
 
       if (response.Body is null)
       {
@@ -77,10 +84,12 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       if (request.TagsIds.Any())
       {
-        _newsTagsRepository.CreateAsync(
-          _newsTagsMapper.Map(request.TagsIds.Distinct().ToList(),
-          response.Body.Value));
+        await _newsTagsRepository.CreateAsync(_dbNewsTagMapper.Map(request.TagsIds.Distinct().ToList(), response.Body.Value /*news.NewsTags.ToList()*/));
+
+        await _tagRepository.UpdateCountAsync(request.TagsIds.Distinct().ToList());
       }
+
+      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       return response;
     }

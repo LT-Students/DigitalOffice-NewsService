@@ -22,7 +22,6 @@ using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace LT.DigitalOffice.NewsService.Business.Commands.News

@@ -17,11 +17,11 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public DateTime CreatedAtUtc { get; set; }
 
     [IgnoreParse]
-    public ICollection<DbNews> News { get; set; }
+    public ICollection<DbNewsTag> NewsTags { get; set; }
 
     public DbTag()
     {
-      News = new HashSet<DbNews>();
+      NewsTags = new HashSet<DbNewsTag>();
     }
   }
 
@@ -40,8 +40,8 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         .IsRequired();
 
       builder
-        .HasMany(p => p.News)
-        .WithMany(n => n.Tags);
+        .HasMany(p => p.NewsTags)
+        .WithOne(p => p.Tag);
     }
   }
 }

@@ -12,7 +12,6 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Patch.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Channel;
 using LT.DigitalOffice.NewsService.Validation.Channel.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
@@ -20,7 +19,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
   public class EditChannelCommand : IEditChannelCommand
   {
     private readonly IAccessValidator _accessValidator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IEditChannelRequestValidator _validator;
     private readonly IChannelRepository _repository;
     private readonly IPatchChannelMapper _mapper;
@@ -28,14 +26,12 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
 
     public EditChannelCommand(
       IAccessValidator accessValidator,
-      IHttpContextAccessor httpContextAccessor,
       IEditChannelRequestValidator validator,
       IChannelRepository repository,
       IPatchChannelMapper mapper,
       IResponseCreator responseCreator)
     {
       _accessValidator = accessValidator;
-      _httpContextAccessor = httpContextAccessor;
       _validator = validator;
       _repository = repository;
       _mapper = mapper;
