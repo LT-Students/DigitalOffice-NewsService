@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
@@ -101,6 +102,23 @@ namespace LT.DigitalOffice.NewsService
       context.Database.Migrate();
     }
 
+    private void DeleteUnusedTagsAsync(IApplicationBuilder app)
+    {
+      var scope = app.ApplicationServices.CreateScope();
+
+      var tagRepository = scope.ServiceProvider.GetRequiredService<ITagRepository>();
+
+      Task.Run(async () =>
+      {
+        while (true)
+        {
+          await tagRepository.RemoveAsync();
+
+          Thread.Sleep(1200000);
+        }
+      });
+    }
+
     #endregion
 
     #region public methods
@@ -174,6 +192,8 @@ namespace LT.DigitalOffice.NewsService
     {
       UpdateDatabase(app);
 
+      DeleteUnusedTagsAsync(app);
+
       app.UseForwardedHeaders();
 
       app.UseExceptionsHandler(loggerFactory);
@@ -202,34 +222,6 @@ namespace LT.DigitalOffice.NewsService
           ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
       });
-    }
-
-    private async Task DeleteUnusedTagsAsync(IApplicationBuilder app)
-    {
-      var scope = app.ApplicationServices.CreateScope();
-
-      //создать в репозитории тэгов метод который выдает или удаляет список тех тегов count == 0
-
-      var newsTagRepository = scope.ServiceProvider.GetRequiredService<INewsTagRepository>();
-      var tagRepository = scope.ServiceProvider.GetRequiredService<ITagRepository>();
-
-      if (DateTime.UtcNow.Hour == 00 
-          && DateTime.UtcNow.Minute == 00 
-          && DateTime.UtcNow.Second == 00)
-      {
-        await tagRepository.RemoveAsync();
-      }
-      /*DbWorkTime lastWorkTime = await workTimeRepository.GetLastAsync();
-
-      workTimeCreater.Start(
-        _timeConfig.MinutesToRestart,
-        lastWorkTime != null
-          ? new DateTime(year: lastWorkTime.Year, month: lastWorkTime.Month, day: 1)
-          : default);
-
-      workTimeLimitCreater.Start(
-        _timeConfig.MinutesToRestart,
-        _timeConfig.CountNeededNextMonth);*/
     }
     #endregion
   }

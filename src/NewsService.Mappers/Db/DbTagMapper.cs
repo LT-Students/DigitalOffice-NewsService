@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;

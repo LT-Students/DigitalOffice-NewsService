@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
@@ -27,7 +26,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
       {
         return null;
       }
-      
+
       Guid newsId = Guid.NewGuid();
 
       return new DbNews
@@ -42,7 +41,6 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         CreatedAtUtc = DateTime.UtcNow,
         PublishedAtUtc = request.IsActive ? DateTime.UtcNow : null,
         PublishedBy = request.IsActive ? _httpContextAccessor.HttpContext.GetUserId() : null,
-        //NewsTags = request.TagsIds.Any() ? _newsTagsMapper.Map(request.TagsIds.Distinct().ToList(), newsId) : null,
       };
     }
   }
