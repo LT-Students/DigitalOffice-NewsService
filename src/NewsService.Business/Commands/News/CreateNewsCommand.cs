@@ -27,10 +27,10 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
-    private readonly IDbNewsTagMapper _newsTagsMapper;
     private readonly INewsTagRepository _newsTagsRepository;
     private readonly ITagRepository _tagRepository;
     private readonly IDbNewsTagMapper _dbNewsTagMapper;
+
     public CreateNewsCommand(
       INewsRepository repository,
       IDbNewsMapper mapper,
@@ -38,7 +38,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IAccessValidator accessValidator,
       IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator,
-      IDbNewsTagMapper newsTagsMapper,
       INewsTagRepository newsTagsRepository,
       ITagRepository tagRepository,
       IDbNewsTagMapper dbNewsTagMapper)
@@ -49,7 +48,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       _accessValidator = accessValidator;
       _httpContextAccessor = httpContextAccessor;
       _responseCreator = responseCreator;
-      _newsTagsMapper = newsTagsMapper;
       _newsTagsRepository = newsTagsRepository;
       _tagRepository = tagRepository;
       _dbNewsTagMapper = dbNewsTagMapper;
@@ -73,9 +71,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       OperationResultResponse<Guid?> response = new();
 
-      DbNews news = _mapper.Map(request);
-
-      response.Body = await _repository.CreateAsync(news);
+      response.Body = await _repository.CreateAsync(_mapper.Map(request));
 
       if (response.Body is null)
       {
@@ -84,7 +80,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       if (request.TagsIds.Any())
       {
-        await _newsTagsRepository.CreateAsync(_dbNewsTagMapper.Map(request.TagsIds.Distinct().ToList(), response.Body.Value /*news.NewsTags.ToList()*/));
+        await _newsTagsRepository.CreateAsync(_dbNewsTagMapper.Map(request.TagsIds.Distinct().ToList(), response.Body.Value));
 
         await _tagRepository.UpdateCountAsync(request.TagsIds.Distinct().ToList());
       }

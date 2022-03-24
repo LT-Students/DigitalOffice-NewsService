@@ -42,23 +42,14 @@ namespace LT.DigitalOffice.NewsService.Data
       if (filter.ChannelId.HasValue)
       {
         dbNewsList = dbNewsList.Where(nl => nl.ChannelId == filter.ChannelId);
-
-        if (filter.TagId.HasValue)
-        {
-          dbNewsList = dbNewsList.Where(nl => nl.NewsTags.Select(nt => nt.TagId).Contains(filter.TagId.Value));
-
-          dbNewsList = dbNewsList.Include(nl => nl.Channel).Include(nl => nl.NewsTags).ThenInclude(nt => nt.Tag);
-
-          return dbNewsList;
-        }
       }
 
       if (filter.TagId.HasValue)
       {
         dbNewsList = dbNewsList.Where(nl => nl.NewsTags.Select(nt => nt.TagId).Contains(filter.TagId.Value));
-      }
 
-      dbNewsList = dbNewsList.Include(nl => nl.NewsTags).ThenInclude(nt => nt.Tag);
+        dbNewsList = dbNewsList.Include(nl => nl.NewsTags).ThenInclude(nt => nt.Tag);
+      }
 
       return dbNewsList;
     }
@@ -124,9 +115,8 @@ namespace LT.DigitalOffice.NewsService.Data
       IQueryable<DbNews> dbNews = _provider.News.AsQueryable();
 
       dbNews = dbNews.Where(dbNews => dbNews.Id == newsId);
-      dbNews = dbNews.Include(dbNews => dbNews.Channel).Include(dbNews => dbNews.NewsTags).ThenInclude(nt => nt.Tag);
 
-      return await dbNews.FirstOrDefaultAsync();
+      return await dbNews.Include(dbNews => dbNews.Channel).Include(dbNews => dbNews.NewsTags).ThenInclude(nt => nt.Tag).FirstOrDefaultAsync();
     }
 
     public async Task<List<DbNews>> GetAsync(List<Guid> newsIds)

@@ -15,7 +15,7 @@ using LT.DigitalOffice.NewsService.Validation.Tag.Interface;
 
 namespace LT.DigitalOffice.NewsService.Business.Commands.Tags
 {
-  public class EditTagCommand : IEditTagCommand
+  public class EditNewsTagCommand : IEditNewsTagCommand
   {
     private readonly INewsTagRepository _newsTagsRepository;
     private readonly IDbNewsTagMapper _newsTagsMapper;
@@ -24,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Tags
     private readonly IEditTagRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
 
-    public EditTagCommand(
+    public EditNewsTagCommand(
       INewsTagRepository newsTagsRepository,
       IDbNewsTagMapper newsTagsMapper,
       ITagRepository tagRepository,
@@ -40,7 +40,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Tags
       _accessValidator = accessValidator;
     }
 
-    public async Task<OperationResultResponse<bool>> ExecuteAsync(Guid newsId, EditTagsRequest request)
+    public async Task<OperationResultResponse<bool>> ExecuteAsync(Guid newsId, EditNewsTagsRequest request)
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {

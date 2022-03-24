@@ -64,6 +64,7 @@ namespace LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef.Migrations
           Count = table.Column<int>(nullable: false),
           CreatedBy = table.Column<Guid>(nullable: false),
           CreatedAtUtc = table.Column<DateTime>(nullable: false),
+          ModifiedAtUtc = table.Column<DateTime>(nullable: true),
         },
         constraints: table =>
         {

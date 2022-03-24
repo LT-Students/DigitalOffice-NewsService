@@ -12,6 +12,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IDbNewsTagMapper _newsTagsMapper;
+
     public DbNewsMapper(
       IHttpContextAccessor httpContextAccessor,
       IDbNewsTagMapper newsTagsMapper)
@@ -27,11 +28,9 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         return null;
       }
 
-      Guid newsId = Guid.NewGuid();
-
       return new DbNews
       {
-        Id = newsId,
+        Id = Guid.NewGuid(),
         Preview = request.Preview,
         Content = request.Content,
         Subject = request.Subject,

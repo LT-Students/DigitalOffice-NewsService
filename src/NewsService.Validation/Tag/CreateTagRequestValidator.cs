@@ -8,11 +8,10 @@ namespace LT.DigitalOffice.NewsService.Validation.Tag
   {
     public CreateTagRequestValidator()
     {
-      When(
-        tag => !string.IsNullOrEmpty(tag.Name),
-        () =>
-        RuleFor(tag => tag.Name)
-          .MaximumLength(80).WithMessage("Tag is too long."));
+      RuleFor(tag => tag.Name)
+        .Cascade(CascadeMode.Stop)
+        .NotEmpty().WithMessage("Name must not be empty.")
+        .MaximumLength(80).WithMessage("Tag is too long.");
     }
   }
 }

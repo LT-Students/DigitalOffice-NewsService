@@ -29,11 +29,11 @@ namespace LT.DigitalOffice.NewsService.Controllers
       return await command.ExecuteAsync(filter);
     }
 
-    [HttpPut("edit")]
+    [HttpPut("editTagNews")]
     public async Task<OperationResultResponse<bool>> EditAsync(
-      [FromServices] IEditTagCommand command,
+      [FromServices] IEditNewsTagCommand command,
       [FromQuery] Guid newsId,
-      [FromBody] EditTagsRequest request)
+      [FromBody] EditNewsTagsRequest request)
     {
       return await command.ExecuteAsync(newsId, request);
     }

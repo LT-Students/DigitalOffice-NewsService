@@ -22,7 +22,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Tags
     private readonly IResponseCreator _responseCreator;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITagRepository _tagRepository;
-    public readonly IDbTagMapper _dbTagMapper;
+    private readonly IDbTagMapper _dbTagMapper;
     private readonly ICreateTagRequestValidator _validator;
 
     public CreateTagCommand(

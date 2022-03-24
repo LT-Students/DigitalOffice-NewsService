@@ -7,21 +7,20 @@ using LT.DigitalOffice.NewsService.Validation.Tag.Interface;
 
 namespace LT.DigitalOffice.NewsService.Validation.Tag
 {
-  public class EditTagRequestValidator : AbstractValidator<(Guid, EditTagsRequest)>, IEditTagRequestValidator
+  public class EditNewsTagRequestValidator : AbstractValidator<(Guid id, EditNewsTagsRequest request)>, IEditTagRequestValidator
   {
-    public EditTagRequestValidator(
+    public EditNewsTagRequestValidator(
       INewsTagRepository repository)
     {
-      RuleFor(tag => tag.Item2.TagsToAdd)
+      RuleFor(tag => tag.request.TagsToAdd)
         .Cascade(CascadeMode.Stop)
         .NotNull().WithMessage("TagsToAdd list must not be null.")
-        .Must((id, tag) => id.Item2.TagsToAdd.Distinct().ToList().Count() == id.Item2.TagsToAdd.Count())
+        .Must((_, listTag) => listTag.Distinct().ToList().Count() == listTag.Count())
         .WithMessage("The tags can't be duplicated.")
-        .MustAsync(async (id, listTag, _) => !await repository.DoNewsTagsIdsExist(id.Item1, listTag))
+        .MustAsync(async (request, listTag, _) => !await repository.DoNewsTagsIdsExist(request.id, listTag))
         .WithMessage("The tags is already added.");
 
-
-      RuleFor(tag => tag.Item2.TagsToRemove)
+      RuleFor(tag => tag.request.TagsToRemove)
         .Cascade(CascadeMode.Stop)
         .NotNull().WithMessage("TagsToRemove list must not be null.")
         .Must(x => x.Distinct().ToList().Count() == x.Count())

@@ -7,8 +7,8 @@ using LT.DigitalOffice.NewsService.Models.Dto.Requests.Tag;
 namespace LT.DigitalOffice.NewsService.Business.Commands.Tags.Interfaces
 {
   [AutoInject]
-  public interface IEditTagCommand
+  public interface IEditNewsTagCommand
   {
-    Task<OperationResultResponse<bool>> ExecuteAsync(Guid newsId, EditTagsRequest request);
+    Task<OperationResultResponse<bool>> ExecuteAsync(Guid newsId, EditNewsTagsRequest request);
   }
 }

@@ -21,6 +21,11 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public async Task<Guid?> CreateAsync(DbTag dbTag)
     {
+      if (dbTag is null)
+      {
+        return null;
+      }
+
       _provider.Tags.Add(dbTag);
       await _provider.SaveAsync();
 
@@ -35,7 +40,12 @@ namespace LT.DigitalOffice.NewsService.Data
 
       if (dbTagsList is not null && dbTagsList.Any())
       {
-        await dbTagsList.Where(t => t.Count > 0).ForEachAsync(dbTag => dbTag.Count -= 1);
+        foreach (DbTag dbTag in dbTagsList.Where(t => t.Count > 0))
+        {
+          dbTag.Count -= 1;
+          dbTag.ModifiedAtUtc = DateTime.UtcNow;
+        }
+
         await _provider.SaveAsync();
       }
     }
@@ -66,9 +76,13 @@ namespace LT.DigitalOffice.NewsService.Data
         await dbTagsList.CountAsync());
     }
 
-    public async Task RemoveAsync()
+    public async Task RemoveAsync(DateTime time)
     {
-      List<DbTag> dbTags = _provider.Tags.Where(t => t.Count == 0).ToList();
+      List<DbTag> dbTags =
+        _provider.Tags.Where(
+          t => t.Count == 0 &&
+          (time.Minute - t.ModifiedAtUtc.Value.Minute == 30 || time.Minute - t.ModifiedAtUtc.Value.Minute == -30))
+        .ToList();
 
       if (dbTags is not null && dbTags.Any())
       {

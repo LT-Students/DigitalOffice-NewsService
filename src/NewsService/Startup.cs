@@ -112,9 +112,9 @@ namespace LT.DigitalOffice.NewsService
       {
         while (true)
         {
-          await tagRepository.RemoveAsync();
+          await tagRepository.RemoveAsync(DateTime.UtcNow);
 
-          Thread.Sleep(1200000);
+          Thread.Sleep(20000);
         }
       });
     }
