@@ -114,7 +114,7 @@ namespace LT.DigitalOffice.NewsService
         {
           await tagRepository.RemoveAsync(DateTime.UtcNow);
 
-          Thread.Sleep(20000);
+          Thread.Sleep(30000);
         }
       });
     }
