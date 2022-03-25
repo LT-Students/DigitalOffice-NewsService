@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +27,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IResponseCreator _responseCreator;
     private readonly INewsTagRepository _newsTagsRepository;
     private readonly ITagRepository _tagRepository;
-    private readonly IDbNewsTagMapper _dbNewsTagMapper;
+    private readonly IDbNewsTagMapper _newsTagMapper;
 
     public CreateNewsCommand(
       INewsRepository repository,
@@ -40,7 +38,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IResponseCreator responseCreator,
       INewsTagRepository newsTagsRepository,
       ITagRepository tagRepository,
-      IDbNewsTagMapper dbNewsTagMapper)
+      IDbNewsTagMapper newsTagMapper)
     {
       _repository = repository;
       _mapper = mapper;
@@ -50,7 +48,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       _responseCreator = responseCreator;
       _newsTagsRepository = newsTagsRepository;
       _tagRepository = tagRepository;
-      _dbNewsTagMapper = dbNewsTagMapper;
+      _newsTagMapper = newsTagMapper;
     }
 
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request)
@@ -80,9 +78,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       if (request.TagsIds.Any())
       {
-        await _newsTagsRepository.CreateAsync(_dbNewsTagMapper.Map(request.TagsIds.Distinct().ToList(), response.Body.Value));
+        await _newsTagsRepository.CreateAsync(_newsTagMapper.Map(request.TagsIds.ToList(), response.Body.Value));
 
-        await _tagRepository.UpdateCountAsync(request.TagsIds.Distinct().ToList());
+        await _tagRepository.UpdateCountAsync(request.TagsIds.ToList());
       }
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;

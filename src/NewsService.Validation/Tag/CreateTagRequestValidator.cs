@@ -11,7 +11,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Tag
       RuleFor(tag => tag.Name)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Name must not be empty.")
-        .MaximumLength(80).WithMessage("Tag is too long.");
+        .MaximumLength(80).WithMessage("Name is too long.");
     }
   }
 }

@@ -112,7 +112,7 @@ namespace LT.DigitalOffice.NewsService
       {
         while (true)
         {
-          await tagRepository.RemoveAsync(DateTime.UtcNow);
+          await tagRepository.RemoveAsync();
 
           Thread.Sleep(30000);
         }

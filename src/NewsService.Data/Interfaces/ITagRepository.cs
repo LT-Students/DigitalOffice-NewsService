@@ -18,6 +18,6 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
 
     Task UpdateCountAsync(List<Guid> tagsIds);
     
-    Task RemoveAsync(DateTime time);
+    Task RemoveAsync();
   }
 }

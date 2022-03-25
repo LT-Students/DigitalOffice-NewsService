@@ -23,7 +23,6 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public Guid? ModifiedBy { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
 
-
     [IgnoreParse]
     public ICollection<DbNewsTag> NewsTags { get; set; }
     [IgnoreParse]

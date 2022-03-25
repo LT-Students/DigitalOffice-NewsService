@@ -15,7 +15,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Tag
       RuleFor(tag => tag.request.TagsToAdd)
         .Cascade(CascadeMode.Stop)
         .NotNull().WithMessage("TagsToAdd list must not be null.")
-        .Must((_, listTag) => listTag.Distinct().ToList().Count() == listTag.Count())
+        .Must(t => t.Distinct().ToList().Count() == t.Count())
         .WithMessage("The tags can't be duplicated.")
         .MustAsync(async (request, listTag, _) => !await repository.DoNewsTagsIdsExist(request.id, listTag))
         .WithMessage("The tags is already added.");

@@ -34,8 +34,6 @@ namespace LT.DigitalOffice.NewsService.Data
 
       if (filter.IncludeChannel)
       {
-        dbNewsList = dbNewsList.Where(nl => nl.ChannelId.HasValue);
-
         dbNewsList = dbNewsList.Include(nl => nl.Channel);
       }
 

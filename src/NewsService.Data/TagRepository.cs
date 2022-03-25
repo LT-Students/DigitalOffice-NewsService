@@ -76,12 +76,12 @@ namespace LT.DigitalOffice.NewsService.Data
         await dbTagsList.CountAsync());
     }
 
-    public async Task RemoveAsync(DateTime time)
+    public async Task RemoveAsync()
     {
       List<DbTag> dbTags =
         _provider.Tags.Where(
           t => t.Count == 0 &&
-          (time.Minute - t.ModifiedAtUtc.Value.Minute == 30 || time.Minute - t.ModifiedAtUtc.Value.Minute == -30))
+          (DateTime.UtcNow.Hour - t.ModifiedAtUtc.Value.Hour == 0))
         .ToList();
 
       if (dbTags is not null && dbTags.Any())
