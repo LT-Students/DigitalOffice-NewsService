@@ -36,11 +36,11 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       IQueryable<DbTag> dbTagsList = _provider.Tags.AsQueryable();
 
-      dbTagsList = dbTagsList.Where(t => tagsIds.Contains(t.Id));
+      dbTagsList = dbTagsList.Where(t => tagsIds.Contains(t.Id) && t.Count > 0);
 
-      if (dbTagsList is not null && dbTagsList.Any())
+      if (dbTagsList is not null)
       {
-        foreach (DbTag dbTag in dbTagsList.Where(t => t.Count > 0))
+        foreach (DbTag dbTag in dbTagsList)
         {
           dbTag.Count -= 1;
           dbTag.ModifiedAtUtc = DateTime.UtcNow;
