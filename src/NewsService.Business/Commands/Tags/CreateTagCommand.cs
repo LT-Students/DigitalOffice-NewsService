@@ -1,64 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.FluentValidationExtensions;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
-using LT.DigitalOffice.NewsService.Business.Commands.Channels.Interfaces;
+using LT.DigitalOffice.NewsService.Business.Commands.Tags.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests.Channel;
-using LT.DigitalOffice.NewsService.Validation.Channel.Interfaces;
+using LT.DigitalOffice.NewsService.Models.Dto.Requests.Tag;
+using LT.DigitalOffice.NewsService.Validation.Tag.Interface;
 using Microsoft.AspNetCore.Http;
 
-namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
+namespace LT.DigitalOffice.NewsService.Business.Commands.Tags
 {
-  public class CreateChannelCommand : ICreateChannelCommand
+  public class CreateTagCommand : ICreateTagCommand
   {
     private readonly IAccessValidator _accessValidator;
     private readonly IResponseCreator _responseCreator;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IChannelRepository _channelRepository;
-    private readonly IDbChannelMapper _mapper;
-    private readonly ICreateChannelRequestValidator _validator;
+    private readonly ITagRepository _tagRepository;
+    private readonly IDbTagMapper _dbTagMapper;
+    private readonly ICreateTagRequestValidator _validator;
 
-    public CreateChannelCommand(
+    public CreateTagCommand(
       IAccessValidator accessValidator,
       IResponseCreator responseCreator,
       IHttpContextAccessor httpContextAccessor,
-      IChannelRepository channelRepository,
-      IDbChannelMapper mapper,
-      ICreateChannelRequestValidator validator)
+      ITagRepository tagRepository,
+      IDbTagMapper dbTagMapper,
+      ICreateTagRequestValidator validator)
     {
       _accessValidator = accessValidator;
       _responseCreator = responseCreator;
       _httpContextAccessor = httpContextAccessor;
-      _channelRepository = channelRepository;
-      _mapper = mapper;
+      _tagRepository = tagRepository;
+      _dbTagMapper = dbTagMapper;
       _validator = validator;
     }
 
-    public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateChannelRequest request)
+    public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateTagRequest request)
     {
       if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
       {
         return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
       }
 
-      if (!_validator.ValidateCustom(request, out List<string> errors))
+      ValidationResult validationResult = await _validator.ValidateAsync(request);
+
+      if (!validationResult.IsValid)
       {
-        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest, errors);
+        return _responseCreator.CreateFailureResponse<Guid?>(
+          HttpStatusCode.BadRequest,
+          validationResult.Errors.Select(vf => vf.ErrorMessage).ToList());
       }
 
       OperationResultResponse<Guid?> response = new();
 
-      response.Body = await _channelRepository.CreateAsync(await _mapper.MapAsync(request));
+      response.Body = await _tagRepository.CreateAsync(_dbTagMapper.Map(request));
+
       if (response.Body is null)
       {
-        response = _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
+        return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
       }
 
       _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
@@ -67,3 +72,4 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
     }
   }
 }
+

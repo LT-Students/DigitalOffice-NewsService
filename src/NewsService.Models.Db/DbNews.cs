@@ -24,13 +24,13 @@ namespace LT.DigitalOffice.NewsService.Models.Db
     public DateTime? ModifiedAtUtc { get; set; }
 
     [IgnoreParse]
-    public ICollection<DbTag> Tags { get; set; }
+    public ICollection<DbNewsTag> NewsTags { get; set; }
     [IgnoreParse]
     public DbChannel Channel { get; set; }
 
     public DbNews()
     {
-      Tags = new HashSet<DbTag>();
+      NewsTags = new HashSet<DbNewsTag>();
     }
   }
 
@@ -61,8 +61,8 @@ namespace LT.DigitalOffice.NewsService.Models.Db
         .WithMany(c => c.News);
 
       builder
-        .HasMany(n => n.Tags)
-        .WithMany(nt => nt.News);
+        .HasMany(n => n.NewsTags)
+        .WithOne(nt => nt.News);
     }
   }
 }

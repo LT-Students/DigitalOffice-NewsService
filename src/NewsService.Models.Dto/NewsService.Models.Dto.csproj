@@ -7,8 +7,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Requests\Tag\" />
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
@@ -10,11 +11,14 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
   public class DbNewsMapper : IDbNewsMapper
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IDbNewsTagMapper _newsTagsMapper;
 
     public DbNewsMapper(
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      IDbNewsTagMapper newsTagsMapper)
     {
       _httpContextAccessor = httpContextAccessor;
+      _newsTagsMapper = newsTagsMapper;
     }
 
     public DbNews Map(CreateNewsRequest request)

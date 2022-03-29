@@ -37,7 +37,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         Publisher = users.Where(u => u.Id == dbNews.PublishedBy).FirstOrDefault(),
         Creator = users.Where(u => u.Id == dbNews.CreatedBy).FirstOrDefault(),
         Channel = channel,
-        Tags = _tagsInfoMapper.Map(dbNews.Tags.ToList())
+        Tags = _tagsInfoMapper.Map(dbNews.NewsTags.Select(x => x.Tag).ToList())
       };
     }
   }

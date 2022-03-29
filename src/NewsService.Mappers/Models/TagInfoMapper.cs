@@ -8,14 +8,14 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
 {
   public class TagInfoMapper : ITagInfoMapper
   {
-    public List<TagsInfo> Map(List<DbTag> dbTags)
+    public List<TagInfo> Map(List<DbTag> dbTagsList)
     {
-      if (dbTags is null)
+      if (dbTagsList is null)
       {
         return null;
       }
 
-      return dbTags.Select(x => new TagsInfo
+      return dbTagsList.Select(x => new TagInfo
       {
         Id = x.Id,
         Name = x.Name,

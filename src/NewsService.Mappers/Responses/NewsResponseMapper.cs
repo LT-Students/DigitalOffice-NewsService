@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.NewsService.Mappers.Responses
       UserInfo creator,
       UserInfo publisher,
       ChannelInfo channel,
-      List<TagsInfo> tags)
+      List<TagInfo> tags)
     {
       if (dbNews is null)
       {

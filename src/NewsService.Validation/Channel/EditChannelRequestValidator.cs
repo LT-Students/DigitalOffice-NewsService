@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Validators;
-using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Validators;
+using LT.DigitalOffice.Kernel.Validators.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Channel;
@@ -17,6 +18,9 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
   {
     private readonly IChannelRepository _channelRepository;
     private readonly INewsRepository _newsRepository;
+    private readonly IImageContentValidator _imageContentValidator;
+    private readonly IImageExtensionValidator _imageExtensionValidator;
+
     private async Task HandleInternalPropertyValidation(
       Operation<EditChannelRequest> requestedOperation,
       CustomContext context)
@@ -73,29 +77,17 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
       AddFailureForPropertyIf(
         nameof(EditChannelRequest.Image),
         x => x == OperationType.Replace,
-        new()
-        {
+        new Dictionary<Func<Operation<EditChannelRequest>, bool>, string>
+      {
+        { x =>
           {
-            x =>
-            {
-              try
-              {
-                ImageConsist image = JsonConvert.DeserializeObject<ImageConsist>(x.value?.ToString());
+            ImageConsist image = JsonConvert.DeserializeObject<ImageConsist>(x.value?.ToString());
 
-                var byteString = new Span<byte>(new byte[image.Content.Length]);
-
-                if (!String.IsNullOrEmpty(image.Content) &&
-                  Convert.TryFromBase64String(image.Content, byteString, out _) &&
-                  ImageFormats.formats.Contains(image.Extension))
-                {
-                  return true;
-                }
-              }
-              catch
-              {
-              }
-              return false;
-            },
+            return image is null
+              ? true
+              : _imageContentValidator.Validate(image.Content).IsValid &&
+                _imageExtensionValidator.Validate(image.Extension).IsValid;
+          },
             "Incorrect Image format"
           }
         });
@@ -155,10 +147,14 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
 
     public EditChannelRequestValidator(
       IChannelRepository channelRepository,
-      INewsRepository newsRepository)
+      INewsRepository newsRepository,
+      IImageContentValidator imageContentValidator,
+      IImageExtensionValidator imageExtensionValidator)
     {
       _channelRepository = channelRepository;
       _newsRepository = newsRepository;
+      _imageContentValidator = imageContentValidator;
+      _imageExtensionValidator = imageExtensionValidator;
 
       RuleForEach(x => x.Operations)
         .CustomAsync(async (x, context, token) => await HandleInternalPropertyValidation(x, context));

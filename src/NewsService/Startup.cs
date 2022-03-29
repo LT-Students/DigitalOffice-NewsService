@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
@@ -9,6 +11,7 @@ using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.NewsService.Broker;
+using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
 using MassTransit;
@@ -99,6 +102,23 @@ namespace LT.DigitalOffice.NewsService
       context.Database.Migrate();
     }
 
+    private void DeleteUnusedTagsAsync(IApplicationBuilder app)
+    {
+      var scope = app.ApplicationServices.CreateScope();
+
+      var tagRepository = scope.ServiceProvider.GetRequiredService<ITagRepository>();
+
+      Task.Run(async () =>
+      {
+        while (true)
+        {
+          await tagRepository.RemoveAsync();
+
+          Thread.Sleep(1800000);
+        }
+      });
+    }
+
     #endregion
 
     #region public methods
@@ -172,6 +192,8 @@ namespace LT.DigitalOffice.NewsService
     {
       UpdateDatabase(app);
 
+      DeleteUnusedTagsAsync(app);
+
       app.UseForwardedHeaders();
 
       app.UseExceptionsHandler(loggerFactory);
@@ -201,7 +223,6 @@ namespace LT.DigitalOffice.NewsService
         });
       });
     }
-
     #endregion
   }
 }

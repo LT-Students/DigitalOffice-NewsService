@@ -13,7 +13,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Responses
     public UserInfo Creator { get; set; }
     public UserInfo Publisher { get; set; }
     public ChannelInfo Channel { get; set; }
-    public List<TagsInfo> Tags { get; set; }
+    public List<TagInfo> Tags { get; set; }
     public bool IsActive { get; set; }
     public DateTime? PublishedAtUtc { get; set; }
     public DateTime CreatedAtUtc { get; set; }

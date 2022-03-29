@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -26,8 +25,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IAccessValidator _accessValidator;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
-    private readonly IDbNewsTagMapper _newsTagsMapper;
     private readonly INewsTagRepository _newsTagsRepository;
+    private readonly ITagRepository _tagRepository;
+    private readonly IDbNewsTagMapper _newsTagMapper;
 
     public CreateNewsCommand(
       INewsRepository repository,
@@ -36,8 +36,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IAccessValidator accessValidator,
       IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator,
-      IDbNewsTagMapper newsTagsMapper,
-      INewsTagRepository newsTagsRepository)
+      INewsTagRepository newsTagsRepository,
+      ITagRepository tagRepository,
+      IDbNewsTagMapper newsTagMapper)
     {
       _repository = repository;
       _mapper = mapper;
@@ -45,8 +46,9 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       _accessValidator = accessValidator;
       _httpContextAccessor = httpContextAccessor;
       _responseCreator = responseCreator;
-      _newsTagsMapper = newsTagsMapper;
       _newsTagsRepository = newsTagsRepository;
+      _tagRepository = tagRepository;
+      _newsTagMapper = newsTagMapper;
     }
 
     public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateNewsRequest request)
@@ -57,6 +59,7 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       ValidationResult validationResult = await _validator.ValidateAsync(request);
+
       if (!validationResult.IsValid)
       {
         return _responseCreator.CreateFailureResponse<Guid?>(
@@ -65,8 +68,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       }
 
       OperationResultResponse<Guid?> response = new();
-
-      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       response.Body = await _repository.CreateAsync(_mapper.Map(request));
 
@@ -77,10 +78,12 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       if (request.TagsIds.Any())
       {
-        _newsTagsRepository.CreateAsync(
-          _newsTagsMapper.Map(request.TagsIds.Distinct().ToList(),
-          response.Body.Value));
+        await _newsTagsRepository.CreateAsync(_newsTagMapper.Map(request.TagsIds.ToList(), response.Body.Value));
+
+        await _tagRepository.UpdateCountAsync(request.TagsIds.ToList());
       }
+
+      _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
       return response;
     }

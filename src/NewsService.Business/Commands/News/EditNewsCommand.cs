@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Constants;
-using LT.DigitalOffice.Kernel.Enums;
 using LT.DigitalOffice.Kernel.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
@@ -13,7 +12,6 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Patch.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace LT.DigitalOffice.NewsService.Business.Commands.News
@@ -24,7 +22,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
     private readonly IPatchNewsMapper _mapper;
     private readonly IEditNewsRequestValidator _validator;
     private readonly IAccessValidator _accessValidator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IResponseCreator _responseCreator;
 
     public EditNewsCommand(
@@ -32,14 +29,12 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
       IPatchNewsMapper mapper,
       IEditNewsRequestValidator validator,
       IAccessValidator accessValidator,
-      IHttpContextAccessor httpContextAccessor,
       IResponseCreator responseCreator)
     {
       _repository = repository;
       _mapper = mapper;
       _validator = validator;
       _accessValidator = accessValidator;
-      _httpContextAccessor = httpContextAccessor;
       _responseCreator = responseCreator;
     }
 

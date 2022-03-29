@@ -24,24 +24,30 @@ namespace LT.DigitalOffice.NewsService.Data
     {
       if (filter.PublisherId.HasValue)
       {
-        dbNewsList = dbNewsList.Where(x => x.PublishedBy == filter.PublisherId);
+        dbNewsList = dbNewsList.Where(nl => nl.PublishedBy == filter.PublisherId);
       }
 
       if (!filter.IncludeDeactivated)
       {
-        dbNewsList = dbNewsList.Where(x => x.IsActive);
+        dbNewsList = dbNewsList.Where(nl => nl.IsActive);
       }
 
       if (filter.IncludeChannel)
       {
-        dbNewsList = dbNewsList.Where(x => x.ChannelId.HasValue);
+        dbNewsList = dbNewsList.Include(nl => nl.Channel);
       }
 
       if (filter.ChannelId.HasValue)
       {
-        dbNewsList = dbNewsList.Where(x => x.ChannelId == filter.ChannelId);
+        dbNewsList = dbNewsList.Where(nl => nl.ChannelId == filter.ChannelId);
       }
-      dbNewsList = dbNewsList.Include(nl => nl.Channel);
+
+      if (filter.TagId.HasValue)
+      {
+        dbNewsList = dbNewsList.Where(nl => nl.NewsTags.Select(nt => nt.TagId).Contains(filter.TagId.Value));
+
+        dbNewsList = dbNewsList.Include(nl => nl.NewsTags).ThenInclude(nt => nt.Tag);
+      }
 
       return dbNewsList;
     }
@@ -104,7 +110,11 @@ namespace LT.DigitalOffice.NewsService.Data
 
     public async Task<DbNews> GetAsync(Guid newsId)
     {
-      return await _provider.News.FirstOrDefaultAsync(dbNews => dbNews.Id == newsId);
+      IQueryable<DbNews> dbNews = _provider.News.AsQueryable();
+
+      dbNews = dbNews.Where(dbNews => dbNews.Id == newsId);
+
+      return await dbNews.Include(dbNews => dbNews.Channel).Include(dbNews => dbNews.NewsTags).ThenInclude(nt => nt.Tag).FirstOrDefaultAsync();
     }
 
     public async Task<List<DbNews>> GetAsync(List<Guid> newsIds)
