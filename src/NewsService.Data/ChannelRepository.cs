@@ -86,9 +86,9 @@ namespace LT.DigitalOffice.NewsService.Data
         dbChannels = dbChannels.Where(c => c.Name == filter.Name);
       }
 
-      if (!filter.IncludeDeactivated)
+      if (filter.IsActive.HasValue)
       {
-        dbChannels = dbChannels.Where(c => c.IsActive);
+        dbChannels = dbChannels.Where(c => c.IsActive == filter.IsActive);
       }
 
       return(

@@ -27,9 +27,9 @@ namespace LT.DigitalOffice.NewsService.Data
         dbNewsList = dbNewsList.Where(nl => nl.PublishedBy == filter.PublisherId);
       }
 
-      if (!filter.IncludeDeactivated)
+      if (filter.IsActive.HasValue)
       {
-        dbNewsList = dbNewsList.Where(nl => nl.IsActive);
+        dbNewsList = dbNewsList.Where(nl => nl.IsActive == filter.IsActive);
       }
 
       if (filter.IncludeChannel)
