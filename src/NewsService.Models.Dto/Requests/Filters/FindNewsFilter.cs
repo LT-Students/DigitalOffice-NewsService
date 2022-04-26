@@ -9,8 +9,8 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
     [FromQuery(Name = "publisherId")]
     public Guid? PublisherId { get; set; }
 
-    [FromQuery(Name = "includeDeactivated")]
-    public bool IncludeDeactivated { get; set; } = false;
+    [FromQuery(Name = "isActive")]
+    public bool? IsActive { get; set; }
 
     [FromQuery(Name = "includeChannel")]
     public bool IncludeChannel { get; set; } = false;

@@ -8,7 +8,7 @@ namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters
     [FromQuery(Name = "name")]
     public string Name { get; set; }
 
-    [FromQuery(Name = "includeDeactivated")]
-    public bool IncludeDeactivated { get; set; } = false;
+    [FromQuery(Name = "isActive")]
+    public bool? IsActive { get; set; }
   }
 }
