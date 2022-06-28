@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.Models.Broker.Models;
+using LT.DigitalOffice.Models.Broker.Models.Image;
 using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 

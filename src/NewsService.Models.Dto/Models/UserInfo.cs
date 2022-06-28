@@ -1,5 +1,5 @@
 ﻿using System;
-using LT.DigitalOffice.Models.Broker.Models;
+using LT.DigitalOffice.Models.Broker.Models.Image;
 
 namespace LT.DigitalOffice.NewsService.Models.Dto.Models
 {

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
-using LT.DigitalOffice.Kernel.Database;
+using LT.DigitalOffice.Kernel.EFSupport.Provider;
 using LT.DigitalOffice.NewsService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 
