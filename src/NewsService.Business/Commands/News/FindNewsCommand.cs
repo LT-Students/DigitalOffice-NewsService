@@ -131,10 +131,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
 
       response.TotalCount = totalCount;
 
-      response.Status = response.Errors.Any()
-        ? OperationResultStatusType.PartialSuccess
-        : OperationResultStatusType.FullSuccess;
-
       return response;
     }
   }

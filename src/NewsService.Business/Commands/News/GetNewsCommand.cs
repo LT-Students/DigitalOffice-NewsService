@@ -131,10 +131,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.News
           _channelInfoMapper.Map(dbNews.Channel),
           _tagsInfoMapper.Map(dbNews.NewsTags.Select(x => x.Tag).ToList()));
 
-      response.Status = response.Errors.Any()
-        ? OperationResultStatusType.PartialSuccess
-        : OperationResultStatusType.FullSuccess;
-
       return response;
     }
   }

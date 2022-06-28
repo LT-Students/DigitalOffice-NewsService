@@ -125,10 +125,6 @@ namespace LT.DigitalOffice.NewsService.Business.Commands.Channels
           dbChannel,
           dbChannel.News.Select(n => _newsInfoMapper.Map(n, usersInfo)).ToList());
 
-      response.Status = response.Errors.Any()
-        ? OperationResultStatusType.PartialSuccess
-        : OperationResultStatusType.FullSuccess;
-
       return response;
     }
   }
