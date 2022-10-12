@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using LT.DigitalOffice.ImageSupport.Helpers.Interfaces;
 using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.ImageSupport.Helpers.Interfaces;
 using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Channel;

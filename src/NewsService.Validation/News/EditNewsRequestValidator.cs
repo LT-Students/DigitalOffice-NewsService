@@ -6,6 +6,7 @@ using LT.DigitalOffice.Kernel.Validators;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Validation.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace LT.DigitalOffice.NewsService.Validation
@@ -16,7 +17,7 @@ namespace LT.DigitalOffice.NewsService.Validation
 
     private async Task HandleInternalPropertyValidation(
       Operation<EditNewsRequest> requestedOperation,
-      CustomContext context)
+      ValidationContext<JsonPatchDocument<EditNewsRequest>> context)
     {
       Context = context;
       RequestedOperation = requestedOperation;
