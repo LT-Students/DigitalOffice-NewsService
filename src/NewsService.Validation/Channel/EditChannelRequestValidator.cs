@@ -9,6 +9,7 @@ using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Channel;
 using LT.DigitalOffice.NewsService.Validation.Channel.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json;
 
@@ -23,7 +24,7 @@ namespace LT.DigitalOffice.NewsService.Validation.Channel
 
     private async Task HandleInternalPropertyValidation(
       Operation<EditChannelRequest> requestedOperation,
-      CustomContext context)
+      ValidationContext<JsonPatchDocument<EditChannelRequest>> context)
     {
       Context = context;
       RequestedOperation = requestedOperation;
