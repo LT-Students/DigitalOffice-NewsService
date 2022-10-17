@@ -1,34 +1,30 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using LT.DigitalOffice.NewsService.Data.Provider;
 using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.NewsService.Mappers.Db.Interfaces;
-using LT.DigitalOffice.NewsService.Mappers.Models.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Db;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace LT.DigitalOffice.NewsService.Mappers.Models
+namespace LT.DigitalOffice.NewsService.Business.Commands.News.Create
 {
-  public class DbNewsMapper : IDbNewsMapper
+  public class CreateNewsHandler : IRequestHandler<CreateNewsRequest, Guid?>
   {
+    private readonly IDataProvider _provider;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IDbNewsTagMapper _newsTagsMapper;
 
-    public DbNewsMapper(
-      IHttpContextAccessor httpContextAccessor,
-      IDbNewsTagMapper newsTagsMapper)
+    public CreateNewsHandler(
+      IDataProvider provider,
+      IHttpContextAccessor httpContextAccessor)
     {
+      _provider = provider;
       _httpContextAccessor = httpContextAccessor;
-      _newsTagsMapper = newsTagsMapper;
     }
 
-    public DbNews Map(CreateNewsRequest request)
+    public async Task<Guid?> Handle(CreateNewsRequest request, CancellationToken token)
     {
-      if (request is null)
-      {
-        return null;
-      }
-
-      return new DbNews
+      DbNews news = new()
       {
         Id = Guid.NewGuid(),
         Preview = request.Preview,
@@ -41,6 +37,11 @@ namespace LT.DigitalOffice.NewsService.Mappers.Models
         PublishedAtUtc = request.IsActive ? DateTime.UtcNow : null,
         PublishedBy = request.IsActive ? _httpContextAccessor.HttpContext.GetUserId() : null,
       };
+
+      await _provider.News.AddAsync(news, token);
+      await _provider.SaveAsync();
+
+      return news.Id;
     }
   }
 }
