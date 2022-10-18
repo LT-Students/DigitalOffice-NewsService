@@ -50,9 +50,9 @@ namespace LT.DigitalOffice.NewsService.Controllers
     [HttpPost("create")]
     public async Task<IActionResult> CreateAsync(
       [FromBody] CreateNewsRequest request,
-      CancellationToken ct)
+      CancellationToken token)
     {
-      return Created("/news", await _mediator.Send(request, ct));
+      return Created("/news", await _mediator.Send(request, token));
     }
 
     [HttpGet("find")]
