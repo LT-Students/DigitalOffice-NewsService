@@ -1,13 +1,11 @@
 ﻿using System.Linq;
 using FluentValidation;
-using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
-using LT.DigitalOffice.NewsService.Validation.Interfaces;
 
-namespace LT.DigitalOffice.NewsService.Validation
+namespace LT.DigitalOffice.NewsService.Business.Commands.News.Create
 {
-  public class CreateNewsRequestValidator : AbstractValidator<CreateNewsRequest>, ICreateNewsRequestValidator
+  public class CreateNewsValidator : AbstractValidator<CreateNewsRequest>
   {
-    public CreateNewsRequestValidator()
+    public CreateNewsValidator()
     {
       RuleFor(news => news.TagsIds)
         .Cascade(CascadeMode.Stop)

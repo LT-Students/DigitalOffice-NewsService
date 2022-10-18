@@ -75,19 +75,6 @@ namespace LT.DigitalOffice.NewsService.Data
       return true;
     }
 
-    public async Task<Guid?> CreateAsync(DbNews dbNews)
-    {
-      if (dbNews is null)
-      {
-        return null;
-      }
-
-      _provider.News.Add(dbNews);
-      await _provider.SaveAsync();
-
-      return dbNews.Id;
-    }
-
     public async Task<(List<DbNews> dbNews, int totalCount)> FindAsync(FindNewsFilter filter)
     {
       if (filter is null)

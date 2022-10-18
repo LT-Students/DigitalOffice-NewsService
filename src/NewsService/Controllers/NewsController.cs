@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
 using LT.DigitalOffice.Kernel.Responses;
+using LT.DigitalOffice.NewsService.Business.Commands.News.Create;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
 using LT.DigitalOffice.NewsService.Models.Dto.Models;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.Filters;
 using LT.DigitalOffice.NewsService.Models.Dto.Requests.News;
 using LT.DigitalOffice.NewsService.Models.Dto.Responses;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +19,17 @@ namespace LT.DigitalOffice.NewsService.Controllers
   [ApiController]
   public class NewsController : ControllerBase
   {
+    private readonly IMediator _mediator;
+    private readonly IAccessValidator _accessValidator;
+
+    public NewsController(
+      IMediator mediator,
+      IAccessValidator accessValidator)
+    {
+      _mediator = mediator;
+      _accessValidator = accessValidator;
+    }
+
     [HttpGet("get")]
     public async Task<OperationResultResponse<NewsResponse>> GetAsync(
       [FromServices] IGetNewsCommand command,
@@ -33,11 +48,11 @@ namespace LT.DigitalOffice.NewsService.Controllers
     }
 
     [HttpPost("create")]
-    public async Task<OperationResultResponse<Guid?>> CreateAsync(
-      [FromServices] ICreateNewsCommand command,
-      [FromBody] CreateNewsRequest request)
+    public async Task<IActionResult> CreateAsync(
+      [FromBody] CreateNewsRequest request,
+      CancellationToken token)
     {
-      return await command.ExecuteAsync(request);
+      return Created("/news", await _mediator.Send(request, token));
     }
 
     [HttpGet("find")]

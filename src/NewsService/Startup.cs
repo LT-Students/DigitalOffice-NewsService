@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using System.Threading;
 using System.Threading.Tasks;
+using DigitalOffice.Kernel.Behaviours;
+using FluentValidation;
 using HealthChecks.UI.Client;
 using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
@@ -14,10 +15,13 @@ using LT.DigitalOffice.Kernel.EFSupport.Helpers;
 using LT.DigitalOffice.Kernel.Extensions;
 using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.NewsService.Broker;
+using LT.DigitalOffice.NewsService.Business;
 using LT.DigitalOffice.NewsService.Data.Interfaces;
 using LT.DigitalOffice.NewsService.Data.Provider.MsSql.Ef;
 using LT.DigitalOffice.NewsService.Models.Dto.Configuration;
+using LT.DigitalOffice.NewsService.Validation;
 using MassTransit;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +29,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace LT.DigitalOffice.NewsService
 {
@@ -80,7 +83,7 @@ namespace LT.DigitalOffice.NewsService
         {
           await tagRepository.RemoveAsync();
 
-          Thread.Sleep(1800000);
+          await Task.Delay(1800000);
         }
       });
     }
@@ -126,6 +129,8 @@ namespace LT.DigitalOffice.NewsService
       services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
       services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
 
+      services.AddMediatR(typeof(AssemblyMarker));
+
       services.AddHttpContextAccessor();
 
       services.AddControllers().AddNewtonsoftJson().AddJsonOptions(option =>
@@ -148,6 +153,9 @@ namespace LT.DigitalOffice.NewsService
         .AddHealthChecks()
         .AddSqlServer(dbConnStr)
         .AddRabbitMqCheck();
+
+      services.AddValidatorsFromAssembly(typeof(AssemblyMarker).Assembly);
+      services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
     }
 
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

@@ -1,9 +1,10 @@
 ﻿using System;
+using MediatR;
 using System.Collections.Generic;
 
-namespace LT.DigitalOffice.NewsService.Models.Dto.Requests.News
+namespace LT.DigitalOffice.NewsService.Business.Commands.News.Create
 {
-  public record CreateNewsRequest
+  public record CreateNewsRequest : IRequest<Guid?>
   {
     public string Preview { get; set; }
     public string Content { get; set; }

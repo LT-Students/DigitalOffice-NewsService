@@ -11,8 +11,6 @@ namespace LT.DigitalOffice.NewsService.Data.Interfaces
   [AutoInject]
   public interface INewsRepository
   {
-    Task<Guid?> CreateAsync(DbNews dbNews);
-
     Task<bool> EditAsync(Guid newsId, JsonPatchDocument<DbNews> patch);
 
     Task<DbNews> GetAsync(Guid newsId);
