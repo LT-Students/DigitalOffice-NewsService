@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LT.DigitalOffice.Kernel.BrokerSupport.AccessValidatorEngine.Interfaces;
+using LT.DigitalOffice.Kernel.Constants;
 using LT.DigitalOffice.Kernel.Responses;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Create;
 using LT.DigitalOffice.NewsService.Business.Commands.News.Interfaces;
@@ -52,6 +53,11 @@ namespace LT.DigitalOffice.NewsService.Controllers
       [FromBody] CreateNewsRequest request,
       CancellationToken token)
     {
+      if (!await _accessValidator.HasRightsAsync(Rights.AddEditRemoveNews))
+      {
+        return StatusCode(403);
+      }
+
       return Created("/news", await _mediator.Send(request, token));
     }
 
